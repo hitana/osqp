@@ -1,7 +1,7 @@
 # Add qdldl
 #subdir('qdldl_sources')
 current_source_dir = meson.current_source_dir()
-if not embedded
+if embedded == 0
   amd_sources = ['amd/include/amd_internal.h', 
 				'amd/include/amd.h', 
 				'amd/include/SuiteSparse_config.h', 
@@ -29,12 +29,12 @@ linsys_qdldl_lib = library('linsys_qdldl',
 # Generate header file with the global options
 # ---------------------------------------------
 # numeric types
-if get_option('DFLOAT')
+if conf_data.get('DFLOAT')
   qdldl_float_type = 'float'
 else
   qdldl_float_type = 'double'
 endif
-if get_option('DLONG')
+if conf_data.get('DLONG')
   qdldl_int_type = 'long long'
   qdldl_int_type_max = 'LLONG_MAX'
 else

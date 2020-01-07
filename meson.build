@@ -1,24 +1,45 @@
 # Minimum version required
 # Project name
 project('osqp', 'c', default_options : ['default_library=static'])
+# todo : default_options:['EMBEDDED=0'] doesn't work
 add_project_arguments('-lxc++', language: 'c')
 
 c_compiler = meson.get_compiler('c')
-system_name = get_option('SYSTEM_NAME')
 
-# Some non-standard CMake modules
-# list(['APPEND', 'CMAKE_MODULE_PATH', project_source_dir, '/configure/cmake'])
-# include(FindMKL)  # Find MKL module
+conf_data = configuration_data({
+  'UNITTESTS' : get_option('UNITTESTS'),
+  'PRINTING' : get_option('PRINTING'),
+  'PROFILING' : get_option('PROFILING'),
+  'CTRLC' : get_option('CTRLC'),
+  'DFLOAT': get_option('DFLOAT'),
+  'DLONG': get_option('DLONG'),
+  'DEBUG': get_option('DEBUG'),
+  'COVERAGE': get_option('COVERAGE'),
+  'ENABLE_MKL_PARDISO': get_option('ENABLE_MKL_PARDISO'),
+  #'SYSTEM_NAME': get_option('SYSTEM_NAME'),
+  'EMBEDDED': get_option('EMBEDDED'),
+  #'OSQP_CUSTOM_MEMORY': get_option('OSQP_CUSTOM_MEMORY'),
+  'CMAKE_SIZEOF_VOID_P': get_option('CMAKE_SIZEOF_VOID_P'),
+  'MATLAB': get_option('MATLAB'),
+  'PYTHON': get_option('PYTHON'),
+  'R_LANG': get_option('R_LANG'),
+  'PYTHON_INCLUDE_DIRS': get_option('PYTHON_INCLUDE_DIRS'),
+  'MSVC': get_option('MSVC'),
+  'FORTRAN': get_option('FORTRAN')
+})
+
+# include(FindMKL)  # Find MKL module - todo: review it
+
 # Detect operating system
 # ----------------------------------------------
-# todo : trasfer it to C headers automatically
+system_name = get_option('SYSTEM_NAME')
 message(['STATUS', 'We are on a @0@ system'.format(system_name)])
 if system_name == 'Linux'
-  IS_LINUX = 'ON'
+  conf_data.set('IS_LINUX', true)
 elif system_name == 'Darwin'
-  IS_MAC = 'ON'
+  conf_data.set('IS_MAC', true)
 elif system_name == 'Windows'
-  IS_WINDOWS = 'ON'
+  conf_data.set('IS_WINDOWS', true)
 endif
 
 # Set options
@@ -26,37 +47,36 @@ endif
 # Are unittests generated?
 # Is the code generated for embedded platforms?
 embedded = get_option('EMBEDDED')
+#   0 :   Default. Not for embedded platforms.
 #   1 :   Yes. Matrix update not allowed.
 #   2 :   Yes. Matrix update allowed.
-#message('embedded=@0@'.format(embedded))
 
-if not embedded
-  # message(['STATUS', 'Embedded is OFF'])
+if embedded == 0
+  message(['STATUS', 'Embedded is OFF'])
 else
-  # message(['STATUS', 'Embedded is ${EMBEDDED}'])
-  # message(['STATUS', 'Disabling printing for embedded'])
-  printing = 'OFF'
-  # message(['STATUS', 'Disabling profiling for embedded'])
-  profiling = 'OFF'
-  # message(['STATUS', 'Disabling user interrupt for embedded'])
-  ctrlc = 'OFF'
+  message(['STATUS', 'Disabling printing for embedded'])
+  conf_data.set('PRINTING', false)
+  message(['STATUS', 'Disabling profiling for embedded'])
+  conf_data.set('PROFILING', false)
+  message(['STATUS', 'Disabling user interrupt for embedded'])
+  conf_data.set('CTRLC', false)
 endif
+message(['STATUS', 'User interrupt is @0@'.format(get_option('CTRLC'))])
 
-# message(['STATUS', 'User interrupt is ${CTRLC}'])
 # Use floats instead of integers
-# message(['STATUS', 'Floats are ${DFLOAT}'])
-# Use long integers for indexing
-dfloat = get_option('DFLOAT')
-debug = get_option('DEBUG')
+message(['STATUS', 'Floats are @0@'.format(get_option('DFLOAT'))])
 
+# Use long integers for indexing
 if get_option('CMAKE_SIZEOF_VOID_P') != 8
-  # message(['STATUS', 'Disabling long integers (64bit) on 32bit machine'])
-  dlong = 'OFF'
+  message(['STATUS', 'Disabling long integers (64bit) on 32bit machine'])
+  conf_data.set('DLONG', false)
 endif
-# message(['STATUS', 'Long integers (64bit) are ${DLONG}'])
-if debug
-  debug = 'ON'
-  # message(['STATUS', 'Debug mode is ${DEBUG}'])
+message(['STATUS', 'Long integers (64bit) are @0@'.format(get_option('DLONG'))])
+
+
+if get_option('DEBUG')
+  conf_data.set('DEBUG', true)
+  message(['STATUS', 'Debug mode is ON'])
 endif
 # Add code coverage
 # message(['STATUS', 'Code coverage is ${COVERAGE}'])
@@ -70,27 +90,37 @@ endif
 # define c_calloc mycalloc
 # define c_realloc myrealloc
 # define c_free myfree
-if get_option('OSQP_CUSTOM_MEMORY')
-  # message(['STATUS', 'User custom memory management header: ${OSQP_CUSTOM_MEMORY}'])
+if get_option('OSQP_CUSTOM_MEMORY') != ''
+  message(['STATUS', 'User custom memory management header: @0@'.format(et_option('OSQP_CUSTOM_MEMORY'))])
+   
+  # TODO: make sure of correct quotes
+  conf_data.set('OSQP_CUSTOM_MEMORY', get_option('OSQP_CUSTOM_MEMORY'))
+else
+  conf_data.set('OSQP_CUSTOM_MEMORY', false)
 endif
+
 # Linear solvers dependencies
 # ---------------------------------------------
-if dfloat
-  # message(['STATUS', 'Disabling MKL Pardiso Solver with floats'])
-  enable_mkl_pardiso = 'OFF'
-elif embedded
-  # message(['STATUS', 'Disabling MKL Pardiso Solver for embedded'])
-  enable_mkl_pardiso = 'OFF'
+if get_option('DFLOAT')
+  message(['STATUS', 'Disabling MKL Pardiso Solver with floats'])
+  conf_data.set('ENABLE_MKL_PARDISO', false)
+elif embedded > 0
+  message(['STATUS', 'Disabling MKL Pardiso Solver for embedded'])
+  conf_data.set('ENABLE_MKL_PARDISO', false)
 endif
-# message(['STATUS', 'MKL Pardiso: ${ENABLE_MKL_PARDISO}'])
+message(['STATUS', 'MKL Pardiso: @0@'.format(conf_data.get('ENABLE_MKL_PARDISO', false))])
+
 # Generate header file with the global options
 # ---------------------------------------------
-# configure_file([cmake_current_source_dir, '/configure/osqp_configure.h.in', cmake_current_source_dir, '/include/osqp_configure.h', 'NEWLINE_STYLE', 'LF'])
+configure_file(input : 'configure/osqp_configure.h.in',
+  output : 'osqp_configure.h',
+  configuration : conf_data)
+
+run_command('mv', 'osqp_configure.h', 'include/osqp_configure.h')
+
 # Set Compiler flags
 # ----------------------------------------------
-
-
-
+# todo: set compiler flags
 
 #************************************************************************************
 current_source_dir = meson.current_source_dir()
@@ -118,20 +148,18 @@ osqp_src = ['src/auxil.c',
 
 # Add the KKT update only in normal mode and matrix-updating embedded mode (not mode 1)
 # todo : make embedded not bool
-#if embedded != 1  
-if not embedded  
+if embedded != 1  
   osqp_src = [osqp_src, 'src/kkt.c']
 endif
 # Add more files that should only be in non-embedded code
-if not embedded
+if embedded == 0
   osqp_src = [osqp_src, 'src/cs.c', 'src/polish.c', 'src/lin_sys.c']
 endif
 # Add the ctrl-c handler if enabled
-if get_option('CTRLC')
+if conf_data.get('CTRLC')
   osqp_src = [osqp_src, 'src/ctrlc.c']
 endif
 
-message ('osqp_src = @0@'.format(osqp_src))
 #************************************************************************************
 # Create Static Library
 
@@ -139,10 +167,11 @@ message ('osqp_src = @0@'.format(osqp_src))
 # Add linear system solvers cumulative library
 subdir('lin_sys')
 # Static library
+# '.' include directory is for generated osqp_configure.h
 osqpstatic_lib = shared_library('osqpstatic', 
                                 osqp_src, 
                                 osqp_headers,
-                                include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso'],
+                                include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso', '.'],
                                 dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl')],
                                 #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.
                                 link_with: linsys_solvers
@@ -155,14 +184,14 @@ c_compiler = meson.get_compiler('c')
 dependency_list = []
 
 # -fPIC
-if not get_option('MSVC')
-  if get_option('COVERAGE')
+if not conf_data.get('MSVC')
+  if conf_data.get('COVERAGE')
     #cmake_c_flags = '${CMAKE_C_FLAGS} --coverage'
-    if get_option('FORTRAN')
+    if conf_data.get('FORTRAN')
       #cmake_fortran_flags = '${CMAKE_FORTRAN_FLAGS} --coverage'
     endif
   endif
-  if get_option('DEBUG')
+  if conf_data.get('DEBUG')
     #cmake_c_flags = '${CMAKE_C_FLAGS} -O0 -g'
   else
    # cmake_c_flags = '${CMAKE_C_FLAGS} -O3'
@@ -180,12 +209,12 @@ endif
 
 # todo : wrong argument in dependecies
 message('deps = @0@'.format(dependency_list))
-message('msvc = @0@, DEBUG = @1@, FORTRAN= @2@, system_name = @3@'.format(get_option('MSVC'), get_option('DEBUG'), get_option('FORTRAN'), system_name))
+message('msvc = @0@, DEBUG = @1@, FORTRAN= @2@, system_name = @3@'.format(conf_data.get('MSVC'), conf_data.get('DEBUG'), conf_data.get('FORTRAN'), system_name))
 
 # ----------------------------------------------
-python = get_option('PYTHON')
-matlab = get_option('MATLAB')
-r_lang = get_option('R_LANG')
+python = conf_data.get('PYTHON')
+matlab = conf_data.get('MATLAB')
+r_lang = conf_data.get('R_LANG')
 # install(['FILES', osqp_headers, 'DESTINATION', '${CMAKE_INSTALL_INCLUDEDIR}/osqp'])
 if matlab
   # target_link_libraries(['osqpstatic', matlab_libraries])
@@ -193,7 +222,7 @@ endif
 # If we are building Python/Matlab/R interface:
 #   - do not build shared library
 #   - do not build demo
-if not python and not matlab and not r_lang and not embedded
+if not python and not matlab and not r_lang and (embedded == 0)
   # Create osqp shared library
   # NB: Add all the linear system solvers here
 
@@ -237,7 +266,7 @@ configpackagelocation = 'lib/cmake/osqp'
 # Add testing
 # ----------------------------------------------
 # Add custom command to generate tests
-unittests_opt = get_option('UNITTESTS')
+unittests_opt = conf_data.get('UNITTESTS')
 if unittests_opt
   # todo: add checks
    
