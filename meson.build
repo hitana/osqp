@@ -126,9 +126,42 @@ configure_file(input : 'configure/osqp_configure.h.in',
 # todo : get build directory name here
 run_command('cp', 'build/osqp_configure.h', 'include/osqp_configure.h')
 
+
 # Set Compiler flags
+c_compiler = meson.get_compiler('c')
 # ----------------------------------------------
-# todo: set compiler flags
+# todo : set some default CMAKE_C_FLAGS|CMAKE_FORTRAN_FLAGS|CMAKE_C_STANDARD_LIBRARIES
+c_args = []
+gcov_lib = []
+rt_lib = []
+m_lib = []
+dl_lib = []
+if not conf_data.get('MSVC')
+  if conf_data.get('COVERAGE')
+    c_args += '--coverage'
+    gcov_lib = c_compiler.find_library('gcov')
+    #c_args += '-fprofile-arcs -ftest-coverage --enable-profile -lgcov'
+	  if conf_data.get('FORTRAN')
+      #c_args += '--coverage'
+	  endif
+  endif
+
+  if conf_data.get('DEBUG')
+    c_args += '-O0 -g'
+  else
+    c_args += '-O3'
+  endif
+
+  # Include math
+  #c_args += '-lm'
+  m_lib = c_compiler.find_library('m')
+  if system_name == 'Linux'
+    # Include real time library in linux
+    #c_args += '-lrt -ldl'
+    rt_lib = c_compiler.find_library('rt')
+    dl_lib = c_compiler.find_library('dl')
+  endif
+endif
 
 #************************************************************************************
 current_source_dir = meson.current_source_dir()
@@ -179,44 +212,15 @@ osqpstatic_lib = shared_library('osqpstatic',
                                 osqp_src, 
                                 osqp_headers,
                                 include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso', '.'],
-                                dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl')],
+                                #dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl'), c_compiler.find_library('gcov')],
+                                dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                                 #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.
-                                link_with: linsys_solvers
+                                link_with: linsys_solvers,
+                                c_args: c_args
                                 )
 # Give same name to static library output
 # set_target_properties(['osqpstatic', 'PROPERTIES', 'OUTPUT_NAME', 'osqp'])
 # ----------------------------------------------
-
-c_compiler = meson.get_compiler('c')
-dependency_list = []
-
-# -fPIC
-if not conf_data.get('MSVC')
-  if conf_data.get('COVERAGE')
-    #cmake_c_flags = '${CMAKE_C_FLAGS} --coverage'
-    if conf_data.get('FORTRAN')
-      #cmake_fortran_flags = '${CMAKE_FORTRAN_FLAGS} --coverage'
-    endif
-  endif
-  if conf_data.get('DEBUG')
-    #cmake_c_flags = '${CMAKE_C_FLAGS} -O0 -g'
-  else
-   # cmake_c_flags = '${CMAKE_C_FLAGS} -O3'
-  endif
-  #cmake_c_standard_libraries = '${CMAKE_C_STANDARD_LIBRARIES} -lm'
-  # Include math
-  # Include real time library in linux
-  if system_name == 'Linux'
-    #cmake_c_standard_libraries = '${CMAKE_C_STANDARD_LIBRARIES} -lrt -ldl'
-    dependency_list = [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl')]
-  else
-    dependency_list = [c_compiler.find_library('m')]
-  endif
-endif
-
-# todo : wrong argument in dependecies
-message('deps = @0@'.format(dependency_list))
-message('msvc = @0@, DEBUG = @1@, FORTRAN= @2@, system_name = @3@'.format(conf_data.get('MSVC'), conf_data.get('DEBUG'), conf_data.get('FORTRAN'), system_name))
 
 # ----------------------------------------------
 python = conf_data.get('PYTHON')
@@ -237,9 +241,11 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             osqp_src, 
                             osqp_headers,
                             include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso'],
-                            dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl')],
+                            #dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl'), gcov_lib],
+                            dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                             #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.                            
-                            link_with: linsys_solvers
+                            link_with: linsys_solvers,
+                            c_args: c_args
                             )
   # Install osqp shared library
   # install(['TARGETS', 'osqp', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])
@@ -247,8 +253,10 @@ if not python and not matlab and not r_lang and (embedded == '0')
   osqp_demo_exe = executable('osqp_demo', 
                             'examples/osqp_demo.c',
                             include_directories: ['include'],
-                            link_with: osqp_lib
-                            #link_with: osqpstatic_lib
+                            dependencies: [gcov_lib],
+                            link_with: osqp_lib,
+                            #link_with: osqpstatic_lib,
+                            c_args: c_args
                             )  
 endif
 
@@ -266,8 +274,10 @@ if conf_data.get('UNITTESTS')
   osqp_tester_exe = executable('osqp_tester', 
                                ['tests/osqp_tester.c', 'tests/osqp_tester.h', 'tests/minunit.h', test_headers, codegen_test_headers],
                                include_directories: ['include', 'tests'],
-                               link_with: osqp_lib
-                               #link_with: osqpstatic_lib
+                               dependencies: [gcov_lib],
+                               link_with: osqp_lib,
+                               #link_with: osqpstatic_lib,
+                               c_args: c_args
                                )
   
   # Add custom memory target
@@ -277,8 +287,10 @@ if conf_data.get('UNITTESTS')
                                             test_headers, codegen_test_headers, 
                                             'tests/custom_memory/custom_memory.c', 'tests/custom_memory/custom_memory.h'],
                                             include_directories: ['include', 'tests'],
-                                            link_with: osqp_lib
-                                            #link_with: osqpstatic_lib
+                                            dependencies: [gcov_lib],
+                                            link_with: osqp_lib,
+                                            #link_with: osqpstatic_lib,
+                                            c_args: c_args
                                             )
   test('osqp_tester', osqp_tester_exe)
   test('osqp_tester_custom_memory', osqp_tester_custom_memory_exe)

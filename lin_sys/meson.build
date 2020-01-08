@@ -8,7 +8,8 @@ if embedded == '0'
   linsys_lib_handler = static_library('linsys_lib_handler', 
                                 ['lib_handler.c'], 
                                 ['lib_handler.h'],
-                                include_directories: ['../include', 'direct/qdldl']
+                                include_directories: ['../include', 'direct/qdldl'],
+                                c_args: c_args
                             	  )
                         
 endif
