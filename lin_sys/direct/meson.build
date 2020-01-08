@@ -15,8 +15,10 @@ if embedded == 0
   if conf_data.get('ENABLE_MKL_PARDISO')
     # Add Pardiso interface
     subdir('pardiso')
+    message ('making library linsys_pardiso_lib ...')
     linsys_pardiso_lib = library('linsys_pardiso', 
-                                 ['pardiso/pardiso_interface.h', 'pardiso/pardiso_interface.c', 'pardiso/pardiso_loader.h', 'pardiso/pardiso_loader.c'],
+                                 ['pardiso/pardiso_interface.h', 'pardiso/pardiso_interface.c', 
+                                 'pardiso/pardiso_loader.h', 'pardiso/pardiso_loader.c'],
                                  include_directories: ['../../include', '../'])
     
 	  direct_linsys_solvers = [direct_linsys_solvers, linsys_pardiso_lib]    

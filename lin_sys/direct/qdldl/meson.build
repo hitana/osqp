@@ -1,6 +1,7 @@
 # Add qdldl
 #subdir('qdldl_sources')
 current_source_dir = meson.current_source_dir()
+qdldl_interface_src = ['qdldl_interface.h', 'qdldl_interface.c']
 if embedded == 0
   amd_sources = ['amd/include/amd_internal.h', 
 				'amd/include/amd.h', 
@@ -17,8 +18,9 @@ if embedded == 0
 				'amd/src/amd_preprocess.c', 
 				'amd/src/amd_valid.c', 
 				'amd/src/SuiteSparse_config.c']
+
+  qdldl_interface_src += amd_sources
 endif
-qdldl_interface_src = [amd_sources, 'qdldl_interface.h', 'qdldl_interface.c']
 
 # Create object library for linear system solver interface
 message ('making object library linsys_qdldl_lib ...')

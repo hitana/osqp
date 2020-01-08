@@ -17,8 +17,9 @@ conf_data = configuration_data({
   'COVERAGE': get_option('COVERAGE'),
   'ENABLE_MKL_PARDISO': get_option('ENABLE_MKL_PARDISO'),
   #'SYSTEM_NAME': get_option('SYSTEM_NAME'),
-  'EMBEDDED': get_option('EMBEDDED'),
-  #'OSQP_CUSTOM_MEMORY': get_option('OSQP_CUSTOM_MEMORY'),
+  'EMBEDDED': get_option('USE_EMBEDDED'),
+  'OSQP_CUSTOM_MEMORY': get_option('OSQP_CUSTOM_MEMORY'),
+  'OSQP_CUSTOM_MEMORY_HEADER': get_option('OSQP_CUSTOM_MEMORY_HEADER'),
   'CMAKE_SIZEOF_VOID_P': get_option('CMAKE_SIZEOF_VOID_P'),
   'MATLAB': get_option('MATLAB'),
   'PYTHON': get_option('PYTHON'),
@@ -46,6 +47,7 @@ endif
 # ----------------------------------------------
 # Are unittests generated?
 # Is the code generated for embedded platforms?
+use_embedded = get_option('USE_EMBEDDED')
 embedded = get_option('EMBEDDED')
 #   0 :   Default. Not for embedded platforms.
 #   1 :   Yes. Matrix update not allowed.
@@ -53,6 +55,7 @@ embedded = get_option('EMBEDDED')
 
 if embedded == 0
   message(['STATUS', 'Embedded is OFF'])
+  conf_data.set('USE_EMBEDDED', false)
 else
   message(['STATUS', 'Disabling printing for embedded'])
   conf_data.set('PRINTING', false)
@@ -60,6 +63,8 @@ else
   conf_data.set('PROFILING', false)
   message(['STATUS', 'Disabling user interrupt for embedded'])
   conf_data.set('CTRLC', false)
+  conf_data.set('USE_EMBEDDED', true)
+  conf_data.set('EMBEDDED', embedded)
 endif
 message(['STATUS', 'User interrupt is @0@'.format(get_option('CTRLC'))])
 
@@ -90,11 +95,12 @@ endif
 # define c_calloc mycalloc
 # define c_realloc myrealloc
 # define c_free myfree
-if get_option('OSQP_CUSTOM_MEMORY') != ''
-  message(['STATUS', 'User custom memory management header: @0@'.format(et_option('OSQP_CUSTOM_MEMORY'))])
+if get_option('OSQP_CUSTOM_MEMORY')
+  message(['STATUS', 'User custom memory management header: @0@'.format(et_option('OSQP_CUSTOM_MEMORY_HEADER'))])
    
   # TODO: make sure of correct quotes
   conf_data.set('OSQP_CUSTOM_MEMORY', get_option('OSQP_CUSTOM_MEMORY'))
+  conf_data.set('OSQP_CUSTOM_MEMORY_HEADER', get_option('OSQP_CUSTOM_MEMORY_HEADER'))
 else
   conf_data.set('OSQP_CUSTOM_MEMORY', false)
 endif
@@ -116,7 +122,8 @@ configure_file(input : 'configure/osqp_configure.h.in',
   output : 'osqp_configure.h',
   configuration : conf_data)
 
-run_command('mv', 'osqp_configure.h', 'include/osqp_configure.h')
+# todo : get build directory name here
+run_command('cp', 'build/osqp_configure.h', 'include/osqp_configure.h')
 
 # Set Compiler flags
 # ----------------------------------------------
@@ -149,15 +156,15 @@ osqp_src = ['src/auxil.c',
 # Add the KKT update only in normal mode and matrix-updating embedded mode (not mode 1)
 # todo : make embedded not bool
 if embedded != 1  
-  osqp_src = [osqp_src, 'src/kkt.c']
+  osqp_src += 'src/kkt.c'
 endif
 # Add more files that should only be in non-embedded code
 if embedded == 0
-  osqp_src = [osqp_src, 'src/cs.c', 'src/polish.c', 'src/lin_sys.c']
+  osqp_src += ['src/cs.c', 'src/polish.c', 'src/lin_sys.c']
 endif
 # Add the ctrl-c handler if enabled
 if conf_data.get('CTRLC')
-  osqp_src = [osqp_src, 'src/ctrlc.c']
+  osqp_src += 'src/ctrlc.c'
 endif
 
 #************************************************************************************

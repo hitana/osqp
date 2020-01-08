@@ -14,8 +14,11 @@ extern "C" {
 #mesondefine IS_WINDOWS
 
 /* EMBEDDED */
+#ifdef USE_EMBEDDED
 #define EMBEDDED (@EMBEDDED@)
-
+#else
+#mesondefine EMBEDDED
+#endif
 /* PRINTING */
 #mesondefine PRINTING
 
@@ -37,14 +40,17 @@ extern "C" {
 /* MEMORY MANAGEMENT */
 #mesondefine OSQP_CUSTOM_MEMORY
 #ifdef OSQP_CUSTOM_MEMORY
-#include "@OSQP_CUSTOM_MEMORY@"
-#endif
-
-// todo: review it
+#include "@OSQP_CUSTOM_MEMORY_HEADER@"
+#else
+/* If no custom memory allocator defined, use
+ * standard linux functions. Custom memory allocator definitions
+ * appear in the osqp_configure.h generated file. */
+#include <stdlib.h>
 #define c_malloc malloc
 #define c_calloc calloc
 #define c_realloc realloc
 #define c_free free
+#endif
 
 # ifdef __cplusplus
 }

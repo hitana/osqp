@@ -9,8 +9,10 @@ option('COVERAGE', type : 'boolean', value : false, description : 'Perform code 
 option('ENABLE_MKL_PARDISO', type : 'boolean', value : true, description : 'Enable MKL Pardiso solver')
 
 option('SYSTEM_NAME', type : 'string', value : 'Linux', description : 'Host OS type')
-option('EMBEDDED', type : 'integer', value : 0, description : 'The code is generated for embedded platforms')
-option('OSQP_CUSTOM_MEMORY', type : 'string', value : '', description : 'User custom memory management header')
+option('USE_EMBEDDED', type : 'boolean', value : false, description : 'The code is generated for embedded platforms')
+option('EMBEDDED', type : 'integer', value : 0, description : '1 - Embedded is ON. Matrix update not allowed. 2 - Embedded is ON. Matrix update allowed. Should be 0 for false USE_EMBEDDED')
+option('OSQP_CUSTOM_MEMORY', type : 'boolean', value : false, description : 'Use custom memory management')
+option('OSQP_CUSTOM_MEMORY_HEADER', type : 'string', value : 'custom_header.h', description : 'User custom memory management header')
 option('CMAKE_SIZEOF_VOID_P', type : 'integer', value : 8, description : 'Size of void pointer. 4 for 32 bit, 8 for 64 bit')
 option('MATLAB', type : 'boolean', value : false, description : 'Use MATLAB')
 option('PYTHON', type : 'boolean', value : false, description : 'Python')
