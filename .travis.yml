@@ -24,7 +24,8 @@ install:
  # Source to export variables
  - source ${TRAVIS_BUILD_DIR}/ci/travis/install.sh
  - sudo apt install python3-pip
- - sudo apt install meson
+ #- sudo apt install meson
+ - sudo pip3 install meson
  # for test data generation
  - pip3 install numpy
  - pip3 install scipy
