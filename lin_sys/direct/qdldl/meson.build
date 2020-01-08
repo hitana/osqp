@@ -88,12 +88,13 @@ qdldlstatic_lib = static_library('qdldlstatic',
 
 # ----------------------------------------------
 # Create qdldl shared library
-message ('making shared_library qdldlstqdldl_libatic_lib ...')
+message ('making shared_library qdldl_lib ...')
 qdldl_lib = shared_library('qdldl', 
                            qdldl_src, 
                            qdldl_headers,
 						   include_directories: ['qdldl_sources/include'],
-						   dependencies: [meson.get_compiler('c').find_library('gcov')],
-						   c_args: c_args)
+						   dependencies: [gcov_lib],
+						   c_args: c_args
+						   )
 # Install qdldl shared library
 # install(['TARGETS', 'qdldl', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])

@@ -275,8 +275,7 @@ if conf_data.get('UNITTESTS')
                                ['tests/osqp_tester.c', 'tests/osqp_tester.h', 'tests/minunit.h', test_headers, codegen_test_headers],
                                include_directories: ['include', 'tests'],
                                dependencies: [gcov_lib],
-                               link_with: osqp_lib,
-                               #link_with: osqpstatic_lib,
+                               link_with: osqpstatic_lib,
                                c_args: c_args
                                )
   
@@ -288,8 +287,7 @@ if conf_data.get('UNITTESTS')
                                             'tests/custom_memory/custom_memory.c', 'tests/custom_memory/custom_memory.h'],
                                             include_directories: ['include', 'tests'],
                                             dependencies: [gcov_lib],
-                                            link_with: osqp_lib,
-                                            #link_with: osqpstatic_lib,
+                                            link_with: osqpstatic_lib,
                                             c_args: c_args
                                             )
   test('osqp_tester', osqp_tester_exe)
