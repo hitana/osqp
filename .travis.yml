@@ -14,9 +14,7 @@ matrix:
      # osx_image: xcode9.3
 #sudo: required
 sudo: false
-branches:
-  only:
-  - master 
+
 env:
   global:
     - OSQP_VERSION="0.6.0"
@@ -40,8 +38,6 @@ install:
 
 script:
  - bash ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
- - meson build
- - ninja -j8 -C build
  #- ninja -j8 -C build test -v
  #- git submodule update --init --recursive
  #
