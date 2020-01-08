@@ -2,11 +2,6 @@ language: c
  
 jobs:
   include:
-    env: [DFLOAT=false, DLONG=true, DEBUG=false, COVERAGE=false, UNITTESTS=false,
-    ENABLE_MKL_PARDISO=true, EMBEDDED=false, OSQP_CUSTOM_MEMORY=false, CMAKE_SIZEOF_VOID_P=8, 
-    PRINTING=true, PROFILING=true, CTRLC=true, 
-    MATLAB=false,PYTHON=false, R_LANG=false, MSVC=false, FORTRAN=false]
-
     - os: linux
       dist: xenial
     #- os: osx
