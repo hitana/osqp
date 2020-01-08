@@ -44,13 +44,12 @@ endif
 # ----------------------------------------------
 # Are unittests generated?
 # Is the code generated for embedded platforms?
-use_embedded = get_option('USE_EMBEDDED')
 embedded = get_option('EMBEDDED')
 #   0 :   Default. Not for embedded platforms.
 #   1 :   Yes. Matrix update not allowed.
 #   2 :   Yes. Matrix update allowed.
 
-if embedded == 0
+if embedded == '0'
   message(['STATUS', 'Embedded is OFF'])
   conf_data.set('USE_EMBEDDED', false)
 else
@@ -61,7 +60,12 @@ else
   message(['STATUS', 'Disabling user interrupt for embedded'])
   conf_data.set('CTRLC', false)
   conf_data.set('USE_EMBEDDED', true)
-  conf_data.set('EMBEDDED', embedded)
+
+  if embedded == '1'
+    conf_data.set('EMBEDDED', 1)
+  else
+    conf_data.set('EMBEDDED', 2)
+  endif
 endif
 message(['STATUS', 'User interrupt is @0@'.format(get_option('CTRLC'))])
 
@@ -69,7 +73,7 @@ message(['STATUS', 'User interrupt is @0@'.format(get_option('CTRLC'))])
 message(['STATUS', 'Floats are @0@'.format(get_option('DFLOAT'))])
 
 # Use long integers for indexing
-if get_option('CMAKE_SIZEOF_VOID_P') != 8
+if get_option('CMAKE_SIZEOF_VOID_P') != '8'
   message(['STATUS', 'Disabling long integers (64bit) on 32bit machine'])
   conf_data.set('DLONG', false)
 endif
@@ -107,7 +111,7 @@ endif
 if get_option('DFLOAT')
   message(['STATUS', 'Disabling MKL Pardiso Solver with floats'])
   conf_data.set('ENABLE_MKL_PARDISO', false)
-elif embedded > 0
+elif embedded != '0'
   message(['STATUS', 'Disabling MKL Pardiso Solver for embedded'])
   conf_data.set('ENABLE_MKL_PARDISO', false)
 endif
@@ -151,11 +155,11 @@ osqp_src = ['src/auxil.c',
             'src/util.c']
 
 # Add the KKT update only in normal mode and matrix-updating embedded mode (not mode 1)
-if embedded != 1  
+if embedded != '1'  
   osqp_src += 'src/kkt.c'
 endif
 # Add more files that should only be in non-embedded code
-if embedded == 0
+if embedded == '0'
   osqp_src += ['src/cs.c', 'src/polish.c', 'src/lin_sys.c']
 endif
 # Add the ctrl-c handler if enabled
@@ -225,7 +229,7 @@ endif
 # If we are building Python/Matlab/R interface:
 #   - do not build shared library
 #   - do not build demo
-if not python and not matlab and not r_lang and (embedded == 0)
+if not python and not matlab and not r_lang and (embedded == '0')
   # Create osqp shared library
   # NB: Add all the linear system solvers here
 

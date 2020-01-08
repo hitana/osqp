@@ -2,7 +2,7 @@
 #subdir('qdldl_sources')
 current_source_dir = meson.current_source_dir()
 qdldl_interface_src = ['qdldl_interface.h', 'qdldl_interface.c']
-if embedded == 0
+if embedded == '0'
   amd_sources = ['amd/include/amd_internal.h', 
 				'amd/include/amd.h', 
 				'amd/include/SuiteSparse_config.h', 

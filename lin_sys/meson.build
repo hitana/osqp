@@ -3,7 +3,7 @@
 subdir('direct')
 # Add linsys handler if not embedded
 linsys_lib_handler = []
-if embedded == 0
+if embedded == '0'
   message ('making static_library linsys_lib_handler ...')
   linsys_lib_handler = static_library('linsys_lib_handler', 
                                 ['lib_handler.c'], 

@@ -10,7 +10,7 @@ direct_linsys_solvers = [linsys_qdldl_lib, qdldlobject_lib]
 direct_linsys_solvers_includes = [current_source_dir + '/qdldl/', 
                                   current_source_dir + '/qdldl/qdldl_sources/include']
 # Add other solvers if embedded option is false
-if embedded == 0
+if embedded == '0'
   # If MKL Pardiso is enabled, include pardiso directory
   if conf_data.get('ENABLE_MKL_PARDISO')
     # Add Pardiso interface
