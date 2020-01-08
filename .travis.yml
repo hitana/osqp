@@ -34,6 +34,9 @@ install:
  - source ${TRAVIS_BUILD_DIR}/ci/travis/install.sh
  - sudo apt install python3-pip
  - sudo apt install meson
+ # for test data generation
+ - pip3 install numpy
+ - pip3 install scipy
 
 script:
  - bash ${TRAVIS_BUILD_DIR}/ci/travis/script.sh

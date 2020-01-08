@@ -276,6 +276,9 @@ configpackagelocation = 'lib/cmake/osqp'
 unittests_opt = conf_data.get('UNITTESTS')
 if unittests_opt
  
+  # generate data headers
+  run_command('python3', 'generate_tests_data.py')
+
   # Add test_headers and codegen_test_headers
   subdir('tests')
   # Generating tests.stamp so that the test data are not always generated
