@@ -23,7 +23,7 @@ fi
 echo "Change directory to Travis build ${TRAVIS_BUILD_DIR}"
 echo "Testing OSQP with standard configuration"
 cd ${TRAVIS_BUILD_DIR}
-# mkdir build
+mkdir build
 # cd build
 # cmake -G "Unix Makefiles" -DCOVERAGE=ON -DUNITTESTS=ON ..
 # make
