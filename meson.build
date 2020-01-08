@@ -188,13 +188,15 @@ osqp_src = ['src/auxil.c',
             'src/util.c']
 
 # Add the KKT update only in normal mode and matrix-updating embedded mode (not mode 1)
-if embedded != '1'  
+# todo : EMBEDDED also requires these files
+#if embedded != '1'
   osqp_src += 'src/kkt.c'
-endif
+#endif
 # Add more files that should only be in non-embedded code
-if embedded == '0'
+# todo : EMBEDDED also requires these files
+#if not conf_data.get('USE_EMBEDDED')
   osqp_src += ['src/cs.c', 'src/polish.c', 'src/lin_sys.c']
-endif
+#endif
 # Add the ctrl-c handler if enabled
 if conf_data.get('CTRLC')
   osqp_src += 'src/ctrlc.c'

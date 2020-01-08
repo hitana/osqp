@@ -17,7 +17,7 @@ extern "C" {
 #ifdef USE_EMBEDDED
 #define EMBEDDED (@EMBEDDED@)
 #else
-#mesondefine EMBEDDED
+#undef EMBEDDED
 #endif
 /* PRINTING */
 #mesondefine PRINTING

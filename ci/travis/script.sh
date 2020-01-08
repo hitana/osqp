@@ -90,7 +90,7 @@ rm -rf build
 #cd build
 #cmake -G "Unix Makefiles" -DEMBEDDED=1 ..
 #make
-meson -D USE_EMBEDDED=true -D EMBEDDED=1 build
+meson -D USE_EMBEDDED=true -D EMBEDDED='1' build
 ninja -C build -j8
 
 echo "Building OSQP with embedded=2"
@@ -100,7 +100,7 @@ rm -rf build
 #cd build
 #cmake -G "Unix Makefiles" -DEMBEDDED=2 ..
 #make
-meson -D USE_EMBEDDED=true -D EMBEDDED=2 build
+meson -D USE_EMBEDDED=true -D EMBEDDED='2' build
 ninja -C build -j8
 
 
