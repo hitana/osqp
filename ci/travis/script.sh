@@ -23,10 +23,13 @@ fi
 echo "Change directory to Travis build ${TRAVIS_BUILD_DIR}"
 echo "Testing OSQP with standard configuration"
 cd ${TRAVIS_BUILD_DIR}
-mkdir build
-cd build
-cmake -G "Unix Makefiles" -DCOVERAGE=ON -DUNITTESTS=ON ..
-make
+# mkdir build
+# cd build
+# cmake -G "Unix Makefiles" -DCOVERAGE=ON -DUNITTESTS=ON ..
+# make
+meson -D COVERAGE=true -D UNITTESTS=true build
+ninja -C build -j8
+
 ${TRAVIS_BUILD_DIR}/build/out/osqp_tester
 # Pefrorm code coverage (only in Linux case)
 if [[ $TRAVIS_OS_NAME == "linux" ]]; then
@@ -45,56 +48,71 @@ if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     echo "Testing OSQP with valgrind (disabling MKL pardiso for memory allocation issues)"
     cd ${TRAVIS_BUILD_DIR}
     rm -rf build
-    mkdir build
-    cd build
+    # mkdir build    
+    # cd build
     #disable PARDISO since intel instructions in MKL
     #cause valgrind 3.11 to fail
-    cmake -G "Unix Makefiles" -DENABLE_MKL_PARDISO=OFF -DUNITTESTS=ON ..
-    make
+    # cmake -G "Unix Makefiles" -DENABLE_MKL_PARDISO=OFF -DUNITTESTS=ON ..
+    # make
+
+    meson -D ENABLE_MKL_PARDISO=false -D UNITTESTS=true build
+    ninja -C build -j8
+
     valgrind --suppressions=${TRAVIS_BUILD_DIR}/.valgrind-suppress.supp --leak-check=full --gen-suppressions=all --track-origins=yes --error-exitcode=42 ${TRAVIS_BUILD_DIR}/build/out/osqp_tester
 fi
 
 echo "Testing OSQP with floats"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-mkdir build
-cd build
-cmake -G "Unix Makefiles" -DDFLOAT=ON -DUNITTESTS=ON ..
-make
+# mkdir build
+# cd build
+# cmake -G "Unix Makefiles" -DDFLOAT=ON -DUNITTESTS=ON ..
+# make
+meson -D DFLOAT=true -D UNITTESTS=true build
+ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/out/osqp_tester
 
 echo "Testing OSQP without long integers"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-mkdir build
-cd build
-cmake -G "Unix Makefiles" -DDLONG=OFF -DUNITTESTS=ON ..
-make
+# mkdir build
+# cd build
+# cmake -G "Unix Makefiles" -DDLONG=OFF -DUNITTESTS=ON ..
+# make
+meson -D DLONG=false -D UNITTESTS=true build
+ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/out/osqp_tester
 
 echo "Building OSQP with embedded=1"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-mkdir build
-cd build
-cmake -G "Unix Makefiles" -DEMBEDDED=1 ..
-make
+#mkdir build
+#cd build
+#cmake -G "Unix Makefiles" -DEMBEDDED=1 ..
+#make
+meson -D USE_EMBEDDED=true -D EMBEDDED=1 build
+ninja -C build -j8
 
 echo "Building OSQP with embedded=2"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-mkdir build
-cd build
-cmake -G "Unix Makefiles" -DEMBEDDED=2 ..
-make
+#mkdir build
+#cd build
+#cmake -G "Unix Makefiles" -DEMBEDDED=2 ..
+#make
+meson -D USE_EMBEDDED=true -D EMBEDDED=2 build
+ninja -C build -j8
+
 
 echo "Testing OSQP without printing"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
 mkdir build
-cd build
-cmake -G "Unix Makefiles" -DPRINTING=OFF -DUNITTESTS=ON ..
-make
+#cd build
+#cmake -G "Unix Makefiles" -DPRINTING=OFF -DUNITTESTS=ON ..
+#make
+meson -D PRINTING=false -D UNITTESTS=true build
+ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/out/osqp_tester
 
 
@@ -104,12 +122,12 @@ ${TRAVIS_BUILD_DIR}/build/out/osqp_tester
 echo "Test OSQP custom allocators"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-mkdir build
-cd build
-cmake -DUNITTESTS=ON \
-    -DOSQP_CUSTOM_MEMORY=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h \
-    ..
-make osqp_tester_custom_memory
+#mkdir build
+#cd build
+#cmake -DUNITTESTS=ON -DOSQP_CUSTOM_MEMORY=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h ..
+#make osqp_tester_custom_memory
+meson -D UNITTESTS=true -D OSQP_CUSTOM_MEMORY_HEADER=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h build
+ninja -C build -j8 test
 ${TRAVIS_BUILD_DIR}/build/out/osqp_tester_custom_memory
 
 

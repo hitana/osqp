@@ -270,13 +270,12 @@ configpackagelocation = 'lib/cmake/osqp'
   # configure_file(['${CMAKE_CURRENT_SOURCE_DIR}/configure/cmake/cmake_uninstall.cmake.in', '${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake', 'IMMEDIATE', '@ONLY'])
   # add_custom_target(['uninstall', 'COMMAND', cmake_command, '-P', cmake_current_binary_dir, '/cmake_uninstall.cmake'])
 #endif
-# Add testing
+
 # ----------------------------------------------
 # Add custom command to generate tests
 unittests_opt = conf_data.get('UNITTESTS')
 if unittests_opt
-  # todo: add checks
-   
+ 
   # Add test_headers and codegen_test_headers
   subdir('tests')
   # Generating tests.stamp so that the test data are not always generated
@@ -285,16 +284,22 @@ if unittests_opt
   # Direct linear solver testing
   # include_directories('tests')
   osqp_tester_exe = executable('osqp_tester', 
-                               ['/tests/osqp_tester.c', '/tests/osqp_tester.h', '/tests/minunit.h', test_headers, codegen_test_headers],
+                               ['tests/osqp_tester.c', 'tests/osqp_tester.h', 'tests/minunit.h', test_headers, codegen_test_headers],
+                               include_directories: ['include', 'tests'],
                                link_with: osqp_lib
+                               #link_with: osqpstatic_lib
                                )
-  # target_link_libraries(['osqp_tester', 'osqpstatic'])
+  
   # Add custom memory target
   osqp_tester_custom_memory_exe = executable('osqp_tester_custom_memory', 
                                             #'EXCLUDE_FROM_ALL', 
-                                            ['/tests/osqp_tester.c', '/tests/osqp_tester.h', '/tests/minunit.h', test_headers, codegen_test_headers, '/tests/custom_memory/custom_memory.c', '/tests/custom_memory/custom_memory.h'],
-                                            link_with: osqp_lib)
-  # target_link_libraries(['osqp_tester_custom_memory', 'osqpstatic'])
-  # Add testing
-  test('NAME', 'tester', 'COMMAND', '$<TARGET_FILE:osqp_tester>')
+                                            ['tests/osqp_tester.c', 'tests/osqp_tester.h', 'tests/minunit.h', 
+                                            test_headers, codegen_test_headers, 
+                                            'tests/custom_memory/custom_memory.c', 'tests/custom_memory/custom_memory.h'],
+                                            include_directories: ['include', 'tests'],
+                                            link_with: osqp_lib
+                                            #link_with: osqpstatic_lib
+                                            )
+  #test('osqp_tester', osqp_tester_exe)
+  #test('osqp_tester_custom_memory', osqp_tester_custom_memory_exe)
 endif
