@@ -1,6 +1,6 @@
-language: C
-
-matrix:
+language: c
+ 
+jobs:
   include:
     env: [DFLOAT=false, DLONG=true, DEBUG=false, COVERAGE=false, UNITTESTS=false,
     ENABLE_MKL_PARDISO=true, EMBEDDED=false, OSQP_CUSTOM_MEMORY=false, CMAKE_SIZEOF_VOID_P=8, 
@@ -12,8 +12,6 @@ matrix:
     #- os: osx
       # Specify version to avoid bug (https://github.com/travis-ci/travis-ci/issues/6522)
      # osx_image: xcode9.3
-#sudo: required
-sudo: false
 
 env:
   global:
