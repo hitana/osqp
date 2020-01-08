@@ -1,3 +1,6 @@
+
+  run_command('python3', 'generate_tests_data.py')
+
   # Add subdirectories of all the tests
   subdir('basic_qp')
   subdir('basic_qp2')
