@@ -1,7 +1,6 @@
 # Minimum version required
 # Project name
 project('osqp', 'c', default_options : ['default_library=static'])
-# todo : default_options:['EMBEDDED=0'] doesn't work
 add_project_arguments('-lxc++', language: 'c')
 
 c_compiler = meson.get_compiler('c')
@@ -28,8 +27,6 @@ conf_data = configuration_data({
   'MSVC': get_option('MSVC'),
   'FORTRAN': get_option('FORTRAN')
 })
-
-# include(FindMKL)  # Find MKL module - todo: review it
 
 # Detect operating system
 # ----------------------------------------------
@@ -154,7 +151,6 @@ osqp_src = ['src/auxil.c',
             'src/util.c']
 
 # Add the KKT update only in normal mode and matrix-updating embedded mode (not mode 1)
-# todo : make embedded not bool
 if embedded != 1  
   osqp_src += 'src/kkt.c'
 endif
@@ -251,25 +247,6 @@ if not python and not matlab and not r_lang and (embedded == 0)
                             #link_with: osqpstatic_lib
                             )  
 endif
-# Create CMake packages for the build directory
-# ----------------------------------------------
-# todo : review it
-# export(['EXPORT', project_name, 'FILE', '${CMAKE_CURRENT_BINARY_DIR}/osqp-targets.cmake', 'NAMESPACE', 'osqp::'])
-#if not 'EXISTS', cmake_current_binary_dir, '/osqp-config.cmake'
-  # file(['WRITE', cmake_current_binary_dir, '/osqp-config.cmake', 'include(\"\${CMAKE_CURRENT_LIST_DIR}/osqp-targets.cmake\")\n'])
-#endif
-# Create CMake packages for the install directory
-# ----------------------------------------------
-configpackagelocation = 'lib/cmake/osqp'
-# install(['EXPORT', project_name, 'FILE', 'osqp-targets.cmake', 'NAMESPACE', 'osqp::', 'DESTINATION', configpackagelocation])
-# install(['FILES', cmake_current_binary_dir, '/osqp-config.cmake', 'DESTINATION', configpackagelocation])
-# Add uninstall command
-# ----------------------------------------------
-# todo : review it
-#if not 'TARGET', 'uninstall'
-  # configure_file(['${CMAKE_CURRENT_SOURCE_DIR}/configure/cmake/cmake_uninstall.cmake.in', '${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake', 'IMMEDIATE', '@ONLY'])
-  # add_custom_target(['uninstall', 'COMMAND', cmake_command, '-P', cmake_current_binary_dir, '/cmake_uninstall.cmake'])
-#endif
 
 # ----------------------------------------------
 # Add custom command to generate tests
@@ -303,6 +280,6 @@ if unittests_opt
                                             link_with: osqp_lib
                                             #link_with: osqpstatic_lib
                                             )
-  #test('osqp_tester', osqp_tester_exe)
-  #test('osqp_tester_custom_memory', osqp_tester_custom_memory_exe)
+  test('osqp_tester', osqp_tester_exe)
+  test('osqp_tester_custom_memory', osqp_tester_custom_memory_exe)
 endif
