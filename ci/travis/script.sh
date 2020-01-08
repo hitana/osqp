@@ -30,7 +30,7 @@ mkdir build
 meson -D COVERAGE=true -D UNITTESTS=true build
 ninja -C build -j8
 
-${TRAVIS_BUILD_DIR}/build/out/osqp_tester
+${TRAVIS_BUILD_DIR}/build/osqp_tester
 # Pefrorm code coverage (only in Linux case)
 if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     cd ${TRAVIS_BUILD_DIR}/build
@@ -58,7 +58,7 @@ if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     meson -D ENABLE_MKL_PARDISO=false -D UNITTESTS=true build
     ninja -C build -j8
 
-    valgrind --suppressions=${TRAVIS_BUILD_DIR}/.valgrind-suppress.supp --leak-check=full --gen-suppressions=all --track-origins=yes --error-exitcode=42 ${TRAVIS_BUILD_DIR}/build/out/osqp_tester
+    valgrind --suppressions=${TRAVIS_BUILD_DIR}/.valgrind-suppress.supp --leak-check=full --gen-suppressions=all --track-origins=yes --error-exitcode=42 ${TRAVIS_BUILD_DIR}/build/osqp_tester
 fi
 
 echo "Testing OSQP with floats"
@@ -70,7 +70,7 @@ rm -rf build
 # make
 meson -D DFLOAT=true -D UNITTESTS=true build
 ninja -C build -j8
-${TRAVIS_BUILD_DIR}/build/out/osqp_tester
+${TRAVIS_BUILD_DIR}/build/osqp_tester
 
 echo "Testing OSQP without long integers"
 cd ${TRAVIS_BUILD_DIR}
@@ -81,7 +81,7 @@ rm -rf build
 # make
 meson -D DLONG=false -D UNITTESTS=true build
 ninja -C build -j8
-${TRAVIS_BUILD_DIR}/build/out/osqp_tester
+${TRAVIS_BUILD_DIR}/build/osqp_tester
 
 echo "Building OSQP with embedded=1"
 cd ${TRAVIS_BUILD_DIR}
@@ -113,7 +113,7 @@ mkdir build
 #make
 meson -D PRINTING=false -D UNITTESTS=true build
 ninja -C build -j8
-${TRAVIS_BUILD_DIR}/build/out/osqp_tester
+${TRAVIS_BUILD_DIR}/build/osqp_tester
 
 
 # Test custom memory management
@@ -128,7 +128,7 @@ rm -rf build
 #make osqp_tester_custom_memory
 meson -D UNITTESTS=true -D OSQP_CUSTOM_MEMORY_HEADER=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h build
 ninja -C build -j8 test
-${TRAVIS_BUILD_DIR}/build/out/osqp_tester_custom_memory
+${TRAVIS_BUILD_DIR}/build/osqp_tester_custom_memory
 
 
 cd ${TRAVIS_BUILD_DIR}
