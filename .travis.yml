@@ -29,14 +29,15 @@ install:
  - pip3 install numpy
  - pip3 install scipy
 
-script:
- - bash ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
+script: ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
+#script:
+# - bash ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
  #- ninja -j8 -C build test -v
  #- git submodule update --init --recursive
  #
  #- cd test && ./run_tests.sh && cd ..
  #- find test/coverage -type f -exec mv {} . \;
 
- after_success:
+ #after_success:
  #- bash <(curl -s https://codecov.io/bash)
 
