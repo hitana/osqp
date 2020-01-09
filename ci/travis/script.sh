@@ -118,7 +118,7 @@ rm -rf build
 #cmake -DUNITTESTS=ON -DOSQP_CUSTOM_MEMORY=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h ..
 #make osqp_tester_custom_memory
 # todo : fails. add -DOSQP_CUSTOM_MEMORY=true
-meson -D UNITTESTS=true -D -D OSQP_CUSTOM_MEMORY_HEADER=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h build
+meson -D UNITTESTS=true -D OSQP_CUSTOM_MEMORY_HEADER=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h build
 ninja -C build -j8 test
 ${TRAVIS_BUILD_DIR}/build/osqp_tester_custom_memory
 
