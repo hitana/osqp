@@ -97,7 +97,7 @@ endif
 # define c_realloc myrealloc
 # define c_free myfree
 if get_option('OSQP_CUSTOM_MEMORY')
-  message(['STATUS', 'User custom memory management header: @0@'.format(et_option('OSQP_CUSTOM_MEMORY_HEADER'))])
+  message(['STATUS', 'User custom memory management header: @0@'.format(get_option('OSQP_CUSTOM_MEMORY_HEADER'))])
    
   # TODO: make sure of correct quotes
   conf_data.set('OSQP_CUSTOM_MEMORY', get_option('OSQP_CUSTOM_MEMORY'))
@@ -251,7 +251,8 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             )
   # Install osqp shared library
   # install(['TARGETS', 'osqp', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])
-  # Create demo executable (linked to static library)
+
+  message('Create demo executable (linked to static library)')
   osqp_demo_exe = executable('osqp_demo', 
                             'examples/osqp_demo.c',
                             include_directories: ['include'],
