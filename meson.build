@@ -266,16 +266,14 @@ endif
 # Add custom command to generate tests
 if conf_data.get('UNITTESTS')
 
-  # Add test_headers and codegen_test_headers
   subdir('tests')
+
   # Generating tests.stamp so that the test data are not always generated
   # set(data_timestamp ${PROJECT_SOURCE_DIR}/tests/tests_data.stamp)
-  # add_custom_command(['WORKING_DIRECTORY', project_source_dir, '/tests', 'COMMAND', python_executable, 'generate_tests_data.py', 'DEPENDS', project_source_dir, '/tests/generate_tests_data.py', 'OUTPUT', codegen_test_headers, 'COMMENT', 'Generating unittests data files using Python'])
-  # Direct linear solver testing
-  # include_directories('tests')
+
   osqp_tester_exe = executable('osqp_tester', 
-                               ['tests/osqp_tester.c', 'tests/osqp_tester.h', 'tests/minunit.h', test_headers, codegen_test_headers],
-                               include_directories: ['include', 'tests'],
+                               ['tests/osqp_tester.c'],
+                               include_directories: ['include', 'tests', test_include_dirs],
                                dependencies: [gcov_lib],
                                link_with: osqpstatic_lib,
                                c_args: c_args
@@ -283,15 +281,14 @@ if conf_data.get('UNITTESTS')
   
   # Add custom memory target
   osqp_tester_custom_memory_exe = executable('osqp_tester_custom_memory', 
-                                            #'EXCLUDE_FROM_ALL', 
-                                            ['tests/osqp_tester.c', 'tests/osqp_tester.h', 'tests/minunit.h', 
-                                            test_headers, codegen_test_headers, 
-                                            'tests/custom_memory/custom_memory.c', 'tests/custom_memory/custom_memory.h'],
-                                            include_directories: ['include', 'tests'],
+                                            ['tests/osqp_tester.c', 'tests/custom_memory/custom_memory.c'],
+                                            include_directories: ['include', 'tests', test_include_dirs],
                                             dependencies: [gcov_lib],
                                             link_with: osqpstatic_lib,
                                             c_args: c_args
                                             )
+
+  test('osqp_demo', osqp_demo_exe)
   test('osqp_tester', osqp_tester_exe)
   test('osqp_tester_custom_memory', osqp_tester_custom_memory_exe)
 endif

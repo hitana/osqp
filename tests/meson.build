@@ -1,15 +1,13 @@
 
+  # Generating unittests data files using Python
   run_command('python3', 'generate_tests_data.py')
 
-  # Add subdirectories of all the tests
-  subdir('basic_qp')
-  subdir('basic_qp2')
-  subdir('lin_alg')
-  subdir('non_cvx')
-  subdir('primal_dual_infeasibility')
-  subdir('primal_infeasibility')
-  subdir('solve_linsys')
-  subdir('unconstrained')
-  subdir('update_matrices')
-  test_headers = [headers]
-  codegen_test_headers = [codegen_headers]
+  test_include_dirs = ['tests/basic_qp',
+                       'tests/basic_qp2',
+                       'tests/lin_alg',
+                       'tests/non_cvx',
+                       'tests/primal_dual_infeasibility',
+                       'tests/primal_infeasibility',
+                       'tests/solve_linsys',
+                       'tests/unconstrained',
+                       'tests/update_matrices']
