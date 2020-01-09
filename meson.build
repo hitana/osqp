@@ -259,7 +259,8 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             link_with: osqp_lib,
                             #link_with: osqpstatic_lib,
                             c_args: c_args
-                            )  
+                            )
+  test('osqp_demo', osqp_demo_exe)
 endif
 
 # ----------------------------------------------
@@ -288,7 +289,6 @@ if conf_data.get('UNITTESTS')
                                             c_args: c_args
                                             )
 
-  test('osqp_demo', osqp_demo_exe)
   test('osqp_tester', osqp_tester_exe)
   test('osqp_tester_custom_memory', osqp_tester_custom_memory_exe)
 endif
