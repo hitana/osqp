@@ -228,7 +228,7 @@ osqpstatic_lib = shared_library('osqpstatic',
 python = conf_data.get('PYTHON')
 matlab = conf_data.get('MATLAB')
 r_lang = conf_data.get('R_LANG')
-# install(['FILES', osqp_headers, 'DESTINATION', '${CMAKE_INSTALL_INCLUDEDIR}/osqp'])
+
 if matlab
   # target_link_libraries(['osqpstatic', matlab_libraries])
 endif

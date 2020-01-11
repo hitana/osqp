@@ -17,5 +17,3 @@ endif
 # TODO: Add indirect ones
 # Add library handler if desktop version
 linsys_solvers = [direct_linsys_solvers, linsys_lib_handler]
-# Combine solvers external libraries
-linsys_solvers_includes = [direct_linsys_solvers_includes]
