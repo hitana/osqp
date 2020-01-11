@@ -1,24 +1,20 @@
+
 # Add qdldl
-#subdir('qdldl_sources')
-current_source_dir = meson.current_source_dir()
-qdldl_interface_src = ['qdldl_interface.h', 'qdldl_interface.c']
+qdldl_interface_src = ['qdldl_interface.c']
 # todo : EMBEDDED also requires these files
 #if embedded == '0'
-  amd_sources = ['amd/include/amd_internal.h', 
-				'amd/include/amd.h', 
-				'amd/include/SuiteSparse_config.h', 
-				'amd/src/amd_1.c', 
-				'amd/src/amd_2.c', 
-				'amd/src/amd_aat.c', 
-				'amd/src/amd_control.c', 
-				'amd/src/amd_defaults.c', 
-				'amd/src/amd_info.c', 
-				'amd/src/amd_order.c', 
-				'amd/src/amd_post_tree.c', 
-				'amd/src/amd_postorder.c', 
-				'amd/src/amd_preprocess.c', 
-				'amd/src/amd_valid.c', 
-				'amd/src/SuiteSparse_config.c']
+  amd_sources = ['amd/src/amd_1.c',
+                 'amd/src/amd_2.c',
+                 'amd/src/amd_aat.c',
+                 'amd/src/amd_control.c',
+                 'amd/src/amd_defaults.c',
+                 'amd/src/amd_info.c',
+                 'amd/src/amd_order.c',
+                 'amd/src/amd_post_tree.c',
+                 'amd/src/amd_postorder.c',
+                 'amd/src/amd_preprocess.c',
+                 'amd/src/amd_valid.c',
+                 'amd/src/SuiteSparse_config.c']
 
   qdldl_interface_src += amd_sources
 #endif
@@ -66,16 +62,16 @@ qdldl_src = 'qdldl_sources/src/qdldl.c'
 qdldl_headers = ['qdldl_sources/include/qdldl.h']
 
 # Create object library
-message ('making object library qdldlobject_lib ...')
 # ----------------------------------------------
+message ('making object library qdldlobject_lib ...')
 qdldlobject_lib = library('qdldlobject', 
                           qdldl_src, 
 						  qdldl_headers,
 						  include_directories: ['qdldl_sources/include'],
 						  c_args: c_args)
 
-# ----------------------------------------------
 # Create Static Library
+# ----------------------------------------------
 message ('making static_library qdldlstatic_lib ...')
 qdldlstatic_lib = static_library('qdldlstatic', 
                                 qdldl_src, 
@@ -87,8 +83,8 @@ qdldlstatic_lib = static_library('qdldlstatic',
 # Install Static Library
 # install(['TARGETS', 'qdldlstatic', 'EXPORT', project_name, 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])
 
-# ----------------------------------------------
 # Create qdldl shared library
+# ----------------------------------------------
 message ('making shared_library qdldl_lib ...')
 qdldl_lib = shared_library('qdldl', 
                            qdldl_src, 
