@@ -32,10 +32,14 @@ before_install:
  #- pip3 install --upgrade pip
  - pip3 install meson
  - pip3 install ninja
+ - sudo apt-get install curl
+ - curl -fsS https://dlang.org/install.sh | bash -s dmd
+
 
 install:
  # Source to export variables
  - source ${TRAVIS_BUILD_DIR}/ci/travis/install.sh
+ - source ~/dlang/dmd-2.090.0/activate
 
 script: ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
 #script:
