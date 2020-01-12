@@ -1,9 +1,12 @@
 # Minimum version required
 # Project name
-project('osqp', 'c', default_options : ['default_library=static'])
-add_project_arguments('-lxc++', language: 'c')
+project('osqp', 'c', 'd', version : '0.1', default_options : ['default_library=static'])
+#add_project_arguments('-lxc++', language: 'd')
+add_project_arguments(['-dip25','-dip1000','-dip1008',], language: 'd')
 
 c_compiler = meson.get_compiler('c')
+
+d_module_versions = []
 
 conf_data = configuration_data({
   'UNITTESTS' : get_option('UNITTESTS'),
@@ -14,8 +17,7 @@ conf_data = configuration_data({
   'DLONG': get_option('DLONG'),
   'DEBUG': get_option('DEBUG'),
   'COVERAGE': get_option('COVERAGE'),
-  'ENABLE_MKL_PARDISO': get_option('ENABLE_MKL_PARDISO'),
-  #'SYSTEM_NAME': get_option('SYSTEM_NAME'),
+  'ENABLE_MKL_PARDISO': get_option('ENABLE_MKL_PARDISO'),  
   'EMBEDDED': get_option('USE_EMBEDDED'),
   'OSQP_CUSTOM_MEMORY': get_option('OSQP_CUSTOM_MEMORY'),
   'OSQP_CUSTOM_MEMORY_HEADER': get_option('OSQP_CUSTOM_MEMORY_HEADER'),
@@ -34,9 +36,15 @@ system_name = get_option('SYSTEM_NAME')
 message(['STATUS', 'We are on a @0@ system'.format(system_name)])
 if system_name == 'Linux'
   conf_data.set('IS_LINUX', true)
+  # todo : replace with native Linux  version
+  d_module_versions += 'IS_LINUX'
 elif system_name == 'Darwin'
   conf_data.set('IS_MAC', true)
+  # todo : replace with native Darwin version
+  d_module_versions += 'IS_MAC'
 elif system_name == 'Windows'
+  d_module_versions += 'IS_WINDOWS'
+  # todo : replace with native Windows  version
   conf_data.set('IS_WINDOWS', true)
 endif
 
@@ -62,9 +70,15 @@ else
   conf_data.set('USE_EMBEDDED', true)
 
   if embedded == '1'
-    conf_data.set('EMBEDDED', 1)
+    conf_data.set('EMBEDDED', 1)    
+    # todo : review it
+    d_module_versions += 'EMBEDDED'
+    d_module_versions += 'EMBEDDED_1'
   else
     conf_data.set('EMBEDDED', 2)
+    # todo : review it
+    d_module_versions += 'EMBEDDED'
+    d_module_versions += 'EMBEDDED_2'
   endif
 endif
 message(['STATUS', 'User interrupt is @0@'.format(get_option('CTRLC'))])
@@ -101,7 +115,7 @@ if get_option('OSQP_CUSTOM_MEMORY')
    
   # TODO: make sure of correct quotes
   conf_data.set('OSQP_CUSTOM_MEMORY', get_option('OSQP_CUSTOM_MEMORY'))
-  conf_data.set('OSQP_CUSTOM_MEMORY_HEADER', get_option('OSQP_CUSTOM_MEMORY_HEADER'))
+  conf_data.set('OSQP_CUSTOM_MEMORY_HEADER', get_option('OSQP_CUSTOM_MEMORY_HEADER'))  
 else
   conf_data.set('OSQP_CUSTOM_MEMORY', false)
 endif
@@ -117,18 +131,63 @@ elif embedded != '0'
 endif
 message(['STATUS', 'MKL Pardiso: @0@'.format(conf_data.get('ENABLE_MKL_PARDISO', false))])
 
+
+if conf_data.get('UNITTESTS')
+ # todo : add to args
+ #d_unittest: true
+endif
+if conf_data.get('OSQP_CUSTOM_MEMORY')
+  # todo : review it
+  d_module_versions += 'OSQP_CUSTOM_MEMORY'
+endif
+if conf_data.get('PRINTING')
+  d_module_versions += 'PRINTING'
+endif
+if conf_data.get('PROFILING')
+  d_module_versions += 'PROFILING'
+endif
+if conf_data.get('CTRLC')
+  d_module_versions += 'CTRLC'
+endif
+if conf_data.get('DFLOAT')
+  d_module_versions += 'DFLOAT'
+endif
+if conf_data.get('DLONG')
+  d_module_versions += 'DLONG'
+endif
+if conf_data.get('DEBUG')
+  # todO : replace with something like d_debug: [3, 'DebugFeatureA'])
+  d_module_versions += 'DEBUG'
+endif
+if conf_data.get('ENABLE_MKL_PARDISO')
+  d_module_versions += 'ENABLE_MKL_PARDISO'
+endif
+if conf_data.get('MATLAB')
+  d_module_versions += 'MATLAB'
+endif
+if conf_data.get('PYTHON')
+  d_module_versions += 'PYTHON'
+endif
+if conf_data.get('R_LANG')
+  d_module_versions += 'R_LANG'
+endif
+
+message ('d_module_versions=@0@'.format(d_module_versions))
+
+
 # Generate header file with the global options
 # ---------------------------------------------
-configure_file(input : 'configure/osqp_configure.h.in',
-  output : 'osqp_configure.h',
+configure_file(input : 'configure/osqp_configure.d.in',
+  output : 'osqp_configure.d',
   configuration : conf_data)
 
 # todo : get build directory name here
-run_command('cp', 'build/osqp_configure.h', 'include/osqp_configure.h')
+run_command('cp', 'build/osqp_configure.d', 'include/osqp_configure.d')
 
 
 # Set Compiler flags
 c_compiler = meson.get_compiler('c')
+#d_compiler = meson.get_compiler('d')
 # ----------------------------------------------
 # todo : set some default CMAKE_C_FLAGS|CMAKE_FORTRAN_FLAGS|CMAKE_C_STANDARD_LIBRARIES
 c_args = []
@@ -179,27 +238,27 @@ osqp_headers = ['include/auxil.h',
                 'include/util.h']
 
 # Add the OSQP sources
-osqp_src = ['src/auxil.c', 
-            'src/error.c', 
-            'src/lin_alg.c', 
-            'src/osqp.c', 
-            'src/proj.c', 
-            'src/scaling.c', 
-            'src/util.c']
+osqp_src = ['src/auxil.d',
+            'src/error.d',
+            'src/lin_alg.d',
+            'src/osqp.d',
+            'src/proj.d',
+            'src/scaling.d',
+            'src/util.d']
 
 # Add the KKT update only in normal mode and matrix-updating embedded mode (not mode 1)
 # todo : EMBEDDED also requires these files
 #if embedded != '1'
-  osqp_src += 'src/kkt.c'
+  osqp_src += 'src/kkt.d'
 #endif
 # Add more files that should only be in non-embedded code
 # todo : EMBEDDED also requires these files
 #if not conf_data.get('USE_EMBEDDED')
-  osqp_src += ['src/cs.c', 'src/polish.c', 'src/lin_sys.c']
+  osqp_src += ['src/cs.d', 'src/polish.d', 'src/lin_sys.d']
 #endif
 # Add the ctrl-c handler if enabled
 if conf_data.get('CTRLC')
-  osqp_src += 'src/ctrlc.c'
+  osqp_src += 'src/ctrlc.d'
 endif
 
 #************************************************************************************
@@ -218,7 +277,8 @@ osqpstatic_lib = shared_library('osqpstatic',
                                 dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                                 #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.
                                 link_with: linsys_solvers,
-                                c_args: c_args
+                                c_args: c_args,
+                                d_module_versions: d_module_versions
                                 )
 # Give same name to static library output
 # set_target_properties(['osqpstatic', 'PROPERTIES', 'OUTPUT_NAME', 'osqp'])
@@ -247,7 +307,8 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                             #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.                            
                             link_with: linsys_solvers,
-                            c_args: c_args
+                            c_args: c_args,
+                            d_module_versions: d_module_versions
                             )
   # Install osqp shared library
   # install(['TARGETS', 'osqp', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])
@@ -259,7 +320,8 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             dependencies: [gcov_lib],
                             link_with: osqp_lib,
                             #link_with: osqpstatic_lib,
-                            c_args: c_args
+                            c_args: c_args,
+                            d_module_versions: d_module_versions
                             )
   test('osqp_demo', osqp_demo_exe)
 endif
@@ -278,7 +340,8 @@ if conf_data.get('UNITTESTS')
                                include_directories: ['include', 'tests', test_include_dirs],
                                dependencies: [gcov_lib],
                                link_with: osqpstatic_lib,
-                               c_args: c_args
+                               c_args: c_args,
+                               d_module_versions: d_module_versions
                                )
   
   # Add custom memory target
@@ -287,7 +350,8 @@ if conf_data.get('UNITTESTS')
                                             include_directories: ['include', 'tests', test_include_dirs],
                                             dependencies: [gcov_lib],
                                             link_with: osqpstatic_lib,
-                                            c_args: c_args
+                                            c_args: c_args,
+                                            d_module_versions: d_module_versions
                                             )
 
   test('osqp_tester', osqp_tester_exe)

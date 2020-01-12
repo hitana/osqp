@@ -3,7 +3,7 @@ option('PRINTING', type : 'boolean', value : true, description : 'Enable solver 
 option('PROFILING', type : 'boolean', value : true, description : 'Enable solver profiling (timing)')
 option('CTRLC', type : 'boolean', value : true, description : 'Enable user interrupt (Ctrl-C)')
 option('DFLOAT', type : 'boolean', value : false, description : 'Use float numbers instead of doubles')
-option('DLONG', type : 'boolean', value : true, description : 'Use long integers (64bit) for indexing')
+option('DLONG', type : 'boolean', value : false, description : 'Use long integers (64bit) for indexing')
 option('DEBUG', type : 'boolean', value : false, description : 'Debug mode')
 option('COVERAGE', type : 'boolean', value : true, description : 'Perform code coverage')
 option('ENABLE_MKL_PARDISO', type : 'boolean', value : true, description : 'Enable MKL Pardiso solver')

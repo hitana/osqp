@@ -1,20 +1,20 @@
 
 # Add qdldl
-qdldl_interface_src = ['qdldl_interface.c']
+qdldl_interface_src = ['qdldl_interface.d']
 # todo : EMBEDDED also requires these files
 #if embedded == '0'
-  amd_sources = ['amd/src/amd_1.c',
-                 'amd/src/amd_2.c',
-                 'amd/src/amd_aat.c',
-                 'amd/src/amd_control.c',
-                 'amd/src/amd_defaults.c',
-                 'amd/src/amd_info.c',
-                 'amd/src/amd_order.c',
-                 'amd/src/amd_post_tree.c',
-                 'amd/src/amd_postorder.c',
-                 'amd/src/amd_preprocess.c',
-                 'amd/src/amd_valid.c',
-                 'amd/src/SuiteSparse_config.c']
+  amd_sources = ['amd/src/amd_1.d',
+                 'amd/src/amd_2.d',
+                 'amd/src/amd_aat.d',
+                 'amd/src/amd_control.d',
+                 'amd/src/amd_defaults.d',
+                 'amd/src/amd_info.d',
+                 'amd/src/amd_order.d',
+                 'amd/src/amd_post_tree.d',
+                 'amd/src/amd_postorder.d',
+                 'amd/src/amd_preprocess.d',
+                 'amd/src/amd_valid.d',
+                 'amd/src/SuiteSparse_config.d']
 
   qdldl_interface_src += amd_sources
 #endif
@@ -23,7 +23,10 @@ qdldl_interface_src = ['qdldl_interface.c']
 message ('making object library linsys_qdldl_lib ...')
 linsys_qdldl_lib = library('linsys_qdldl', 
                             qdldl_interface_src,
-							include_directories: ['../../../include', '../../../configure', 'amd/include', 'qdldl_sources/include'])
+							include_directories: ['../../../include', '../../../configure', 'amd/include', 'qdldl_sources/include', 
+                                   'amd/src', '../../../src', 'qdldl_sources/src'  # for D modules
+                                   ]
+                                   )
 
 # Generate header file with the global options
 # ---------------------------------------------
@@ -36,29 +39,35 @@ else
   conf_qdldl.set('QDLDL_FLOAT_TYPE', 'double')
 endif
 if conf_data.get('DLONG')
-  conf_qdldl.set('QDLDL_INT_TYPE', 'long long')
-  conf_qdldl.set('QDLDL_INT_TYPE_MAX', 'LLONG_MAX')
+  #conf_qdldl.set('QDLDL_INT_TYPE', 'long long')
+  conf_qdldl.set('QDLDL_INT_TYPE', 'long')
+  conf_qdldl.set('QDLDL_INT_MAX', 'LLONG_MAX')
 else
   conf_qdldl.set('QDLDL_INT_TYPE', 'int')
-  conf_qdldl.set('QDLDL_INT_TYPE_MAX', 'INT_MAX')
+  conf_qdldl.set('QDLDL_INT_MAX', 'INT_MAX')
 endif
 #boolean type is always unsigned char
 #for now, since _Bool does not exist in
 #C89 and we want to avoid interoperability
 #problems when calling QDLDL from C++
-conf_qdldl.set('QDLDL_BOOL_TYPE', 'unsigned char')
+#conf_qdldl.set('QDLDL_BOOL_TYPE', 'unsigned char')
+conf_qdldl.set('QDLDL_BOOL_TYPE', 'ubyte')
 
-configure_file(input : 'qdldl_sources/configure/qdldl_types.h.in',
-  output : 'qdldl_types.h',
+#configure_file(input : 'qdldl_sources/configure/qdldl_types.h.in',
+#  output : 'qdldl_types.h',
+#  configuration : conf_qdldl)
+configure_file(input : 'qdldl_sources/configure/qdldl_types.d.in',
+  output : 'qdldl_types.d',
   configuration : conf_qdldl)
 
 # todo : get build directory name here
-run_command('cp', '../../../build/lin_sys/direct/qdldl/qdldl_types.h', 'qdldl_sources/include/qdldl_types.h')
+#run_command('cp', '../../../build/lin_sys/direct/qdldl/qdldl_types.h', 'qdldl_sources/include/qdldl_types.h')
+run_command('cp', '../../../build/lin_sys/direct/qdldl/qdldl_types.d', 'qdldl_sources/src/qdldl_types.d')
 
 
 # Set sources
 # ----------------------------------------------
-qdldl_src = 'qdldl_sources/src/qdldl.c'
+qdldl_src = 'qdldl_sources/src/qdldl.d'
 qdldl_headers = ['qdldl_sources/include/qdldl.h']
 
 # Create object library

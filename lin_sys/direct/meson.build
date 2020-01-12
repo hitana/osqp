@@ -14,8 +14,10 @@ if embedded == '0'
     # Add Pardiso interface
     message ('making library linsys_pardiso_lib ...')
     linsys_pardiso_lib = library('linsys_pardiso', 
-                                 ['pardiso/pardiso_interface.c', 'pardiso/pardiso_loader.c'],
-                                 include_directories: ['pardiso', '../../include', '../'],
+                                 ['pardiso/pardiso_interface.d', 'pardiso/pardiso_loader.d'],
+                                 include_directories: ['pardiso', '../../include', '../',
+                                 '../../src', 'qdldl/qdldl_sources/src' # for D modules
+                                 ],
                                  c_args: c_args)
     
 	  direct_linsys_solvers = [direct_linsys_solvers, linsys_pardiso_lib]
