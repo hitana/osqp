@@ -8,11 +8,12 @@ import util;
 
 version(IS_WINDOWS){
 //#include <windows.h>
+// todo
 alias soHandle_t = HINSTANCE;
 } else {
-//#include <unistd.h>
-//#include <dlfcn.h>
-// todo
+import std.uni;
+import core.sys.posix.dlfcn;
+
 alias soHandle_t = void *;
 }
 
@@ -89,11 +90,11 @@ version (IS_WINDOWS){
  * @param symName Name of the symbol to load.
  * @return A pointer to the symbol, or OSQP_NULL if not found.
  */
-symtype lh_load_sym (soHandle_t h, const char *symName) {
+symtype lh_load_sym (soHandle_t h, char *symName) {
     symtype s;
-    const char *from;
+    char *from;
     char *to;
-    const char *tripSym;
+    char *tripSym;
     char* err;
     char [257] lcbuf;
     char [257]ucbuf;
@@ -117,41 +118,41 @@ symtype lh_load_sym (soHandle_t h, const char *symName) {
     for (trip = 1;  trip <= 6;  trip++) {
         switch (trip) {
         case 1:                             /* original */
-            tripSym = symName;
+            tripSym = cast(char*)symName;
             break;
         case 2:                             /* lower_ */
-            for (from = symName, to = lcbuf;  *from;  from++, to++) {
-                *to = tolower(*from);
+            for (from = cast(char*)symName, to = cast(char*)lcbuf;  *from;  from++, to++) {
+                *to = cast(char)toLower(*from); // todo : may cause data loss
             }
             symLen = from - symName;
             *to++ = '_';
             *to = '\0';
-            tripSym = lcbuf;
+            tripSym = cast(char*)lcbuf;
             break;
         case 3:                             /* upper_ */
-            for (from = symName, to = ucbuf;  *from;  from++, to++) {
-                *to = toupper(*from);
+            for (from = cast(char*)symName, to = cast(char*)ucbuf;  *from;  from++, to++) {
+                *to = cast(char)toUpper(*from);
             }
             *to++ = '_';
             *to = '\0';
-            tripSym = ucbuf;
+            tripSym = cast(char*)ucbuf;
             break;
         case 4:                             /* original_ */
-            c_strcpy(ocbuf, symName);
+            c_strcpy(cast(char*)ocbuf, symName);
             ocbuf[symLen] = '_';
             ocbuf[symLen+1] = '\0';
-            tripSym = ocbuf;
+            tripSym = cast(char*)ocbuf;
             break;
         case 5:                             /* lower */
             lcbuf[symLen] = '\0';
-            tripSym = lcbuf;
+            tripSym = cast(char*)lcbuf;
             break;
         case 6:                             /* upper */
             ucbuf[symLen] = '\0';
-            tripSym = ucbuf;
+            tripSym = cast(char*)ucbuf;
             break;
         default:
-            tripSym = symName;
+            tripSym = cast(char*)symName;
         } /* end switch */
 version(IS_WINDOWS){
         s = GetProcAddress (h, tripSym);

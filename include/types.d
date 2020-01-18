@@ -4,6 +4,12 @@ import glob_opts;
 import constants;
 import qdldl_types; // for QDLDL_int and others
 
+
+version(PRINTING){
+//#  include <stdio.h>
+  import core.stdc.stdio;
+} // ifdef PRINTING
+
 /******************
 * Internal types *
 ******************/
@@ -44,8 +50,63 @@ alias LinSysSolver = linsys_solver;  // todo : check it
 /**
  * OSQP Timer for statistics
  */
-//typedef struct OSQP_TIMER OSQPTimer;
-alias OSQP_TIMER = OSQPTimer;
+
+
+/*********************************
+* Timer Structs and Functions * *
+*********************************/
+
+/*! \cond PRIVATE */
+
+version(PROFILING){
+
+// Windows
+version(IS_WINDOWS){
+
+  // Some R packages clash with elements
+  // of the windows.h header, so use a
+version(R_LANG){
+//#define NOGDI
+enum bool NOGDI = true; // todo : test it
+}
+
+//#   include <windows.h>
+import windows; // todo
+
+struct OSQP_TIMER {
+  LARGE_INTEGER tic;
+  LARGE_INTEGER toc;
+  LARGE_INTEGER freq;
+};
+
+} else {
+  version(IS_MAC){
+
+    //#   include <mach/mach_time.h>
+    import mach.mach_time;  // todo
+
+    /* Use MAC OSX  mach_time for timing */
+    struct OSQP_TIMER {
+      uint64_t                  tic;
+      uint64_t                  toc;
+      mach_timebase_info_data_t tinfo;
+    };
+  }
+  else // Linux
+
+    /* Use POSIX clock_gettime() for timing on non-Windows machines */
+    import core.sys.posix.sys.time;
+
+    struct OSQP_TIMER {
+      timespec tic;
+      timespec toc;
+    };
+
+  } // ifdef IS_WINDOWS
+
+}/* END #ifdef PROFILING */
+
+alias OSQPTimer = OSQP_TIMER;
 
 /**
  * Problem scaling matrices stored as vectors

@@ -1,3 +1,6 @@
+
+module lin_alg;
+
 import glob_opts;
 import types;
 

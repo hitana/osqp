@@ -33,14 +33,14 @@ static mkl_get_mt_t func_mkl_get_max_threads = OSQP_NULL;
 */
 // todo : declare function pointers
 
-void function(void**, const c_int*, const c_int*, const c_int*,
+void delegate(void**, const c_int*, const c_int*, const c_int*,
                           const c_int*, const c_int*, const c_float*,
                           const c_int*, const c_int*, c_int*,
                           const c_int*, c_int*, const c_int*, c_float*,
                           c_float*, c_int*) func_pardiso;
 
-int function(int) func_mkl_set_interface_layer;
-int function() func_mkl_get_max_threads;
+int delegate(int) func_mkl_set_interface_layer;
+int delegate() func_mkl_get_max_threads;
 soHandle_t Pardiso_handle = null;
 
 // Wrappers for loaded Pardiso function handlers
@@ -50,7 +50,7 @@ void pardiso(void** pt, const c_int* maxfct, const c_int* mnum,
                   c_int* perm, const c_int* nrhs, c_int* iparm,
                   const c_int* msglvl, c_float* b, c_float* x,
                   c_int* error) {
-	if(func_pardiso){
+	if (func_pardiso){
             // Call function pardiso only if it has been initialized
 	    func_pardiso(pt, maxfct, mnum, mtype, phase, n, a, ia, ja,
 			 perm, nrhs, iparm, msglvl, b, x, error);
@@ -86,24 +86,26 @@ c_int lh_load_pardiso(const char* libname) {
 
     // Load Pardiso functions
     //func_pardiso = cast(pardiso_t)lh_load_sym(Pardiso_handle, "pardiso");
-    func_pardiso = lh_load_sym; // test func delegate
+    //func_pardiso = &lh_load_sym; // test func delegate
+    lh_load_sym(Pardiso_handle, "pardiso"); // todo : test it   load library here
+    //if (!func_pardiso) return 1;
 
-    if (!func_pardiso) return 1;
+    //func_mkl_set_interface_layer = cast(mkl_set_ifl_t)lh_load_sym(Pardiso_handle, "MKL_Set_Interface_Layer");
+    //func_mkl_set_interface_layer = &lh_load_sym;
+    lh_load_sym(Pardiso_handle, "MKL_Set_Interface_Layer"); // todo : test it
+    //if (!func_mkl_set_interface_layer) return 1;
 
-    func_mkl_set_interface_layer = cast(mkl_set_ifl_t)lh_load_sym(Pardiso_handle,
-                                                    "MKL_Set_Interface_Layer");
-    if (!func_mkl_set_interface_layer) return 1;
-
-    func_mkl_get_max_threads = cast(mkl_get_mt_t)lh_load_sym(Pardiso_handle,
-                                                    "MKL_Get_Max_Threads");
-    if (!func_mkl_get_max_threads) return 1;
+    //func_mkl_get_max_threads = cast(mkl_get_mt_t)lh_load_sym(Pardiso_handle, "MKL_Get_Max_Threads");
+    //func_mkl_get_max_threads = &lh_load_sym;
+    lh_load_sym(Pardiso_handle, "MKL_Get_Max_Threads");// todo : test it
+    //if (!func_mkl_get_max_threads) return 1;
 
     return 0;
 }
 
 c_int lh_unload_pardiso() {
 
-    if (Pardiso_handle == OSQP_NULL) return 0;
+    if (Pardiso_handle == null) return 0;
 
     return lh_unload_lib(Pardiso_handle);
 

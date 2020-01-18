@@ -1,5 +1,7 @@
 //#include "osqp.h"
 
+module osqp;
+
 /* Includes */
 import types;
 import util; // Needed for osqp_set_default_settings functions

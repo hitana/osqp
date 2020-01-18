@@ -1,66 +1,8 @@
 module util;
 
+import glob_opts;
 import types;
 import constants;
-
-/*********************************
-* Timer Structs and Functions * *
-*********************************/
-
-/*! \cond PRIVATE */
-
-version(PROFILING){
-
-// Windows
-version(IS_WINDOWS){
-
-  // Some R packages clash with elements
-  // of the windows.h header, so use a
-version(R_LANG){
-//#define NOGDI
-enum bool NOGDI = true; // todo : test it
-}
-
-//#   include <windows.h>
-import windows; // todo
-
-struct OSQP_TIMER {
-  LARGE_INTEGER tic;
-  LARGE_INTEGER toc;
-  LARGE_INTEGER freq;
-};
-
-} else {
-  version(IS_MAC){
-
-    //#   include <mach/mach_time.h>
-    import mach.mach_time;  // todo
-
-    /* Use MAC OSX  mach_time for timing */
-    struct OSQP_TIMER {
-      uint64_t                  tic;
-      uint64_t                  toc;
-      mach_timebase_info_data_t tinfo;
-    };
-  }
-  else // Linux
-
-    /* Use POSIX clock_gettime() for timing on non-Windows machines */
-    //#   include <time.h>
-    //#   include <sys/time.h>
-    import core.stdc.time;  // test
-    import std.datetime.systime; // test
-
-
-    struct OSQP_TIMER {
-      timespec tic;
-      timespec toc;
-    };
-
-  } // ifdef IS_WINDOWS
-
-}/* END #ifdef PROFILING */
-
 
 /* ================================= DEBUG FUNCTIONS ======================= */
 
@@ -93,7 +35,7 @@ void c_strcpy(char * dest, const char * source) {
 
 version(PRINTING){
 
-static void print_line(void) {
+static void print_line() {
   char [HEADER_LINE_LEN + 1] the_line;
   c_int i;
 
@@ -102,7 +44,7 @@ static void print_line(void) {
   c_print("%s\n", the_line);
 }
 
-void print_header(void) {
+void print_header() {
   // Different indentation required for windows
 /*#if defined(IS_WINDOWS) && !defined(PYTHON)
   c_print("iter  ");

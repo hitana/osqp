@@ -115,18 +115,18 @@ c_int c_absval(ref c_int x) { return ((x) < 0) ? -(x) : (x); }
 //# ifndef c_max
 //#  define c_max(a, b) (((a) > (b)) ? (a) : (b))
 //# endif /* ifndef c_max */
-c_int c_max(ref c_int a, ref c_int b) { return ((a) > (b)) ? (a) : (b); }
+auto ref c_max(T)(auto ref return T a, auto ref return T b) { return (a > b) ? a : b; }
 
 //# ifndef c_min
 //#  define c_min(a, b) (((a) < (b)) ? (a) : (b))
 //# endif /* ifndef c_min */
-c_int c_min(ref c_int a, ref c_int b) { return ((a) < (b)) ? (a) : (b); }
+auto ref c_min(T)(auto ref return T a, auto ref return T b) { return (a < b) ? a : b; }
 
 // Round x to the nearest multiple of N
 //# ifndef c_roundmultiple
 //#  define c_roundmultiple(x, N) ((x) + .5 * (N)-c_fmod((x) + .5 * (N), (N)))
 //# endif /* ifndef c_roundmultiple */
-c_int c_roundmultiple(ref c_int x, ref c_int N) { return (x) + .5 * (N)-c_fmod((x) + .5 * (N), (N)); }
+auto ref c_roundmultiple(T)(auto ref return T x, auto ref return T N) { return x + .5 * N-c_fmod(x + .5 * N, N); }
 
 
 /* Use customized functions -----------------------------------------------   */

@@ -1,18 +1,14 @@
-#include "osqp.h" // For OSQP rho update
-//#include "auxil.h"
+module auxil;
+
+import glob_opts;
 import types;
 
+//import osqp;  // For OSQP rho update
 import proj;
 import lin_alg;
 import constants;
 import scaling;
 import util;
-
-//#include "proj.h"
-//#include "lin_alg.h"
-//#include "constants.h"
-//#include "scaling.h"
-//#include "util.h"
 
 /***********************************************************
 * Auxiliary functions needed to compute ADMM iterations * *
@@ -200,7 +196,7 @@ void update_x(OSQPWorkspace *work) {
   // update x
   for (i = 0; i < work.data.n; i++) {
     work.x[i] = work.settings.alpha * work.xz_tilde[i] +
-                 ((c_float)1.0 - work.settings.alpha) * work.x_prev[i];
+                 (cast(c_float)1.0 - work.settings.alpha) * work.x_prev[i];
   }
 
   // update delta_x
@@ -215,7 +211,7 @@ void update_z(OSQPWorkspace *work) {
   // update z
   for (i = 0; i < work.data.m; i++) {
     work.z[i] = work.settings.alpha * work.xz_tilde[i + work.data.n] +
-                 ((c_float)1.0 - work.settings.alpha) * work.z_prev[i] +
+                 (cast(c_float)1.0 - work.settings.alpha) * work.z_prev[i] +
                  work.rho_inv_vec[i] * work.y[i];
   }
 
@@ -230,7 +226,7 @@ void update_y(OSQPWorkspace *work) {
     work.delta_y[i] = work.rho_vec[i] *
                        (work.settings.alpha *
                         work.xz_tilde[i + work.data.n] +
-                        ((c_float)1.0 - work.settings.alpha) * work.z_prev[i] -
+                        (cast(c_float)1.0 - work.settings.alpha) * work.z_prev[i] -
                         work.z[i]);
     work.y[i] += work.delta_y[i];
   }
@@ -410,8 +406,7 @@ c_int is_primal_infeasible(OSQPWorkspace *work, c_float eps_prim_inf) {
   if (norm_delta_y > eps_prim_inf) { // ||delta_y|| > 0
 
     for (i = 0; i < work.data.m; i++) {
-      ineq_lhs += work.data.u[i] * c_max(work.delta_y[i], 0) + \
-                  work.data.l[i] * c_min(work.delta_y[i], 0);
+      ineq_lhs += work.data.u[i] * c_max(work.delta_y[i], 0) + work.data.l[i] * c_min(work.delta_y[i], 0);
     }
 
     // Check if the condition is satisfied: ineq_lhs < -eps
@@ -578,14 +573,29 @@ void update_info(OSQPWorkspace *work,
                  c_int          iter,
                  c_int          compute_objective,
                  c_int          polish) {
-  c_float *x, *z, *y;                   // Allocate pointers to variables
-  c_float *obj_val, *pri_res, *dua_res; // objective value, residuals
+  c_float *x;
+  c_float *z;
+  c_float *y;                   // Allocate pointers to variables
+  c_float *obj_val;
+  c_float *pri_res;
+  c_float *dua_res; // objective value, residuals
 
 version(PROFILING){
   c_float *run_time;                    // Execution time
 } /* ifdef PROFILING */
 
-version (EMBEDDED){}
+version (EMBEDDED){
+  x                = work.x;
+  y                = work.y;
+  z                = work.z;
+  obj_val          = &work.info.obj_val;
+  pri_res          = &work.info.pri_res;
+  dua_res          = &work.info.dua_res;
+  work.info.iter = iter; // Update iteration number
+version(PROFILING){
+  run_time = &work.info.solve_time;
+} /* ifdef PROFILING */
+}
 else {
   if (polish) {
     x       = work.pol.x;
@@ -598,23 +608,17 @@ version(PROFILING){
     run_time = &work.info.polish_time;
 } /* ifdef PROFILING */
   } else {
-} // EMBEDDED
-  x                = work.x;
-  y                = work.y;
-  z                = work.z;
-  obj_val          = &work.info.obj_val;
-  pri_res          = &work.info.pri_res;
-  dua_res          = &work.info.dua_res;
-  work.info.iter = iter; // Update iteration number
+    x                = work.x;
+    y                = work.y;
+    z                = work.z;
+    obj_val          = &work.info.obj_val;
+    pri_res          = &work.info.pri_res;
+    dua_res          = &work.info.dua_res;
+    work.info.iter = iter; // Update iteration number
 version(PROFILING){
-  run_time = &work.info.solve_time;
+    run_time = &work.info.solve_time;
 } /* ifdef PROFILING */
-version (EMBEDDED){}
-else {
-}     // todo : can be ambiguos
 }
-
-} /* ifndef EMBEDDED */
 
 
   // Compute the objective if needed
@@ -665,6 +669,7 @@ else {
 } /* if EMBEDDED != 1 */
 
 void update_status(OSQPInfo *info, c_int status_val) {
+version(PROFILING){
   // Update status value
   info.status_val = status_val;
 
@@ -684,14 +689,37 @@ void update_status(OSQPInfo *info, c_int status_val) {
                                                                    "dual infeasible inaccurate");
   else if (status_val == OSQP_MAX_ITER_REACHED) c_strcpy(info.status,
                                                          "maximum iterations reached");
-version(PROFILING){
   else if (status_val == OSQP_TIME_LIMIT_REACHED) c_strcpy(info.status,
                                                            "run time limit reached");
-} /* ifdef PROFILING */
   else if (status_val == OSQP_SIGINT) c_strcpy(info.status, "interrupted");
 
   else if (status_val == OSQP_NON_CVX) c_strcpy(info.status, "problem non convex");
+}
+else {
+// Update status value
+  info.status_val = status_val;
 
+  // Update status string depending on status val
+  if (status_val == OSQP_SOLVED) c_strcpy(info.status, "solved");
+
+  if (status_val == OSQP_SOLVED_INACCURATE) c_strcpy(info.status,
+                                                     "solved inaccurate");
+  else if (status_val == OSQP_PRIMAL_INFEASIBLE) c_strcpy(info.status,
+                                                          "primal infeasible");
+  else if (status_val == OSQP_PRIMAL_INFEASIBLE_INACCURATE) c_strcpy(info.status,
+                                                                     "primal infeasible inaccurate");
+  else if (status_val == OSQP_UNSOLVED) c_strcpy(info.status, "unsolved");
+  else if (status_val == OSQP_DUAL_INFEASIBLE) c_strcpy(info.status,
+                                                        "dual infeasible");
+  else if (status_val == OSQP_DUAL_INFEASIBLE_INACCURATE) c_strcpy(info.status,
+                                                                   "dual infeasible inaccurate");
+  else if (status_val == OSQP_MAX_ITER_REACHED) c_strcpy(info.status,
+                                                         "maximum iterations reached");
+  else if (status_val == OSQP_SIGINT) c_strcpy(info.status, "interrupted");
+
+  else if (status_val == OSQP_NON_CVX) c_strcpy(info.status, "problem non convex");
+}
+  
 }
 
 c_int check_termination(OSQPWorkspace *work, c_int approximate) {
@@ -832,7 +860,7 @@ version(PRINTING){
   if ((data.n <= 0) || (data.m < 0)) {
 version(PRINTING){
     c_eprint("n must be positive and m nonnegative; n = %i, m = %i",
-             (int)data.n, (int)data.m);
+             cast(int)data.n, cast(int)data.m);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -840,7 +868,7 @@ version(PRINTING){
   // Matrix P
   if (data.P.m != data.n) {
 version(PRINTING){
-    c_eprint("P does not have dimension n x n with n = %i", (int)data.n);
+    c_eprint("P does not have dimension n x n with n = %i", cast(int)data.n);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -866,7 +894,7 @@ version(PRINTING){
   // Matrix A
   if ((data.A.m != data.m) || (data.A.n != data.n)) {
 version(PRINTING){
-    c_eprint("A does not have dimension %i x %i", (int)data.m, (int)data.n);
+    c_eprint("A does not have dimension %i x %i", cast(int)data.m, cast(int)data.n);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -876,7 +904,7 @@ version(PRINTING){
     if (data.l[j] > data.u[j]) {
 version(PRINTING){
       c_eprint("Lower bound at index %d is greater than upper bound: %.4e > %.4e",
-               (int)j, data.l[j], data.u[j]);
+               cast(int)j, data.l[j], data.u[j]);
 } /* ifdef PRINTING */
       return 1;
     }

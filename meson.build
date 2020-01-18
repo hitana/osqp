@@ -272,7 +272,7 @@ subdir('lin_sys')
 osqpstatic_lib = shared_library('osqpstatic', 
                                 osqp_src, 
                                 osqp_headers,
-                                include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso', '.'],
+                                include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso', '.', 'src'],
                                 #dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl'), c_compiler.find_library('gcov')],
                                 dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                                 #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.
@@ -302,7 +302,8 @@ if not python and not matlab and not r_lang and (embedded == '0')
   osqp_lib = shared_library('osqp', 
                             osqp_src, 
                             osqp_headers,
-                            include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso'],
+                            include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso',
+                            'src'], # for D modules
                             #dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl'), gcov_lib],
                             dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                             #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.                            
