@@ -66,7 +66,7 @@ enum osqp_error_type {
     OSQP_MEM_ALLOC_ERROR,
     OSQP_WORKSPACE_NOT_INIT_ERROR,
 };
-extern const char * [] OSQP_ERROR_MESSAGE;
+//extern const char * [] OSQP_ERROR_MESSAGE;
 
 // test for qdldl_interface.d compilation
 enum int OSQP_LINSYS_SOLVER_INIT_ERROR = 4;

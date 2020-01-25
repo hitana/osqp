@@ -1,5 +1,6 @@
 //#include "polish.h"
 import types;
+import glob_opts;
 
 import lin_alg;
 import util;
@@ -9,13 +10,6 @@ import kkt;
 import proj;
 import error;
 
-//#include "lin_alg.h"
-//#include "util.h"
-//#include "auxil.h"
-//#include "lin_sys.h"
-//#include "kkt.h"
-//#include "proj.h"
-//#include "error.h"
 
 /**
  * Form reduced matrix A that contains only rows that are active at the

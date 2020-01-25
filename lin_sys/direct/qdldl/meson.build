@@ -24,7 +24,7 @@ message ('making object library linsys_qdldl_lib ...')
 linsys_qdldl_lib = library('linsys_qdldl', 
                             qdldl_interface_src,
 							include_directories: ['../../../include', '../../../configure', 'amd/include', 'qdldl_sources/include', 
-                                   'amd/src', '../../../src', 'qdldl_sources/src'  # for D modules
+                                   'amd/src', 'amd/include', '../../../src', 'qdldl_sources/src'  # for D modules
                                    ]
                                    )
 

@@ -3,7 +3,7 @@
 module osqp;
 
 /* Includes */
-imprt glob_opts;
+import glob_opts;
 import types;
 import util; // Needed for osqp_set_default_settings functions
 // Library to deal with sparse matrices enabled only if embedded not defined

@@ -1,12 +1,12 @@
 
 import types;
+import glob_opts;
+import constants;
+import qdldl_interface;  // Include only this solver in the same directory
 
-//#include "qdldl_interface.h" // Include only this solver in the same directory
-import qdldl_interface;
-
-const char * []LINSYS_SOLVER_NAME = {
+ enum LINSYS_SOLVER_NAME = [  // const char * []
   "qdldl", "mkl pardiso"
-};
+ ];
 
 version(ENABLE_MKL_PARDISO){
 //# include "pardiso_interface.h"

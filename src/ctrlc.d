@@ -22,9 +22,8 @@ else {
     import windows;
   }
   else {
-    /* Use sigaction for signal handling on non-Windows machines */
-    //#  include <signal.h>
-    import signal;
+    /* Use sigaction for signal handling on non-Windows machines */    
+    import core.stdc.signal;
   }
 }
 
@@ -49,7 +48,8 @@ else {
   version(IS_WINDOWS)  // todo : use native Windows
   {
     static int int_detected;
-    static BOOL WINAPI handle_ctrlc(DWORD dwCtrlType) {
+    //static BOOL WINAPI handle_ctrlc(DWORD dwCtrlType) {
+    static BOOL handle_ctrlc(DWORD dwCtrlType) {  // todo : review it
       if (dwCtrlType != CTRL_C_EVENT) return FALSE;
 
       int_detected = 1;
@@ -72,15 +72,19 @@ else {
   else { /* Unix */
 
     //# include <signal.h>
-    import signal;
+    import core.stdc.signal;
+    import core.sys.posix.signal; // test for sigaction
+
     static int int_detected;
-    struct sigaction oact;
+    //sigaction oact;
+    sigaction_t oact;
     static void handle_ctrlc(int dummy) {
       int_detected = dummy ? dummy : -1;
     }
 
-    void osqp_start_interrupt_listener(void) {
-      struct sigaction act;
+    void osqp_start_interrupt_listener() {
+      //sigaction act;
+      sigaction_t act;
 
       int_detected = 0;
       act.sa_flags = 0;
@@ -89,13 +93,14 @@ else {
       sigaction(SIGINT, &act, &oact);
     }
 
-    void osqp_end_interrupt_listener(void) {
-      struct sigaction act;
+    void osqp_end_interrupt_listener() {
+      //sigaction act;
+      sigaction_t act;
 
       sigaction(SIGINT, &oact, &act);
     }
 
-    int osqp_is_interrupted(void) {
+    int osqp_is_interrupted() {
       return int_detected;
     }
   }
