@@ -110,7 +110,7 @@ else {
 //# ifndef c_absval
 //#  define c_absval(x) (((x) < 0) ? -(x) : (x))
 //# endif /* ifndef c_absval */
-c_int c_absval(ref c_int x) { return ((x) < 0) ? -(x) : (x); }
+auto ref c_absval(T)(auto ref return T x) { return (x < 0) ? -x : x; }
 
 //# ifndef c_max
 //#  define c_max(a, b) (((a) > (b)) ? (a) : (b))

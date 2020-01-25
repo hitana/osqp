@@ -108,7 +108,7 @@ else {
     c_float *b;
     c_int    i;
 
-    b = c_malloc(n * sizeof(c_float));
+    b = c_malloc(n * (c_float.sizeof));
     if (!b) return OSQP_NULL;
 
     for (i = 0; i < n; i++) {
@@ -409,9 +409,10 @@ c_float quad_form(const csc *P, const c_float *x) {
       else {                                        // Element in lower diagonal
                                                     // part
 version(PRINTING){
-        c_eprint("quad_form matrix is not upper triangular");
+        c_eprint(cast(char*)"quad_form matrix is not upper triangular");
 } /* ifdef PRINTING */
-        return OSQP_NULL;
+        //return OSQP_NULL;
+        return cast(c_float)null;
       }
     }
   }

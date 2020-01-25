@@ -23,7 +23,7 @@ enum OSQP_ERROR_MESSAGE = [  // const char *[]
 c_int _osqp_error(osqp_error_type error_code,
 		 const char * function_name) {
 version(PRINTING){
-  c_print("ERROR in %s: %s\n", function_name, OSQP_ERROR_MESSAGE[error_code-1]);
+  c_print("ERROR in %s: %s\n", function_name, cast(char*)(OSQP_ERROR_MESSAGE[error_code-1]));
 }
   return cast(c_int)error_code;
 }
