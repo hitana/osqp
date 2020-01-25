@@ -5,12 +5,7 @@ import constants;
 /* OSQP error macro */
 //# if __STDC_VERSION__ >= 199901L      // true
 /* The C99 standard gives the __func__ macro, which is preferred over __FUNCTION__ */
-
-
 //#  define osqp_error(error_code) _osqp_error(error_code, __func__);
-// todo : review it
-alias _osqp_error = osqp_error;
-
 //#else
 //#  define osqp_error(error_code) _osqp_error(error_code, __FUNCTION__);
 //#endif
@@ -18,11 +13,9 @@ alias _osqp_error = osqp_error;
 enum OSQP_ERROR_MESSAGE = [  // const char *[] 
   "Problem data validation.",
   "Solver settings validation.",
-  //"Linear system solver not available.\nTried to obtain it from shared library.",
-  "Linear system solver not available. Tried to obtain it from shared library.",
+  "Linear system solver not available.\nTried to obtain it from shared library.",
   "Linear system solver initialization.",
-  //"KKT matrix factorization.\nThe problem seems to be non-convex.",
-  "KKT matrix factorization. The problem seems to be non-convex.",
+  "KKT matrix factorization.\nThe problem seems to be non-convex.",
   "Memory allocation.",
   "Solver workspace not initialized."
 ];
@@ -34,4 +27,8 @@ version(PRINTING){
 }
   return cast(c_int)error_code;
 }
+
+//#  define osqp_error(error_code) _osqp_error(error_code, __func__);
+// todo : review it
+alias osqp_error = _osqp_error;
 

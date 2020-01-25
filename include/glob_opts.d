@@ -208,5 +208,8 @@ version (PRINTING)
 
   /* Print error macro */
   //#  define c_eprint(...) c_print("ERROR in %s: ", __FUNCTION__); c_print(__VA_ARGS__); c_print("\n");
-  void c_eprint(ref c_int a, ref c_int b) { c_print("ERROR in %s: ", __FUNCTION__); c_print(__VA_ARGS__); c_print("\n"); }
+  //void c_eprint(ref c_int a, ref c_int b) { c_print("ERROR in %s: ", __FUNCTION__); c_print(__VA_ARGS__); c_print("\n"); }
+
+
+  void c_eprint(char* a, ...) { c_print("ERROR in %s: ", __FUNCTION__); c_print(__VA_ARGS__); c_print("\n"); }  
 }

@@ -22,7 +22,7 @@ version(PRINTING){
 /**********************
 * Utility Functions  *
 **********************/
-void c_strcpy(char * dest, const char * source) {
+void c_strcpy(char * dest, char * source) {
   int i = 0;
 
   while (1) {

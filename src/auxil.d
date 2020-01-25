@@ -572,7 +572,8 @@ else {
 void update_info(OSQPWorkspace *work,
                  c_int          iter,
                  c_int          compute_objective,
-                 c_int          polish) {
+                 c_int          polish) 
+{
   c_float *x;
   c_float *z;
   c_float *y;                   // Allocate pointers to variables
@@ -619,6 +620,7 @@ version(PROFILING){
     run_time = &work.info.solve_time;
 } /* ifdef PROFILING */
 }
+} // EMBEDDED
 
 
   // Compute the objective if needed
@@ -647,6 +649,7 @@ version(PRINTING){
 } /* ifdef PRINTING */
 }
 
+void update_status(OSQPInfo *info, c_int status_val);
 
 void reset_info(OSQPInfo *info) {
 version(PROFILING){
@@ -667,57 +670,52 @@ version(EMBEDDED_1){}
 else {
   info.rho_updates = 0;              // Rho updates are now 0
 } /* if EMBEDDED != 1 */
+}
 
-void update_status(OSQPInfo *info, c_int status_val) {
 version(PROFILING){
+void update_status(OSQPInfo *info, c_int status_val) {
   // Update status value
   info.status_val = status_val;
 
   // Update status string depending on status val
-  if (status_val == OSQP_SOLVED) c_strcpy(info.status, "solved");
+  if (status_val == OSQP_SOLVED) c_strcpy(cast(char*)info.status, cast(char*)"solved");
 
-  if (status_val == OSQP_SOLVED_INACCURATE) c_strcpy(info.status,
-                                                     "solved inaccurate");
-  else if (status_val == OSQP_PRIMAL_INFEASIBLE) c_strcpy(info.status,
-                                                          "primal infeasible");
-  else if (status_val == OSQP_PRIMAL_INFEASIBLE_INACCURATE) c_strcpy(info.status,
-                                                                     "primal infeasible inaccurate");
-  else if (status_val == OSQP_UNSOLVED) c_strcpy(info.status, "unsolved");
-  else if (status_val == OSQP_DUAL_INFEASIBLE) c_strcpy(info.status,
-                                                        "dual infeasible");
-  else if (status_val == OSQP_DUAL_INFEASIBLE_INACCURATE) c_strcpy(info.status,
-                                                                   "dual infeasible inaccurate");
-  else if (status_val == OSQP_MAX_ITER_REACHED) c_strcpy(info.status,
-                                                         "maximum iterations reached");
-  else if (status_val == OSQP_TIME_LIMIT_REACHED) c_strcpy(info.status,
-                                                           "run time limit reached");
-  else if (status_val == OSQP_SIGINT) c_strcpy(info.status, "interrupted");
-
-  else if (status_val == OSQP_NON_CVX) c_strcpy(info.status, "problem non convex");
+  if (status_val == OSQP_SOLVED_INACCURATE) c_strcpy(cast(char*)info.status, cast(char*)"solved inaccurate");
+  else if (status_val == OSQP_PRIMAL_INFEASIBLE) c_strcpy(cast(char*)info.status, cast(char*)"primal infeasible");
+  else if (status_val == OSQP_PRIMAL_INFEASIBLE_INACCURATE) c_strcpy(cast(char*)info.status, cast(char*)"primal infeasible inaccurate");
+  else if (status_val == OSQP_UNSOLVED) c_strcpy(cast(char*)info.status, cast(char*)"unsolved");
+  else if (status_val == OSQP_DUAL_INFEASIBLE) c_strcpy(cast(char*)info.status,cast(char*)"dual infeasible");
+  else if (status_val == OSQP_DUAL_INFEASIBLE_INACCURATE) c_strcpy(cast(char*)info.status, cast(char*)"dual infeasible inaccurate");
+  else if (status_val == OSQP_MAX_ITER_REACHED) c_strcpy(cast(char*)info.status, cast(char*)"maximum iterations reached");
+  else if (status_val == OSQP_TIME_LIMIT_REACHED) c_strcpy(cast(char*)info.status, cast(char*)"run time limit reached");
+  else if (status_val == OSQP_SIGINT) c_strcpy(cast(char*)info.status, cast(char*)"interrupted");
+  else if (status_val == OSQP_NON_CVX) c_strcpy(cast(char*)info.status, cast(char*)"problem non convex");
+}
 }
 else {
+  void update_status(OSQPInfo *info, c_int status_val) {
 // Update status value
   info.status_val = status_val;
 
   // Update status string depending on status val
   if (status_val == OSQP_SOLVED) c_strcpy(info.status, "solved");
 
-  if (status_val == OSQP_SOLVED_INACCURATE) c_strcpy(info.status,
-                                                     "solved inaccurate");
-  else if (status_val == OSQP_PRIMAL_INFEASIBLE) c_strcpy(info.status,
-                                                          "primal infeasible");
-  else if (status_val == OSQP_PRIMAL_INFEASIBLE_INACCURATE) c_strcpy(info.status,
-                                                                     "primal infeasible inaccurate");
-  else if (status_val == OSQP_UNSOLVED) c_strcpy(info.status, "unsolved");
-  else if (status_val == OSQP_DUAL_INFEASIBLE) c_strcpy(info.status,
-                                                        "dual infeasible");
-  else if (status_val == OSQP_DUAL_INFEASIBLE_INACCURATE) c_strcpy(info.status,
-                                                                   "dual infeasible inaccurate");
-  else if (status_val == OSQP_MAX_ITER_REACHED) c_strcpy(info.status,
-                                                         "maximum iterations reached");
-  else if (status_val == OSQP_SIGINT) c_strcpy(info.status, "interrupted");
+  if (status_val == OSQP_SOLVED_INACCURATE) c_strcpy(cast(char*)info.status,
+                                                     cast(char*)"solved inaccurate");
+  else if (status_val == OSQP_PRIMAL_INFEASIBLE) c_strcpy(cast(char*)info.status,
+                                                          cast(char*)"primal infeasible");
+  else if (status_val == OSQP_PRIMAL_INFEASIBLE_INACCURATE) c_strcpy(cast(char*)info.status,
+                                                                     cast(char*)"primal infeasible inaccurate");
+  else if (status_val == OSQP_UNSOLVED) c_strcpy(cast(char*)info.status, cast(char*)"unsolved");
+  else if (status_val == OSQP_DUAL_INFEASIBLE) c_strcpy(cast(char*)info.status,
+                                                        cast(char*)"dual infeasible");
+  else if (status_val == OSQP_DUAL_INFEASIBLE_INACCURATE) c_strcpy(cast(char*)info.status,
+                                                                   cast(char*)"dual infeasible inaccurate");
+  else if (status_val == OSQP_MAX_ITER_REACHED) c_strcpy(cast(char*)info.status,
+                                                         cast(char*)"maximum iterations reached");
+  else if (status_val == OSQP_SIGINT) c_strcpy(cast(char*)nfo.status, cast(char*)"interrupted");
 
-  else if (status_val == OSQP_NON_CVX) c_strcpy(info.status, "problem non convex");
+  else if (status_val == OSQP_NON_CVX) c_strcpy(cast(char*)info.status, cast(char*)"problem non convex");
 }
   
 }
@@ -834,24 +832,26 @@ version(EMBEDDED){}
 else {
 
 c_int validate_data(const OSQPData *data) {
-  c_int j, ptr;
+  c_int j;
+  c_int ptr;
 
+  if (!data) {
 version(PRINTING){
-    c_eprint("Missing data");
+    c_eprint(cast(char*)"Missing data");
 }
     return 1;
   }
 
   if (!(data.P)) {
 version(PRINTING){
-    c_eprint("Missing matrix P");
+    c_eprint(cast(char*)"Missing matrix P");
 }
     return 1;
   }
 
   if (!(data.A)) {
 version(PRINTING){
-    c_eprint("Missing matrix A");
+    c_eprint(cast(char*)"Missing matrix A");
 }
     return 1;
   }
@@ -859,7 +859,7 @@ version(PRINTING){
   // General dimensions Tests
   if ((data.n <= 0) || (data.m < 0)) {
 version(PRINTING){
-    c_eprint("n must be positive and m nonnegative; n = %i, m = %i",
+    c_eprint(cast(char*)"n must be positive and m nonnegative; n = %i, m = %i",
              cast(int)data.n, cast(int)data.m);
 } /* ifdef PRINTING */
     return 1;
@@ -868,23 +868,23 @@ version(PRINTING){
   // Matrix P
   if (data.P.m != data.n) {
 version(PRINTING){
-    c_eprint("P does not have dimension n x n with n = %i", cast(int)data.n);
+    c_eprint(cast(char*)"P does not have dimension n x n with n = %i", cast(int)data.n);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (data.P.m != data.P.n) {
 version(PRINTING){
-    c_eprint("P is not square");
+    c_eprint(cast(char*)"P is not square");
 } /* ifdef PRINTING */
     return 1;
   }
-
+  
   for (j = 0; j < data.n; j++) { // COLUMN
     for (ptr = data.P.p[j]; ptr < data.P.p[j + 1]; ptr++) {
       if (data.P.i[ptr] > j) {  // if ROW > COLUMN
 version(PRINTING){
-        c_eprint("P is not upper triangular");
+        c_eprint(cast(char*)"P is not upper triangular");
 } /* ifdef PRINTING */
         return 1;
       }
@@ -894,7 +894,7 @@ version(PRINTING){
   // Matrix A
   if ((data.A.m != data.m) || (data.A.n != data.n)) {
 version(PRINTING){
-    c_eprint("A does not have dimension %i x %i", cast(int)data.m, cast(int)data.n);
+    c_eprint(cast(char*)"A does not have dimension %i x %i", cast(int)data.m, cast(int)data.n);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -903,7 +903,7 @@ version(PRINTING){
   for (j = 0; j < data.m; j++) {
     if (data.l[j] > data.u[j]) {
 version(PRINTING){
-      c_eprint("Lower bound at index %d is greater than upper bound: %.4e > %.4e",
+      c_eprint(cast(char*)"Lower bound at index %d is greater than upper bound: %.4e > %.4e",
                cast(int)j, data.l[j], data.u[j]);
 } /* ifdef PRINTING */
       return 1;
@@ -930,28 +930,28 @@ c_int validate_linsys_solver(c_int linsys_solver) {
 c_int validate_settings(const OSQPSettings *settings) {
   if (!settings) {
 version(PRINTING){
-    c_eprint("Missing settings!");
+    c_eprint(cast(char*)"Missing settings!");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.scaling < 0) {
 version(PRINTING){
-    c_eprint("scaling must be nonnegative");
+    c_eprint(cast(char*)"scaling must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if ((settings.adaptive_rho != 0) && (settings.adaptive_rho != 1)) {
 version(PRINTING){
-    c_eprint("adaptive_rho must be either 0 or 1");
+    c_eprint(cast(char*)"adaptive_rho must be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.adaptive_rho_interval < 0) {
 version(PRINTING){
-    c_eprint("adaptive_rho_interval must be nonnegative");
+    c_eprint(cast(char*)"adaptive_rho_interval must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -959,7 +959,7 @@ version(PROFILING){
 
   if (settings.adaptive_rho_fraction <= 0) {
 version(PRINTING){
-    c_eprint("adaptive_rho_fraction must be positive");
+    c_eprint(cast(char*)"adaptive_rho_fraction must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -967,56 +967,56 @@ version(PRINTING){
 
   if (settings.adaptive_rho_tolerance < 1.0) {
 version(PRINTING){
-    c_eprint("adaptive_rho_tolerance must be >= 1");
+    c_eprint(cast(char*)"adaptive_rho_tolerance must be >= 1");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.polish_refine_iter < 0) {
 version(PRINTING){
-    c_eprint("polish_refine_iter must be nonnegative");
+    c_eprint(cast(char*)"polish_refine_iter must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.rho <= 0.0) {
 version(PRINTING){
-    c_eprint("rho must be positive");
+    c_eprint(cast(char*)"rho must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.sigma <= 0.0) {
 version(PRINTING){
-    c_eprint("sigma must be positive");
+    c_eprint(cast(char*)"sigma must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.delta <= 0.0) {
 version(PRINTING){
-    c_eprint("delta must be positive");
+    c_eprint(cast(char*)"delta must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.max_iter <= 0) {
 version(PRINTING){
-    c_eprint("max_iter must be positive");
+    c_eprint(cast(char*)"max_iter must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_abs < 0.0) {
 version(PRINTING){
-    c_eprint("eps_abs must be nonnegative");
+    c_eprint(cast(char*)"eps_abs must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_rel < 0.0) {
 version(PRINTING){
-    c_eprint("eps_rel must be nonnegative");
+    c_eprint(cast(char*)"eps_rel must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1024,21 +1024,21 @@ version(PRINTING){
   if ((settings.eps_rel == 0.0) &&
       (settings.eps_abs == 0.0)) {
 version(PRINTING){
-    c_eprint("at least one of eps_abs and eps_rel must be positive");
+    c_eprint(cast(char*)"at least one of eps_abs and eps_rel must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_prim_inf <= 0.0) {
 version(PRINTING){
-    c_eprint("eps_prim_inf must be positive");
+    c_eprint(cast(char*)"eps_prim_inf must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_dual_inf <= 0.0) {
 version(PRINTING){
-    c_eprint("eps_dual_inf must be positive");
+    c_eprint(cast(char*)"eps_dual_inf must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1046,14 +1046,14 @@ version(PRINTING){
   if ((settings.alpha <= 0.0) ||
       (settings.alpha >= 2.0)) {
 version(PRINTING){
-    c_eprint("alpha must be strictly between 0 and 2");
+    c_eprint(cast(char*)"alpha must be strictly between 0 and 2");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (validate_linsys_solver(settings.linsys_solver)) {
 version(PRINTING){
-    c_eprint("linsys_solver not recognized");
+    c_eprint(cast(char*)"linsys_solver not recognized");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1061,7 +1061,7 @@ version(PRINTING){
   if ((settings.verbose != 0) &&
       (settings.verbose != 1)) {
 version(PRINTING){
-    c_eprint("verbose must be either 0 or 1");
+    c_eprint(cast(char*)"verbose must be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1069,14 +1069,14 @@ version(PRINTING){
   if ((settings.scaled_termination != 0) &&
       (settings.scaled_termination != 1)) {
 version(PRINTING){
-    c_eprint("scaled_termination must be either 0 or 1");
+    c_eprint(cast(char*)"scaled_termination must be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.check_termination < 0) {
 version(PRINTING){
-    c_eprint("check_termination must be nonnegative");
+    c_eprint(cast(char*)"check_termination must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1084,15 +1084,15 @@ version(PRINTING){
   if ((settings.warm_start != 0) &&
       (settings.warm_start != 1)) {
 version(PRINTING){
-    c_eprint("warm_start must be either 0 or 1");
+    c_eprint(cast(char*)"warm_start must be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
-version(PROFILING)
+version(PROFILING){
 
   if (settings.time_limit < 0.0) {
 version(PRINTING){
-    c_eprint("time_limit must be nonnegative\n");
+    c_eprint(cast(char*)"time_limit must be nonnegative\n");
 } /* ifdef PRINTING */
     return 1;
   }
