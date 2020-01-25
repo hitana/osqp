@@ -3,7 +3,7 @@ module auxil;
 import glob_opts;
 import types;
 
-//import osqp;  // For OSQP rho update
+import osqp;  // For OSQP rho update
 import proj;
 import lin_alg;
 import constants;

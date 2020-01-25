@@ -92,8 +92,7 @@ static c_int form_Ared(OSQPWorkspace *work) {
         work.pol.Ared.x[Ared_nnz++] = work.data.A.x[ptr];
       } else if (work.pol.A_to_Aupp[work.data.A.i[ptr]] != -1) {
         // Upper-active rows of A
-        work.pol.Ared.i[Ared_nnz] = work.pol.A_to_Aupp[work.data.A.i[ptr]] \
-                                       + work.pol.n_low;
+        work.pol.Ared.i[Ared_nnz] = work.pol.A_to_Aupp[work.data.A.i[ptr]] + work.pol.n_low;
         work.pol.Ared.x[Ared_nnz++] = work.data.A.x[ptr];
       }
     }
@@ -154,7 +153,7 @@ static c_int iterative_refinement(OSQPWorkspace *work,
     n = work.data.n + work.pol.Ared.m;
 
     // Allocate rhs vector
-    rhs = (c_float *)c_malloc(sizeof(c_float) * n);
+    rhs = cast(c_float *)c_malloc((c_float.sizeof) * n);
 
     if (!rhs) {
       return osqp_error(OSQP_MEM_ALLOC_ERROR);
@@ -225,9 +224,9 @@ c_int polish(OSQPWorkspace *work) {
   LinSysSolver *plsh;
   c_float *pol_sol; // Polished solution
 
-#ifdef PROFILING
+version(PROFILING){
   osqp_tic(work.timer); // Start timer
-#endif /* ifdef PROFILING */
+ }/* ifdef PROFILING */
 
   // Form Ared by assuming the active constraints and store in work.pol.Ared
   mred = form_Ared(work);
@@ -254,7 +253,7 @@ c_int polish(OSQPWorkspace *work) {
   }
 
   // Form reduced right-hand side rhs_red
-  rhs_red = c_malloc(sizeof(c_float) * (work.data.n + mred));
+  rhs_red = c_malloc((c_float.sizeof) * (work.data.n + mred));
   if (!rhs_red) {
     // Polishing failed
     work.info.status_polish = -1;
@@ -337,10 +336,9 @@ c_int polish(OSQPWorkspace *work) {
     prea_vec_copy(work.pol.y, work.y, work.data.m);
 
     // Print summary
-#ifdef PRINTING
-
+version(PRINTING){
     if (work.settings.verbose) print_polish(work);
-#endif /* ifdef PRINTING */
+} /* ifdef PRINTING */
   } else { // Polishing failed
     work.info.status_polish = -1;
 
