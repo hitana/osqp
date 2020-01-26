@@ -185,8 +185,16 @@ configure_file(input : 'configure/osqp_configure.d.in',
 run_command('cp', 'build/osqp_configure.d', 'include/osqp_configure.d')
 
 
+# todo : configuration for C demo and test
+configure_file(input : 'configure/osqp_configure.h.in',
+  output : 'osqp_configure.h',
+  configuration : conf_data)
+# todo : get build directory name here
+run_command('cp', 'build/osqp_configure.h', 'include/osqp_configure.h')
+
+
+
 # Set Compiler flags
-c_compiler = meson.get_compiler('c')
 #d_compiler = meson.get_compiler('d')
 # ----------------------------------------------
 # todo : set some default CMAKE_C_FLAGS|CMAKE_FORTRAN_FLAGS|CMAKE_C_STANDARD_LIBRARIES
@@ -221,6 +229,8 @@ if not conf_data.get('MSVC')
     dl_lib = c_compiler.find_library('dl')
   endif
 endif
+
+d_args = ['-betterC', c_args]
 
 #************************************************************************************
 current_source_dir = meson.current_source_dir()
@@ -278,7 +288,7 @@ osqpstatic_lib = shared_library('osqpstatic',
                                 dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                                 #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.
                                 link_with: linsys_solvers,
-                                c_args: c_args,
+                                c_args: d_args,
                                 d_module_versions: d_module_versions
                                 )
 # Give same name to static library output
@@ -309,7 +319,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                             #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.                            
                             link_with: linsys_solvers,
-                            c_args: c_args,
+                            c_args: d_args,
                             d_module_versions: d_module_versions
                             )
   # Install osqp shared library
