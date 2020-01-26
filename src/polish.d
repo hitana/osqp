@@ -9,7 +9,8 @@ import lin_sys;
 import kkt;
 import proj;
 import error;
-
+import cs;
+import constants; // for OSQP_NULL
 
 /**
  * Form reduced matrix A that contains only rows that are active at the
@@ -150,7 +151,7 @@ static c_int iterative_refinement(OSQPWorkspace *work,
     rhs = cast(c_float *)c_malloc((c_float.sizeof) * n);
 
     if (!rhs) {
-      return osqp_error(OSQP_MEM_ALLOC_ERROR);
+      return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
     } else {
       for (i = 0; i < work.settings.polish_refine_iter; i++) {
         // Form the RHS for the iterative refinement:  b - K*z
@@ -249,7 +250,7 @@ version(PROFILING){
   }
 
   // Form reduced right-hand side rhs_red
-  rhs_red = c_malloc((c_float.sizeof) * (work.data.n + mred));
+  rhs_red = cast(c_float*)c_malloc((c_float.sizeof) * (work.data.n + mred));
   if (!rhs_red) {
     // Polishing failed
     work.info.status_polish = -1;

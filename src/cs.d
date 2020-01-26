@@ -3,6 +3,7 @@ module cs;
 import glob_opts;
 import types; // CSC matrix type
 import lin_alg; // Vector copy operations
+import constants; // for OSQP_NULL
 
 static void* csc_malloc(c_int n, c_int size) {
   return c_malloc(n * size);
@@ -14,7 +15,7 @@ static void* csc_calloc(c_int n, c_int size) {
 
 csc* csc_matrix(c_int m, c_int n, c_int nzmax, c_float *x, c_int *i, c_int *p)
 {
-  csc *M = cast(csc *)c_malloc(sizeof(csc));
+  csc *M = cast(csc *)c_malloc(csc.sizeof);
 
   if (!M) return OSQP_NULL;
 
@@ -29,7 +30,7 @@ csc* csc_matrix(c_int m, c_int n, c_int nzmax, c_float *x, c_int *i, c_int *p)
 }
 
 csc* csc_spalloc(c_int m, c_int n, c_int nzmax, c_int values, c_int triplet) {
-  csc *A = csc_calloc(1, sizeof(csc)); /* allocate the csc struct */
+  csc *A = cast(csc*)csc_calloc(1, csc.sizeof); /* allocate the csc struct */
 
   if (!A) return OSQP_NULL;            /* out of memory */
 
@@ -37,9 +38,9 @@ csc* csc_spalloc(c_int m, c_int n, c_int nzmax, c_int values, c_int triplet) {
   A.n     = n;
   A.nzmax = nzmax = c_max(nzmax, 1);
   A.nz    = triplet ? 0 : -1;         /* allocate triplet or comp.col */
-  A.p     = csc_malloc(triplet ? nzmax : n + 1, sizeof(c_int));
-  A.i     = csc_malloc(nzmax,  sizeof(c_int));
-  A.x     = values ? csc_malloc(nzmax,  sizeof(c_float)) : OSQP_NULL;
+  A.p     = cast(c_int*)csc_malloc(triplet ? nzmax : n + 1, c_int.sizeof);
+  A.i     = cast(c_int*)csc_malloc(nzmax,  c_int.sizeof);
+  A.x     = values ? cast(c_float*)csc_malloc(nzmax,  c_float.sizeof) : OSQP_NULL;
   if (!A.p || !A.i || (values && !A.x)){
     csc_spfree(A);
     return OSQP_NULL;
@@ -72,12 +73,12 @@ csc* triplet_to_csc(const csc *T, c_int *TtoC) {
 
   m  = T.m;
   n  = T.n;
-  Ti = T.i;
-  Tj = T.p;
-  Tx = T.x;
+  Ti = cast(int*)T.i;
+  Tj = cast(int*)T.p;
+  Tx = cast(double*)T.x;
   nz = T.nz;
   C  = csc_spalloc(m, n, nz, Tx != OSQP_NULL, 0);     /* allocate result */
-  w  = csc_calloc(n, sizeof(c_int));                  /* get workspace */
+  w  = cast(c_int*)csc_calloc(n, c_int.sizeof);                  /* get workspace */
 
   if (!C || !w) return csc_done(C, w, OSQP_NULL, 0);  /* out of memory */
 
@@ -117,12 +118,12 @@ csc* triplet_to_csr(const csc *T, c_int *TtoC) {
 
   m  = T.m;
   n  = T.n;
-  Ti = T.i;
-  Tj = T.p;
-  Tx = T.x;
+  Ti = cast(int*)T.i;
+  Tj = cast(int*)T.p;
+  Tx = cast(double*)T.x;
   nz = T.nz;
   C  = csc_spalloc(m, n, nz, Tx != OSQP_NULL, 0);     /* allocate result */
-  w  = csc_calloc(m, sizeof(c_int));                  /* get workspace */
+  w  = cast(c_int*)csc_calloc(m, c_int.sizeof);                  /* get workspace */
 
   if (!C || !w) return csc_done(C, w, OSQP_NULL, 0);  /* out of memory */
 
@@ -167,7 +168,7 @@ c_int* csc_pinv(c_int *p, c_int n) {
 
   if (!p) return OSQP_NULL;                /* p = OSQP_NULL denotes identity */
 
-  pinv = csc_malloc(n, sizeof(c_int));     /* allocate result */
+  pinv = cast(int*)csc_malloc(n, c_int.sizeof);     /* allocate result */
 
   if (!pinv) return OSQP_NULL;             /* out of memory */
 
@@ -193,12 +194,12 @@ csc* csc_symperm(const csc *A, const c_int *pinv, c_int *AtoC, c_int values) {
   csc     *C;
 
   n  = A.n;
-  Ap = A.p;
-  Ai = A.i;
-  Ax = A.x;
+  Ap = cast(int*)A.p;
+  Ai = cast(int*)A.i;
+  Ax = cast(double*)A.x;
   C  = csc_spalloc(n, n, Ap[n], values && (Ax != OSQP_NULL),
                    0);                                /* alloc result*/
-  w = csc_calloc(n, sizeof(c_int));                   /* get workspace */
+  w = cast(int*)csc_calloc(n, c_int.sizeof);                   /* get workspace */
 
   if (!C || !w) return csc_done(C, w, OSQP_NULL, 0);  /* out of memory */
 
@@ -285,7 +286,7 @@ csc* csc_to_triu(csc *M) {
   // Check if matrix is square
   if (M.m != M.n) {
 version(PRINTING){
-    c_eprint("Matrix M not square");
+    c_eprint(cast(char*)"Matrix M not square");
 } /* ifdef PRINTING */
     return OSQP_NULL;
   }
@@ -313,7 +314,7 @@ version(PRINTING){
 
   if (!M_trip) {
 version(PRINTING){
-    c_eprint("Upper triangular matrix extraction failed (out of memory)");
+    c_eprint(cast(char*)"Upper triangular matrix extraction failed (out of memory)");
 } /* ifdef PRINTING */
     return OSQP_NULL;
   }

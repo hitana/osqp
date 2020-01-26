@@ -304,7 +304,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             osqp_src, 
                             osqp_headers,
                             include_directories: ['include', 'lin_sys/direct/qdldl/', 'lin_sys/direct/qdldl/qdldl_sources/include', 'lin_sys/direct/pardiso',
-                            'src'], # for D modules
+                            'src', 'lin_sys/direct/qdldl/qdldl_sources/src', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include', 'lin_sys'], # for D modules
                             #dependencies: [c_compiler.find_library('m'), c_compiler.find_library('rt'), c_compiler.find_library('dl'), gcov_lib],
                             dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                             #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.                            

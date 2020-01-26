@@ -3,6 +3,7 @@ module lin_alg;
 
 import glob_opts;
 import types;
+import constants; // for OSQP_NULL
 
 
 /* VECTOR FUNCTIONS ----------------------------------------------------------*/
@@ -109,7 +110,7 @@ else {
     c_int    i;
 
     b = cast(double*)c_malloc(n * (c_float.sizeof));
-    if (!b) return null;//OSQP_NULL;
+    if (!b) return OSQP_NULL;
 
     for (i = 0; i < n; i++) {
       b[i] = a[i];
@@ -411,8 +412,7 @@ c_float quad_form(const csc *P, const c_float *x) {
 version(PRINTING){
         c_eprint(cast(char*)"quad_form matrix is not upper triangular");
 } /* ifdef PRINTING */
-        //return OSQP_NULL;
-        return cast(c_float)null;
+        return cast(c_float)OSQP_NULL;
       }
     }
   }

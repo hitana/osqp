@@ -89,7 +89,7 @@ else {
       int_detected = 0;
       act.sa_flags = 0;
       sigemptyset(&act.sa_mask);
-      act.sa_handler = handle_ctrlc;
+      //act.sa_handler = handle_ctrlc;  // todo : check it, never used
       sigaction(SIGINT, &act, &oact);
     }
 

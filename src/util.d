@@ -3,11 +3,11 @@ module util;
 import glob_opts;
 import types;
 import constants;
+import core.sys.posix.time;
 
 /* ================================= DEBUG FUNCTIONS ======================= */
 
 version(PRINTING){
-//#  include <stdio.h>
   import core.stdc.stdio;
 } // ifdef PRINTING
 
@@ -81,70 +81,70 @@ void print_setup_header(const OSQPWorkspace *work) {
   OSQPSettings *settings;
   c_int nnz; // Number of nonzeros in the problem
 
-  data     = work.data;
-  settings = work.settings;
+  data     = cast(OSQPData*)work.data;
+  settings = cast(OSQPSettings*)work.settings;
 
   // Number of nonzeros
   nnz = data.P.p[data.P.n] + data.A.p[data.A.n];
 
   print_line();
-  c_print("           OSQP v%s  -  Operator Splitting QP Solver\n             (c) Bartolomeo Stellato,  Goran Banjac\n        University of Oxford  -  Stanford University 2019\n",
-          OSQP_VERSION);
+  c_print(cast(char*)"           OSQP v%s  -  Operator Splitting QP Solver\n             (c) Bartolomeo Stellato,  Goran Banjac\n        University of Oxford  -  Stanford University 2019\n",
+          cast(char*)OSQP_VERSION);
   print_line();
 
   // Print variables and constraints
-  c_print("problem:  ");
-  c_print("variables n = %i, constraints m = %i\n          ",
+  c_print(cast(char*)"problem:  ");
+  c_print(cast(char*)"variables n = %i, constraints m = %i\n          ",
                                     cast(int)data.n,
           cast(int)data.m);
-  c_print("nnz(P) + nnz(A) = %i\n", cast(int)nnz);
+  c_print(cast(char*)"nnz(P) + nnz(A) = %i\n", cast(int)nnz);
 
   // Print Settings
-  c_print("settings: ");
-  c_print("linear system solver = %s",
+  c_print(cast(char*)"settings: ");
+  c_print(cast(char*)"linear system solver = %s",
           LINSYS_SOLVER_NAME[settings.linsys_solver]);
 
   if (work.linsys_solver.nthreads != 1) {
-    c_print(" (%d threads)", cast(int)work.linsys_solver.nthreads);
+    c_print(cast(char*)" (%d threads)", cast(int)work.linsys_solver.nthreads);
   }
-  c_print(",\n          ");
+  c_print(cast(char*)",\n          ");
 
-  c_print("eps_abs = %.1e, eps_rel = %.1e,\n          ",
+  c_print(cast(char*)"eps_abs = %.1e, eps_rel = %.1e,\n          ",
           settings.eps_abs, settings.eps_rel);
-  c_print("eps_prim_inf = %.1e, eps_dual_inf = %.1e,\n          ",
+  c_print(cast(char*)"eps_prim_inf = %.1e, eps_dual_inf = %.1e,\n          ",
           settings.eps_prim_inf, settings.eps_dual_inf);
-  c_print("rho = %.2e ", settings.rho);
+  c_print(cast(char*)"rho = %.2e ", settings.rho);
 
-  if (settings.adaptive_rho) c_print("(adaptive)");
-  c_print(",\n          ");
-  c_print("sigma = %.2e, alpha = %.2f, ",
+  if (settings.adaptive_rho) c_print("cast(char*)(adaptive)");
+  c_print(cast(char*)",\n          ");
+  c_print(cast(char*)"sigma = %.2e, alpha = %.2f, ",
           settings.sigma, settings.alpha);
-  c_print("max_iter = %i\n", cast(int)settings.max_iter);
+  c_print(cast(char*)"max_iter = %i\n", cast(int)settings.max_iter);
 
   if (settings.check_termination) c_print(
-      "          check_termination: on (interval %i),\n",
+      cast(char*)"          check_termination: on (interval %i),\n",
       cast(int)settings.check_termination);
   else c_print("          check_termination: off,\n");
 
 version(PROFILING){
-  if (settings.time_limit) c_print("          time_limit: %.2e sec,\n",
+  if (settings.time_limit) c_print(cast(char*)"          time_limit: %.2e sec,\n",
                                     settings.time_limit);
 } /* ifdef PROFILING */
 
-  if (settings.scaling) c_print("          scaling: on, ");
-  else c_print("          scaling: off, ");
+  if (settings.scaling) c_print(cast(char*)"          scaling: on, ");
+  else c_print(cast(char*)"          scaling: off, ");
 
-  if (settings.scaled_termination) c_print("scaled_termination: on\n");
-  else c_print("scaled_termination: off\n");
+  if (settings.scaled_termination) c_print(cast(char*)"scaled_termination: on\n");
+  else c_print(cast(char*)"scaled_termination: off\n");
 
-  if (settings.warm_start) c_print("          warm start: on, ");
-  else c_print("          warm start: off, ");
+  if (settings.warm_start) c_print(cast(char*)"          warm start: on, ");
+  else c_print(cast(char*)"          warm start: off, ");
 
-  if (settings.polish) c_print("polish: on, ");
-  else c_print("polish: off, ");
+  if (settings.polish) c_print(cast(char*)"polish: on, ");
+  else c_print(cast(char*)"polish: off, ");
 
-  if (settings.time_limit) c_print("time_limit: %.2e sec\n", settings.time_limit);
-  else c_print("time_limit: off\n");
+  if (settings.time_limit) c_print(cast(char*)"time_limit: %.2e sec\n", settings.time_limit);
+  else c_print(cast(char*)"time_limit: off\n");
 
   c_print("\n");
 }
@@ -163,13 +163,13 @@ version(PROFILING) {
 
   if (work.first_run) {
     // total time: setup + solve
-    c_print("  %9.2es", info.setup_time + info.solve_time);
+    c_print(cast(char*)"  %9.2es", info.setup_time + info.solve_time);
   } else {
     // total time: update + solve
-    c_print("  %9.2es", info.update_time + info.solve_time);
+    c_print(cast(char*)"  %9.2es", info.update_time + info.solve_time);
   }
 } /* ifdef PROFILING */
-  c_print("\n");
+  c_print(cast(char*)"\n");
 
   work.summary_printed = 1; // Summary has been printed
 }
@@ -179,24 +179,24 @@ void print_polish(OSQPWorkspace *work) {
 
   info = work.info;
 
-  c_print("%4s",     "plsh");
-  c_print(" %12.4e", info.obj_val);
-  c_print("  %9.2e", info.pri_res);
-  c_print("  %9.2e", info.dua_res);
+  c_print(cast(char*)"%4s",     cast(char*)"plsh");
+  c_print(cast(char*)" %12.4e", cast(char*)info.obj_val);
+  c_print(cast(char*)"  %9.2e", cast(char*)info.pri_res);
+  c_print(cast(char*)"  %9.2e", cast(char*)info.dua_res);
 
   // Different characters for windows/unix
   version(IS_WINDOWS){
     version(PYTHON){}
     else {
-      c_print("  ---------");
+      c_print(cast(char*)"  ---------");
     }
   }
   else {
-    c_print("  ---------");
+    c_print(cast(char*)"  ---------");
   }
   version(PYTHON){}
   else {
-    c_print("  ---------");
+    c_print(cast(char*)"  ---------");
   }
 /*#if defined(IS_WINDOWS) && !defined(PYTHON)
   c_print("  ---------");
@@ -208,46 +208,46 @@ void print_polish(OSQPWorkspace *work) {
 version(PROFILING){
   if (work.first_run) {
     // total time: setup + solve
-    c_print("  %9.2es", info.setup_time + info.solve_time +
+    c_print(cast(char*)"  %9.2es", info.setup_time + info.solve_time +
             info.polish_time);
   } else {
     // total time: update + solve
-    c_print("  %9.2es", info.update_time + info.solve_time +
+    c_print(cast(char*)"  %9.2es", info.update_time + info.solve_time +
             info.polish_time);
   }
 } /* ifdef PROFILING */
-  c_print("\n");
+  c_print(cast(char*)"\n");
 }
 
 void print_footer(OSQPInfo *info, c_int polish) {
-  c_print("\n"); // Add space after iterations
+  c_print(cast(char*)"\n"); // Add space after iterations
 
-  c_print("status:               %s\n", info.status);
+  c_print(cast(char*)"status:               %s\n", cast(char*)info.status);
 
   if (polish && (info.status_val == OSQP_SOLVED)) {
     if (info.status_polish == 1) {
-      c_print("solution polish:      successful\n");
+      c_print(cast(char*)"solution polish:      successful\n");
     } else if (info.status_polish < 0) {
-      c_print("solution polish:      unsuccessful\n");
+      c_print(cast(char*)"solution polish:      unsuccessful\n");
     }
   }
 
-  c_print("number of iterations: %i\n", cast(int)info.iter);
+  c_print(cast(char*)"number of iterations: %i\n", cast(int)info.iter);
 
   if ((info.status_val == OSQP_SOLVED) ||
       (info.status_val == OSQP_SOLVED_INACCURATE)) {
-    c_print("optimal objective:    %.4f\n", info.obj_val);
+    c_print(cast(char*)"optimal objective:    %.4f\n", info.obj_val);
   }
 
 version(PROFILING){
-  c_print("run time:             %.2es\n", info.run_time);
+  c_print(cast(char*)"run time:             %.2es\n", info.run_time);
 } /* ifdef PROFILING */
 
 version(EMBEDDED_1){}
 else {
-  c_print("optimal rho estimate: %.2e\n", info.rho_estimate);
+  c_print(cast(char*)"optimal rho estimate: %.2e\n", info.rho_estimate);
 } /* if EMBEDDED != 1 */
-  c_print("\n");
+  c_print(cast(char*)"\n");
 }
 
 } /* End #ifdef PRINTING */
@@ -256,7 +256,7 @@ version(EMBEDDED){}
 else {
 
 OSQPSettings* copy_settings(const OSQPSettings *settings) {
-  OSQPSettings *newSettings = c_malloc((OSQPSettings.sizeof));
+  OSQPSettings *newSettings = cast(OSQPSettings*)c_malloc(OSQPSettings.sizeof);
 
   if (!newSettings) return OSQP_NULL;
 
@@ -347,7 +347,6 @@ version(IS_WINDOWS){
     }
 
    } else { /* IS_LINUX */
-
       /* read current time */
       void osqp_tic(OSQPTimer *t)
       {
@@ -363,10 +362,10 @@ version(IS_WINDOWS){
 
         if ((t.toc.tv_nsec - t.tic.tv_nsec) < 0) {
           temp.tv_sec  = t.toc.tv_sec - t.tic.tv_sec - 1;
-          temp.tv_nsec = 1e9 + t.toc.tv_nsec - t.tic.tv_nsec;
+          temp.tv_nsec = cast(long)(1e9 + t.toc.tv_nsec - t.tic.tv_nsec); // todo : check it
         } else {
           temp.tv_sec  = t.toc.tv_sec - t.tic.tv_sec;
-          temp.tv_nsec = t.toc.tv_nsec - t.tic.tv_nsec;
+          temp.tv_nsec = cast(long)(t.toc.tv_nsec - t.tic.tv_nsec);
         }
         return cast(c_float)temp.tv_sec + cast(c_float)temp.tv_nsec / 1e9;
       }

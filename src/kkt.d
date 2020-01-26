@@ -3,6 +3,7 @@ module kkt;
 import glob_opts;
 import cs;
 import types; // CSC matrix type
+import constants; // for OSQP_NULL
 
 version(EMBEDDED){}
 else {
@@ -42,7 +43,7 @@ csc* form_KKT(const csc  *P,
 
   // Allocate vector of indices on the diagonal. Worst case it has m elements
   if (Pdiag_idx != OSQP_NULL) {
-    (*Pdiag_idx) = c_malloc(P.m * sizeof(c_int));
+    (*Pdiag_idx) = cast(c_int*)c_malloc(P.m * c_int.sizeof);
     *Pdiag_n     = 0; // Set 0 diagonal elements to start
   }
 
@@ -95,7 +96,7 @@ csc* form_KKT(const csc  *P,
 
   if (Pdiag_idx != OSQP_NULL) {
     // Realloc Pdiag_idx so that it contains exactly *Pdiag_n diagonal elements
-    (*Pdiag_idx) = c_realloc((*Pdiag_idx), (*Pdiag_n) * sizeof(c_int));
+    (*Pdiag_idx) = cast(c_int*)c_realloc((*Pdiag_idx), (*Pdiag_n) * c_int.sizeof);
   }
 
 
@@ -136,7 +137,7 @@ csc* form_KKT(const csc  *P,
   }
   else {
     // Allocate vector of indices from triplet to csc
-    KKT_TtoC = c_malloc((zKKT) * sizeof(c_int));
+    KKT_TtoC = cast(c_int*)c_malloc((zKKT) * c_int.sizeof);
 
     if (!KKT_TtoC) {
       // Error in allocating KKT_TtoC vector

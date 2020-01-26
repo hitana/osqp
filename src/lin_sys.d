@@ -18,13 +18,13 @@ import pardiso_loader;
 // Load linear system solver shared library
 c_int load_linsys_solver(linsys_solver_type linsys_solver) {
   switch (linsys_solver) {
-  case QDLDL_SOLVER:
+  case cast(linsys_solver_type)QDLDL_SOLVER:
 
     // We do not load  QDLDL solver. We have the source.
     return 0;
 
 version(ENABLE_MKL_PARDISO){
-  case MKL_PARDISO_SOLVER:
+  case cast(linsys_solver_type)MKL_PARDISO_SOLVER:
 
     // Load Pardiso library
     return lh_load_pardiso(OSQP_NULL);
@@ -38,13 +38,13 @@ version(ENABLE_MKL_PARDISO){
 // Unload linear system solver shared library
 c_int unload_linsys_solver(linsys_solver_type linsys_solver) {
   switch (linsys_solver) {
-  case QDLDL_SOLVER:
+  case cast(linsys_solver_type)QDLDL_SOLVER:
 
     // We do not load QDLDL solver. We have the source.
     return 0;
 
 version(ENABLE_MKL_PARDISO){
-  case MKL_PARDISO_SOLVER:
+  case cast(linsys_solver_type)MKL_PARDISO_SOLVER:
 
     // Unload Pardiso library
     return lh_unload_pardiso();
@@ -65,11 +65,11 @@ c_int init_linsys_solver(LinSysSolver          **s,
                          linsys_solver_type      linsys_solver,
                          c_int                   polish) {
   switch (linsys_solver) {
-  case QDLDL_SOLVER:
+  case cast(linsys_solver_type)QDLDL_SOLVER:
     return init_linsys_solver_qdldl(cast(qdldl_solver **)s, P, A, sigma, rho_vec, polish);
 
 version(ENABLE_MKL_PARDISO){
-  case MKL_PARDISO_SOLVER:
+  case cast(linsys_solver_type)MKL_PARDISO_SOLVER:
     return init_linsys_solver_pardiso(cast(pardiso_solver **)s, P, A, sigma, rho_vec, polish);
 
 } /* ifdef ENABLE_MKL_PARDISO */
