@@ -1,5 +1,7 @@
 module types;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import constants;
 import qdldl_types; // for QDLDL_int and others

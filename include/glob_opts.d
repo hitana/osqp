@@ -1,4 +1,7 @@
 module glob_opts;
+
+nothrow @nogc extern(C):
+
 /*
    Define OSQP compiler flags
  */

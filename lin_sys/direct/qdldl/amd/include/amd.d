@@ -34,13 +34,13 @@
 
 module amd;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 
-//#include "SuiteSparse_config.h"
 import SuiteSparse_config;
 
 /* get the definition of size_t: */
-//#include <stddef.h>
 import core.stdc.stddef;
 
 enum c_int AMD_CONTROL = 5;        /* size of Control array */

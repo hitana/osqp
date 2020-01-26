@@ -1,6 +1,8 @@
 
 module lin_alg;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import types;
 import constants; // for OSQP_NULL

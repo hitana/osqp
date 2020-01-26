@@ -1,7 +1,7 @@
-
 module qdldl_interface;
 
-//#include "glob_opts.h"
+nothrow @nogc extern(C):
+
 import glob_opts;
 import types; // CSC matrix type
 import constants; // for linsys_solver_type
@@ -9,8 +9,6 @@ import qdldl_types; // for QDLDL_float and others
 import cs;
 
 import qdldl;
-
-//#include "qdldl.h"
 //#include "qdldl_interface.h"
 
 /**

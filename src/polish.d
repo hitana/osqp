@@ -1,4 +1,8 @@
-//#include "polish.h"
+
+module polish;
+
+nothrow @nogc extern(C):
+
 import types;
 import glob_opts;
 

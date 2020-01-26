@@ -1,5 +1,7 @@
 module pardiso_loader;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import constants;
 import types;

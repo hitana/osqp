@@ -1,6 +1,7 @@
-
-
 module proj;
+
+nothrow @nogc extern(C):
+
 import types;
 import glob_opts;
 

@@ -1,5 +1,7 @@
 module scaling;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import types;
 import lin_alg;

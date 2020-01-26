@@ -1,5 +1,7 @@
 module cs;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import types; // CSC matrix type
 import lin_alg; // Vector copy operations

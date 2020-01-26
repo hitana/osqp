@@ -1,3 +1,6 @@
+module lin_sys;
+
+nothrow @nogc extern(C):
 
 import types;
 import glob_opts;

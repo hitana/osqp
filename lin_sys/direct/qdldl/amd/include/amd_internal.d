@@ -40,6 +40,8 @@
 #undef NDEBUG
 */
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 
 import SuiteSparse_config;

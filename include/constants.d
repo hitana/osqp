@@ -1,5 +1,7 @@
 module constants;
 
+nothrow @nogc extern(C):
+
 import glob_opts; // for c_float
 
 /*******************

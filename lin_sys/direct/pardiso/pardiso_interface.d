@@ -1,5 +1,7 @@
 module pardiso_interface;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 
 import types; // CSC matrix type

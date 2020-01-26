@@ -12,6 +12,8 @@
 
 module amd_postorder;
 
+nothrow @nogc extern(C):
+
 import amd_internal;
 import amd_post_tree;
 

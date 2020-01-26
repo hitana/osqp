@@ -1,3 +1,7 @@
+module error;
+
+nothrow @nogc extern(C):
+
 import types;
 import glob_opts;
 import constants;

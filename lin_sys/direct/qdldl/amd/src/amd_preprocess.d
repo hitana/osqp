@@ -18,6 +18,8 @@
 
 module amd_preprocess;
 
+nothrow @nogc extern(C):
+
 import amd_internal;
 import amd_valid;
 import amd;

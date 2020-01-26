@@ -1,5 +1,7 @@
 module lib_handler;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 //#include <ctype.h> // Needed for tolower functions
 

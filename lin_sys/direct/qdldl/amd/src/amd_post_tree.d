@@ -12,6 +12,8 @@
 
 module amd_post_tree;
 
+nothrow @nogc extern(C):
+
 import amd_internal;
 
 Int AMD_post_tree

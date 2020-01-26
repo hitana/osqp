@@ -1,4 +1,7 @@
+
 module osqp;
+
+nothrow @nogc extern(C):
 
 /* Includes */
 import glob_opts;

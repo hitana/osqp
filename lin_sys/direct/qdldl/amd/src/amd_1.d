@@ -26,6 +26,8 @@
 
 module amd_1;
 
+nothrow @nogc extern(C):
+
 import glob_opts; // for c_float
 import amd_internal;
 import amd;

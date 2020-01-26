@@ -35,6 +35,8 @@
 
 module amd_valid;
 
+nothrow @nogc extern(C):
+
 import amd_internal;
 import amd;
 

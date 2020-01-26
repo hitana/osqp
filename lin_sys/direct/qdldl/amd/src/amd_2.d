@@ -15,6 +15,8 @@
 
 module amd_2;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import amd_internal;
 import amd;

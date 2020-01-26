@@ -1,5 +1,7 @@
 module kkt;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import cs;
 import types; // CSC matrix type

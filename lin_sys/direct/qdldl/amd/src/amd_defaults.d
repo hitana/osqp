@@ -14,6 +14,8 @@
 
 module amd_defaults;
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 import amd_internal;
 import amd;

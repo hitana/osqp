@@ -45,6 +45,8 @@
 
 module suitesparse_config;
 
+nothrow @nogc extern(C):
+
 // Include OSQP Global options for memory management
 import glob_opts;
 
@@ -52,8 +54,6 @@ import core.stdc.math;
 import core.stdc.stdlib;
 import core.stdc.stdio;
 import core.stdc.limits;
-//#include <math.h>
-//#include <stdlib.h>
 //#ifndef NPRINT
 //#include <stdio.h>
 //#endif

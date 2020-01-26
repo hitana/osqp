@@ -7,6 +7,8 @@
  *
  */
 
+nothrow @nogc extern(C):
+
 import glob_opts;
 
 version(MATLAB)
