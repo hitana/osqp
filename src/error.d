@@ -20,9 +20,13 @@ enum OSQP_ERROR_MESSAGE = [  // const char *[]
   "Solver workspace not initialized."
 ];
 
-c_int _osqp_error(osqp_error_type error_code,
-		 const char * function_name) {
-version(PRINTING){
+import core.stdc.stdarg;
+import core.vararg;
+//c_int _osqp_error(osqp_error_type error_code, const char * function_name)
+c_int _osqp_error(osqp_error_type error_code, ...)
+{
+version(PRINTING){  
+  char * function_name = va_arg!(char * )(_argptr);  
   c_print("ERROR in %s: %s\n", function_name, cast(char*)(OSQP_ERROR_MESSAGE[error_code-1]));
 }
   return cast(c_int)error_code;

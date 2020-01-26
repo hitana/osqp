@@ -48,7 +48,7 @@ module suitesparse_config;
 // Include OSQP Global options for memory management
 import glob_opts;
 
-import std.math;
+import core.stdc.math;
 import core.stdc.stdlib;
 import core.stdc.stdio;
 import core.stdc.limits;

@@ -1,24 +1,21 @@
-//#include "osqp.h"
-
 module osqp;
 
 /* Includes */
 import glob_opts;
 import types;
+import constants;
 import util; // Needed for osqp_set_default_settings functions
+
 // Library to deal with sparse matrices enabled only if embedded not defined
 version(EMBEDDED) {}
 else {
 import cs;
 } // ifndef EMBEDDED
 
-
-//#include "auxil.h"
-//#include "util.h"
-//#include "scaling.h"
-//#include "glob_opts.h"
-//#include "error.h"
-
+import auxil;
+import lin_alg;
+import scaling;
+import error;
 
 version(EMBEDDED){}
 else {
@@ -64,7 +61,7 @@ version(PROFILING){
   settings.eps_dual_inf  = cast(c_float)EPS_DUAL_INF;   /* dual infeasibility
                                                         tolerance */
   settings.alpha         = cast(c_float)ALPHA;          /* relaxation parameter */
-  settings.linsys_solver = LINSYS_SOLVER;           /* relaxation parameter */
+  settings.linsys_solver = cast(linsys_solver_type)LINSYS_SOLVER;           /* relaxation parameter */
 
 version(EMBEDDED){}
 else {
@@ -98,114 +95,114 @@ c_int osqp_setup(OSQPWorkspace** workp, const OSQPData *data, const OSQPSettings
   OSQPWorkspace * work;
 
   // Validate data
-  if (validate_data(data)) return osqp_error(OSQP_DATA_VALIDATION_ERROR);
+  if (validate_data(data)) return osqp_error(cast(osqp_error_type)OSQP_DATA_VALIDATION_ERROR);
 
   // Validate settings
-  if (validate_settings(settings)) return osqp_error(OSQP_SETTINGS_VALIDATION_ERROR);
+  if (validate_settings(settings)) return osqp_error(cast(osqp_error_type)OSQP_SETTINGS_VALIDATION_ERROR);
 
   // Allocate empty workspace
-  work = c_calloc(1, (OSQPWorkspace.sizeof));
-  if (!(work)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work = cast(OSQPWorkspace*)c_calloc(1, (OSQPWorkspace.sizeof));
+  if (!(work)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
   *workp = work;
 
   // Start and allocate directly timer
 version(PROFILING){
-  work.timer = c_malloc((OSQPTimer.sizeof));
-  if (!(work.timer)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work.timer = cast(OSQPTimer*)c_malloc((OSQPTimer.sizeof));
+  if (!(work.timer)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
   osqp_tic(work.timer);
 } /* ifdef PROFILING */
 
   // Copy problem data into workspace
-  work.data = c_malloc((OSQPData.sizeof));
-  if (!(work.data)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work.data = cast(OSQPData*)c_malloc((OSQPData.sizeof));
+  if (!(work.data)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
   work.data.n = data.n;
   work.data.m = data.m;
 
   // Cost function
   work.data.P = copy_csc_mat(data.P);
-  work.data.q = vec_copy(data.q, data.n);
-  if (!(work.data.P) || !(work.data.q)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work.data.q = vec_copy(cast(double*)data.q, cast(int)data.n);
+  if (!(work.data.P) || !(work.data.q)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Constraints
   work.data.A = copy_csc_mat(data.A);
-  if (!(work.data.A)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
-  work.data.l = vec_copy(data.l, data.m);
-  work.data.u = vec_copy(data.u, data.m);
+  if (!(work.data.A)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
+  work.data.l = vec_copy(cast(double*)data.l, cast(int)data.m);
+  work.data.u = vec_copy(cast(double*)data.u, cast(int)data.m);
   if ( data.m && (!(work.data.l) || !(work.data.u)) )
-    return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Vectorized rho parameter
-  work.rho_vec     = c_malloc(data.m * (c_float.sizeof));
-  work.rho_inv_vec = c_malloc(data.m * (c_float.sizeof));
+  work.rho_vec     = cast(c_float*)c_malloc(data.m * (c_float.sizeof));
+  work.rho_inv_vec = cast(c_float*)c_malloc(data.m * (c_float.sizeof));
   if ( data.m && (!(work.rho_vec) || !(work.rho_inv_vec)) )
-    return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Type of constraints
-  work.constr_type = c_calloc(data.m, (c_int.sizeof));
-  if (data.m && !(work.constr_type)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work.constr_type = cast(c_int*)c_calloc(data.m, (c_int.sizeof));
+  if (data.m && !(work.constr_type)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Allocate internal solver variables (ADMM steps)
-  work.x        = c_calloc(data.n, (c_float.sizeof));
-  work.z        = c_calloc(data.m, (c_float.sizeof));
-  work.xz_tilde = c_calloc(data.n + data.m, (c_float.sizeof));
-  work.x_prev   = c_calloc(data.n, (c_float.sizeof));
-  work.z_prev   = c_calloc(data.m, (c_float.sizeof));
-  work.y        = c_calloc(data.m, (c_float.sizeof));
+  work.x        = cast(c_float*)c_calloc(data.n, (c_float.sizeof));
+  work.z        = cast(c_float*)c_calloc(data.m, (c_float.sizeof));
+  work.xz_tilde = cast(c_float*)c_calloc(data.n + data.m, (c_float.sizeof));
+  work.x_prev   = cast(c_float*)c_calloc(data.n, (c_float.sizeof));
+  work.z_prev   = cast(c_float*)c_calloc(data.m, (c_float.sizeof));
+  work.y        = cast(c_float*)c_calloc(data.m, (c_float.sizeof));
   if (!(work.x) || !(work.xz_tilde) || !(work.x_prev))
-    return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
   if ( data.m && (!(work.z) || !(work.z_prev) || !(work.y)) )
-    return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Initialize variables x, y, z to 0
   cold_start(work);
 
   // Primal and dual residuals variables
-  work.Ax  = c_calloc(data.m, (c_float.sizeof));
-  work.Px  = c_calloc(data.n, (c_float.sizeof));
-  work.Aty = c_calloc(data.n, (c_float.sizeof));
+  work.Ax  = cast(c_float*)c_calloc(data.m, (c_float.sizeof));
+  work.Px  = cast(c_float*)c_calloc(data.n, (c_float.sizeof));
+  work.Aty = cast(c_float*)c_calloc(data.n, (c_float.sizeof));
 
   // Primal infeasibility variables
-  work.delta_y   = c_calloc(data.m, (c_float.sizeof));
-  work.Atdelta_y = c_calloc(data.n, (c_float.sizeof));
+  work.delta_y   = cast(c_float*)c_calloc(data.m, (c_float.sizeof));
+  work.Atdelta_y = cast(c_float*)c_calloc(data.n, (c_float.sizeof));
 
   // Dual infeasibility variables
-  work.delta_x  = c_calloc(data.n, (c_float.sizeof));
-  work.Pdelta_x = c_calloc(data.n, (c_float.sizeof));
-  work.Adelta_x = c_calloc(data.m, (c_float.sizeof));
+  work.delta_x  = cast(c_float*)c_calloc(data.n, (c_float.sizeof));
+  work.Pdelta_x = cast(c_float*)c_calloc(data.n, (c_float.sizeof));
+  work.Adelta_x = cast(c_float*)c_calloc(data.m, (c_float.sizeof));
 
   if (!(work.Px) || !(work.Aty) || !(work.Atdelta_y) ||
       !(work.delta_x) || !(work.Pdelta_x))
-    return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
   if ( data.m && (!(work.Ax) || !(work.delta_y) || !(work.Adelta_x)) )
-    return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Copy settings
   work.settings = copy_settings(settings);
-  if (!(work.settings)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  if (!(work.settings)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Perform scaling
   if (settings.scaling) {
     // Allocate scaling structure
-    work.scaling = c_malloc((OSQPScaling.sizeof));
-    if (!(work.scaling)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
-    work.scaling.D    = c_malloc(data.n * (c_float.sizeof));
-    work.scaling.Dinv = c_malloc(data.n * (c_float.sizeof));
-    work.scaling.E    = c_malloc(data.m * (c_float.sizeof));
-    work.scaling.Einv = c_malloc(data.m * (c_float.sizeof));
+    work.scaling = cast(OSQPScaling*)c_malloc((OSQPScaling.sizeof));
+    if (!(work.scaling)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
+    work.scaling.D    = cast(c_float*)c_malloc(data.n * (c_float.sizeof));
+    work.scaling.Dinv = cast(c_float*)c_malloc(data.n * (c_float.sizeof));
+    work.scaling.E    = cast(c_float*)c_malloc(data.m * (c_float.sizeof));
+    work.scaling.Einv = cast(c_float*)c_malloc(data.m * (c_float.sizeof));
     if (!(work.scaling.D) || !(work.scaling.Dinv))
-      return osqp_error(OSQP_MEM_ALLOC_ERROR);
+      return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
     if ( data.m && (!(work.scaling.E) || !(work.scaling.Einv)) )
-      return osqp_error(OSQP_MEM_ALLOC_ERROR);
+      return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
 
     // Allocate workspace variables used in scaling
-    work.D_temp   = c_malloc(data.n * (c_float.sizeof));
-    work.D_temp_A = c_malloc(data.n * (c_float.sizeof));
-    work.E_temp   = c_malloc(data.m * (c_float.sizeof));
+    work.D_temp   = cast(c_float*)c_malloc(data.n * (c_float.sizeof));
+    work.D_temp_A = cast(c_float*)c_malloc(data.n * (c_float.sizeof));
+    work.E_temp   = cast(c_float*)c_malloc(data.m * (c_float.sizeof));
     // if (!(work.D_temp) || !(work.D_temp_A) || !(work.E_temp))
     //   return osqp_error(OSQP_MEM_ALLOC_ERROR);
-    if (!(work.D_temp) || !(work.D_temp_A)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
-    if (data.m && !(work.E_temp))           return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    if (!(work.D_temp) || !(work.D_temp_A)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
+    if (data.m && !(work.E_temp))           return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
     // Scale data
     scale_data(work);
@@ -220,7 +217,7 @@ version(PROFILING){
   set_rho_vec(work);
 
   // Load linear system solver
-  if (load_linsys_solver(work.settings.linsys_solver)) return osqp_error(OSQP_LINSYS_SOLVER_LOAD_ERROR);
+  if (load_linsys_solver(work.settings.linsys_solver)) return osqp_error(cast(osqp_error_type)OSQP_LINSYS_SOLVER_LOAD_ERROR);
 
   // Initialize linear system solver structure
   exitflag = init_linsys_solver(&(work.linsys_solver), work.data.P, work.data.A,
@@ -228,36 +225,36 @@ version(PROFILING){
                                 work.settings.linsys_solver, 0);
 
   if (exitflag) {
-    return osqp_error(exitflag);
+    return osqp_error(cast(osqp_error_type)exitflag);
   }
 
   // Initialize active constraints structure
-  work.pol = c_malloc(sizeof(OSQPPolish));
-  if (!(work.pol)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
-  work.pol.Alow_to_A = c_malloc(data.m * (c_int.sizeof));
-  work.pol.Aupp_to_A = c_malloc(data.m * (c_int.sizeof));
-  work.pol.A_to_Alow = c_malloc(data.m * (c_int.sizeof));
-  work.pol.A_to_Aupp = c_malloc(data.m * (c_int.sizeof));
-  work.pol.x         = c_malloc(data.n * (c_float.sizeof));
-  work.pol.z         = c_malloc(data.m * (c_float.sizeof));
-  work.pol.y         = c_malloc(data.m * (c_float.sizeof));
-  if (!(work.pol.x)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work.pol = cast(OSQPPolish*)c_malloc(OSQPPolish.sizeof);
+  if (!(work.pol)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
+  work.pol.Alow_to_A = cast(c_int*)c_malloc(data.m * (c_int.sizeof));
+  work.pol.Aupp_to_A = cast(c_int*)c_malloc(data.m * (c_int.sizeof));
+  work.pol.A_to_Alow = cast(c_int*)c_malloc(data.m * (c_int.sizeof));
+  work.pol.A_to_Aupp = cast(c_int*)c_malloc(data.m * (c_int.sizeof));
+  work.pol.x         = cast(c_float*)c_malloc(data.n * (c_float.sizeof));
+  work.pol.z         = cast(c_float*)c_malloc(data.m * (c_float.sizeof));
+  work.pol.y         = cast(c_float*)c_malloc(data.m * (c_float.sizeof));
+  if (!(work.pol.x)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
   if ( data.m && (!(work.pol.Alow_to_A) || !(work.pol.Aupp_to_A) ||
       !(work.pol.A_to_Alow) || !(work.pol.A_to_Aupp) ||
       !(work.pol.z) || !(work.pol.y)) )
-    return osqp_error(OSQP_MEM_ALLOC_ERROR);
+    return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Allocate solution
-  work.solution = c_calloc(1, (OSQPSolution.sizeof));
-  if (!(work.solution)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
-  work.solution.x = c_calloc(1, data.n * (c_float.sizeof));
-  work.solution.y = c_calloc(1, data.m * (c_float.sizeof));
-  if (!(work.solution.x))            return osqp_error(OSQP_MEM_ALLOC_ERROR);
-  if (data.m && !(work.solution.y)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work.solution = cast(OSQPSolution*)c_calloc(1, (OSQPSolution.sizeof));
+  if (!(work.solution)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
+  work.solution.x = cast(c_float*)c_calloc(1, data.n * (c_float.sizeof));
+  work.solution.y = cast(c_float*)c_calloc(1, data.m * (c_float.sizeof));
+  if (!(work.solution.x))            return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
+  if (data.m && !(work.solution.y)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Allocate and initialize information
-  work.info = c_calloc(1, (OSQPInfo.sizeof));
-  if (!(work.info)) return osqp_error(OSQP_MEM_ALLOC_ERROR);
+  work.info = cast(OSQPInfo*)c_calloc(1, (OSQPInfo.sizeof));
+  if (!(work.info)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
   work.info.status_polish = 0;              // Polishing not performed
   update_status(work.info, OSQP_UNSOLVED);
 version(PROFILING){
@@ -321,7 +318,7 @@ version(PRINTING){
 } /* ifdef PRINTING */
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1)
@@ -530,7 +527,7 @@ version(PRINTING){
       // Actually update rho
       if (adapt_rho(work)) {
 version(PRINTING){
-        c_eprint("Failed rho update");
+        c_eprint(cast(char*)"Failed rho update");
 } // PRINTING
         exitflag = 1;
         goto exit;
@@ -614,8 +611,9 @@ version(PROFILING){
 version(EMBEDDED) {}
 else {
   // Polish the obtained solution
-  if (work.settings.polish && (work.info.status_val == OSQP_SOLVED))
-    polish(work);
+  if (work.settings.polish && (work.info.status_val == OSQP_SOLVED)){
+    polish.polish(work);
+  }
 } /* ifndef EMBEDDED */
 
 version(PROFILING){
@@ -650,17 +648,16 @@ version(PRINTING){
   // Store solution
   store_solution(work);
 
-
 // Define exit flag for quitting function
 version(PROFILING){
-  exit;
+  exit:
 } else {
   version(CTRLC){
-    exit;
+    exit:
   }else {
     version(EMBEDDED_1){}
     else {
-      exit;
+      exit:
     }
   }
 }
@@ -791,7 +788,7 @@ version(PROFILING){
 c_int osqp_update_lin_cost(OSQPWorkspace *work, const c_float *q_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1) {
@@ -826,7 +823,7 @@ c_int osqp_update_bounds(OSQPWorkspace *work,
   c_int i, exitflag = 0;
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1) {
@@ -840,7 +837,7 @@ version(PROFILING){
   for (i = 0; i < work.data.m; i++) {
     if (l_new[i] > u_new[i]) {
 version(PRINTING){
-      c_eprint("lower bound must be lower than or equal to upper bound");
+      c_eprint(cast(char*)"lower bound must be lower than or equal to upper bound");
 } /* ifdef PRINTING */
       return 1;
     }
@@ -876,7 +873,7 @@ c_int osqp_update_lower_bound(OSQPWorkspace *work, const c_float *l_new) {
   c_int i, exitflag = 0;
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1) {
@@ -898,7 +895,7 @@ version(PROFILING){
   for (i = 0; i < work.data.m; i++) {
     if (work.data.l[i] > work.data.u[i]) {
 version(PRINTING){
-      c_eprint("upper bound must be greater than or equal to lower bound");
+      c_eprint(cast(char*)"upper bound must be greater than or equal to lower bound");
  } /* ifdef PRINTING */
       return 1;
     }
@@ -924,7 +921,7 @@ c_int osqp_update_upper_bound(OSQPWorkspace *work, const c_float *u_new) {
   c_int i, exitflag = 0;
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1) {
@@ -946,7 +943,7 @@ version(PROFILING){
   for (i = 0; i < work.data.m; i++) {
     if (work.data.u[i] < work.data.l[i]) {
 version(PRINTING){
-      c_eprint("lower bound must be lower than or equal to upper bound");
+      c_eprint(cast(char*)"lower bound must be lower than or equal to upper bound");
  } /* ifdef PRINTING */
       return 1;
     }
@@ -971,7 +968,7 @@ version(PROFILING){
 c_int osqp_warm_start(OSQPWorkspace *work, const c_float *x, const c_float *y) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Update warm_start setting to true
   if (!work.settings.warm_start) work.settings.warm_start = 1;
@@ -996,7 +993,7 @@ c_int osqp_warm_start(OSQPWorkspace *work, const c_float *x, const c_float *y) {
 c_int osqp_warm_start_x(OSQPWorkspace *work, const c_float *x) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Update warm_start setting to true
   if (!work.settings.warm_start) work.settings.warm_start = 1;
@@ -1018,7 +1015,7 @@ c_int osqp_warm_start_x(OSQPWorkspace *work, const c_float *x) {
 c_int osqp_warm_start_y(OSQPWorkspace *work, const c_float *y) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Update warm_start setting to true
   if (!work.settings.warm_start) work.settings.warm_start = 1;
@@ -1048,7 +1045,7 @@ c_int osqp_update_P(OSQPWorkspace *work,
   c_int nnzP;     // Number of nonzeros in P
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1) {
@@ -1065,7 +1062,7 @@ version(PROFILING){
     // nonzeros in P
     if (P_new_n > nnzP) {
 version(PRINTING){
-      c_eprint("new number of elements (%i) greater than elements in P (%i)",
+      c_eprint(cast(char*)"new number of elements (%i) greater than elements in P (%i)",
                cast(int)P_new_n,
                cast(int)nnzP);
 } /* ifdef PRINTING */
@@ -1107,7 +1104,7 @@ version(PRINTING){
 version(PRINTING){
 
   if (exitflag < 0) {
-    c_eprint("new KKT matrix is not quasidefinite");
+    c_eprint(cast(char*)"new KKT matrix is not quasidefinite");
   }
 } /* ifdef PRINTING */
 
@@ -1128,7 +1125,7 @@ c_int osqp_update_A(OSQPWorkspace *work,
   c_int nnzA;     // Number of nonzeros in A
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1) {
@@ -1145,7 +1142,7 @@ version(PROFILING){
     // nonzeros in A
     if (A_new_n > nnzA) {
 version(PRINTING){
-      c_eprint("new number of elements (%i) greater than elements in A (%i)",
+      c_eprint(cast(char*)"new number of elements (%i) greater than elements in A (%i)",
                cast(int)A_new_n,
                cast(int)nnzA);
 } /* ifdef PRINTING */
@@ -1186,7 +1183,7 @@ version(PRINTING){
 version(PRINTING){
 
   if (exitflag < 0) {
-    c_eprint("new KKT matrix is not quasidefinite");
+    c_eprint(cast(char*)"new KKT matrix is not quasidefinite");
   }
 } /* ifdef PRINTING */
 
@@ -1210,7 +1207,7 @@ c_int osqp_update_P_A(OSQPWorkspace *work,
   c_int nnzP, nnzA; // Number of nonzeros in P and A
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
 version(PROFILING){
   if (work.clear_update_time == 1) {
@@ -1229,7 +1226,7 @@ version(PROFILING){
     // nonzeros in P
     if (P_new_n > nnzP) {
 version(PRINTING){
-      c_eprint("new number of elements (%i) greater than elements in P (%i)",
+      c_eprint(cast(char*)"new number of elements (%i) greater than elements in P (%i)",
                cast(int)P_new_n,
                cast(int)nnzP);
 } /* ifdef PRINTING */
@@ -1243,7 +1240,7 @@ version(PRINTING){
     // nonzeros in A
     if (A_new_n > nnzA) {
 version(PRINTING){
-      c_eprint("new number of elements (%i) greater than elements in A (%i)",
+      c_eprint(cast(char*)"new number of elements (%i) greater than elements in A (%i)",
                cast(int)A_new_n,
                cast(int)nnzA);
 } /* ifdef PRINTING */
@@ -1297,7 +1294,7 @@ version(PRINTING){
 version(PRINTING){
 
   if (exitflag < 0) {
-    c_eprint("new KKT matrix is not quasidefinite");
+    c_eprint(cast(char*)"new KKT matrix is not quasidefinite");
   }
  } /* ifdef PRINTING */
 
@@ -1312,12 +1309,12 @@ c_int osqp_update_rho(OSQPWorkspace *work, c_float rho_new) {
   c_int exitflag, i;
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check value of rho
   if (rho_new <= 0) {
 version(PRINTING){
-    c_eprint("rho must be positive");
+    c_eprint(cast(char*)"rho must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1369,12 +1366,12 @@ version(PROFILING){
 c_int osqp_update_max_iter(OSQPWorkspace *work, c_int max_iter_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that max_iter is positive
   if (max_iter_new <= 0) {
 version(PRINTING){
-    c_eprint("max_iter must be positive");
+    c_eprint(cast(char*)"max_iter must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1388,12 +1385,12 @@ version(PRINTING){
 c_int osqp_update_eps_abs(OSQPWorkspace *work, c_float eps_abs_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that eps_abs is positive
   if (eps_abs_new < 0.) {
 version(PRINTING){
-    c_eprint("eps_abs must be nonnegative");
+    c_eprint(cast(char*)"eps_abs must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1407,12 +1404,12 @@ version(PRINTING){
 c_int osqp_update_eps_rel(OSQPWorkspace *work, c_float eps_rel_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that eps_rel is positive
   if (eps_rel_new < 0.) {
 version(PRINTING){
-    c_eprint("eps_rel must be nonnegative");
+    c_eprint(cast(char*)"eps_rel must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1426,12 +1423,12 @@ version(PRINTING){
 c_int osqp_update_eps_prim_inf(OSQPWorkspace *work, c_float eps_prim_inf_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that eps_prim_inf is positive
   if (eps_prim_inf_new < 0.) {
 version(PRINTING){
-    c_eprint("eps_prim_inf must be nonnegative");
+    c_eprint(cast(char*)"eps_prim_inf must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1445,12 +1442,12 @@ version(PRINTING){
 c_int osqp_update_eps_dual_inf(OSQPWorkspace *work, c_float eps_dual_inf_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that eps_dual_inf is positive
   if (eps_dual_inf_new < 0.) {
 version(PRINTING){
-    c_eprint("eps_dual_inf must be nonnegative");
+    c_eprint(cast(char*)"eps_dual_inf must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1465,12 +1462,12 @@ version(PRINTING){
 c_int osqp_update_alpha(OSQPWorkspace *work, c_float alpha_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that alpha is between 0 and 2
   if ((alpha_new <= 0.) || (alpha_new >= 2.)) {
 version(PRINTING){
-    c_eprint("alpha must be between 0 and 2");
+    c_eprint(cast(char*)"alpha must be between 0 and 2");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1484,12 +1481,12 @@ version(PRINTING){
 c_int osqp_update_warm_start(OSQPWorkspace *work, c_int warm_start_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that warm_start is either 0 or 1
   if ((warm_start_new != 0) && (warm_start_new != 1)) {
 version(PRINTING){
-    c_eprint("warm_start should be either 0 or 1");
+    c_eprint(cast(char*)"warm_start should be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1503,12 +1500,12 @@ version(PRINTING){
 c_int osqp_update_scaled_termination(OSQPWorkspace *work, c_int scaled_termination_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that scaled_termination is either 0 or 1
   if ((scaled_termination_new != 0) && (scaled_termination_new != 1)) {
 version(PRINTING){
-    c_eprint("scaled_termination should be either 0 or 1");
+    c_eprint(cast(char*)"scaled_termination should be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1522,12 +1519,12 @@ version(PRINTING){
 c_int osqp_update_check_termination(OSQPWorkspace *work, c_int check_termination_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that check_termination is nonnegative
   if (check_termination_new < 0) {
 version(PRINTING){
-    c_eprint("check_termination should be nonnegative");
+    c_eprint(cast(char*)"check_termination should be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1544,12 +1541,12 @@ else{
 c_int osqp_update_delta(OSQPWorkspace *work, c_float delta_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that delta is positive
   if (delta_new <= 0.) {
 version(PRINTING){
-    c_eprint("delta must be positive");
+    c_eprint(cast(char*)"delta must be positive");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1563,12 +1560,12 @@ version(PRINTING){
 c_int osqp_update_polish(OSQPWorkspace *work, c_int polish_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that polish is either 0 or 1
   if ((polish_new != 0) && (polish_new != 1)) {
 version(PRINTING){
-    c_eprint("polish should be either 0 or 1");
+    c_eprint(cast(char*)"polish should be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1588,12 +1585,12 @@ version(PROFILING){
 c_int osqp_update_polish_refine_iter(OSQPWorkspace *work, c_int polish_refine_iter_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that polish_refine_iter is nonnegative
   if (polish_refine_iter_new < 0) {
 version(PRINTING){
-    c_eprint("polish_refine_iter must be nonnegative");
+    c_eprint(cast(char*)"polish_refine_iter must be nonnegative");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1607,13 +1604,13 @@ version(PRINTING){
 c_int osqp_update_verbose(OSQPWorkspace *work, c_int verbose_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that verbose is either 0 or 1
   if ((verbose_new != 0) && (verbose_new != 1)) {
 
 version(PRINTING){
-    c_eprint("verbose should be either 0 or 1");
+    c_eprint(cast(char*)"verbose should be either 0 or 1");
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1631,7 +1628,7 @@ version(PROFILING){
 c_int osqp_update_time_limit(OSQPWorkspace *work, c_float time_limit_new) {
 
   // Check if workspace has been initialized
-  if (!work) return osqp_error(OSQP_WORKSPACE_NOT_INIT_ERROR);
+  if (!work) return osqp_error(cast(osqp_error_type)OSQP_WORKSPACE_NOT_INIT_ERROR);
 
   // Check that time_limit is nonnegative
   if (time_limit_new < 0.) {

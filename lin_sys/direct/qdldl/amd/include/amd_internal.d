@@ -70,7 +70,7 @@ import core.stdc.stdio;
 import core.stdc.limits;
 
 /* from math.h: sqrt */
-import std.math;
+import core.stdc.math;
 
 /* ------------------------------------------------------------------------- */
 /* MATLAB include files (only if being used in or via MATLAB) */
@@ -284,7 +284,9 @@ else
     /* from assert.h:  assert macro */
     // todo : maybe no need special import for assert
     //#include <assert.h>
-    import std.exception;
+    import core.exception;
+    //import core.sync.exception;
+    //import core.stdcpp.exception;
 
     //#ifndef EXTERN
     //#define EXTERN extern

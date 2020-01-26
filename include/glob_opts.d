@@ -134,7 +134,7 @@ auto ref c_roundmultiple(T)(auto ref return T x, auto ref return T N) { return x
 // todo : test EMBEDDED_1
 version (EMBEDDED_1) {} // if EMBEDDED != 1
 else {
-  import std.math;
+  import core.stdc.math;
   version (DFLOAT){
     //#define c_sqrt sqrtf
     //#define c_fmod fmodf
@@ -155,7 +155,7 @@ alias c_print = printf; // todo : for SuiteSparse_config module
 version (PRINTING)
 {
   import core.stdc.stdio;
-  import std.string;
+  import core.stdc.string;
 
   version (MATLAB)
   {

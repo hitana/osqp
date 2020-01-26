@@ -213,7 +213,9 @@ static void get_ypol_from_yred(OSQPWorkspace *work, c_float *yred) {
 }
 
 c_int polish(OSQPWorkspace *work) {
-  c_int mred, polish_successful, exitflag;
+  c_int mred;
+  c_int polish_successful;
+  c_int exitflag;
   c_float *rhs_red;
   LinSysSolver *plsh;
   c_float *pol_sol; // Polished solution

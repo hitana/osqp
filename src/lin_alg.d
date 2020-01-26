@@ -108,8 +108,8 @@ else {
     c_float *b;
     c_int    i;
 
-    b = c_malloc(n * (c_float.sizeof));
-    if (!b) return OSQP_NULL;
+    b = cast(double*)c_malloc(n * (c_float.sizeof));
+    if (!b) return null;//OSQP_NULL;
 
     for (i = 0; i < n; i++) {
       b[i] = a[i];

@@ -19,7 +19,7 @@ import glob_opts;
 import amd_internal;
 import amd;
 import amd_postorder;
-import std.math;
+import core.stdc.math;
 
 /* ========================================================================= */
 /* === clear_flag ========================================================== */

@@ -41,7 +41,7 @@ static void print_line() {
 
   for (i = 0; i < HEADER_LINE_LEN; ++i) the_line[i] = '-';
   the_line[HEADER_LINE_LEN] = '\0';
-  c_print("%s\n", the_line);
+  c_print(cast(char*)"%s\n", cast(char*)the_line);
 }
 
 void print_header() {
@@ -288,7 +288,7 @@ version(PROFILING){
   newSettings.polish = settings.polish;
   newSettings.polish_refine_iter = settings.polish_refine_iter;
   newSettings.verbose = settings.verbose;
-  nenewSettingsw.scaled_termination = settings.scaled_termination;
+  newSettings.scaled_termination = settings.scaled_termination;
   newSettings.check_termination = settings.check_termination;
   newSettings.warm_start = settings.warm_start;
 version(PROFILING){

@@ -57,8 +57,16 @@ extern const char *[] LINSYS_SOLVER_NAME;
 /******************
 * Solver Errors  *
 ******************/
+enum int OSQP_DATA_VALIDATION_ERROR = 1;
+enum int OSQP_SETTINGS_VALIDATION_ERROR = 2;
+enum int OSQP_LINSYS_SOLVER_LOAD_ERROR = 3;
+enum int OSQP_LINSYS_SOLVER_INIT_ERROR = 4;
+enum int OSQP_NONCVX_ERROR = 5;
+enum int OSQP_MEM_ALLOC_ERROR = 6;
+enum int OSQP_WORKSPACE_NOT_INIT_ERROR = 7;
+
 enum osqp_error_type {
-    OSQP_DATA_VALIDATION_ERROR = 1,  /* Start errors from 1 */
+    OSQP_DATA_VALIDATION_ERROR,  /* Start errors from 1 */
     OSQP_SETTINGS_VALIDATION_ERROR,
     OSQP_LINSYS_SOLVER_LOAD_ERROR,
     OSQP_LINSYS_SOLVER_INIT_ERROR,
@@ -67,11 +75,6 @@ enum osqp_error_type {
     OSQP_WORKSPACE_NOT_INIT_ERROR,
 };
 //extern const char * [] OSQP_ERROR_MESSAGE;
-
-// test for qdldl_interface.d compilation
-enum int OSQP_LINSYS_SOLVER_INIT_ERROR = 4;
-enum int OSQP_NONCVX_ERROR = 5;
-
 
 /**********************************
 * Solver Parameters and Settings *
@@ -99,6 +102,7 @@ enum float EPS_ABS = 1E-3;
 enum float EPS_REL = 1E-3;
 enum float EPS_PRIM_INF = 1E-4;
 enum float EPS_DUAL_INF = 1E-4;
+enum float ALPHA = 1.6;
 alias LINSYS_SOLVER = QDLDL_SOLVER;
 
 enum float RHO_MIN = 1e-06;
