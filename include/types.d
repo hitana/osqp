@@ -376,7 +376,7 @@ version(PRINTING){
 alias solve_t = c_int function(LinSysSolver* self, c_float* b);
 alias update_matrices_t = c_int function(LinSysSolver* s, const csc* P, const csc* A);
 alias update_rho_vec_t = c_int function(LinSysSolver* s, const c_float* rho_vec);
-alias free_t void function(LinSysSolver* self);
+alias free_t = void function(LinSysSolver* self);
 
 struct linsys_solver {
   linsys_solver_type type;                 ///< linear system solver type functions
