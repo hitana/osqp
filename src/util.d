@@ -104,7 +104,7 @@ void print_setup_header(const OSQPWorkspace *work) {
   // Print Settings
   c_print(cast(char*)"settings: ");
   c_print(cast(char*)"linear system solver = %s",
-          LINSYS_SOLVER_NAME[settings.linsys_solver]);
+          cast(char*)(LINSYS_SOLVER_NAME[settings.linsys_solver]));
 
   if (work.linsys_solver.nthreads != 1) {
     c_print(cast(char*)" (%d threads)", cast(int)work.linsys_solver.nthreads);
