@@ -5,6 +5,7 @@ nothrow @nogc extern(C):
 import glob_opts;
 import types;
 import constants;
+import lin_sys;
 import core.sys.posix.time;
 
 /* ================================= DEBUG FUNCTIONS ======================= */
