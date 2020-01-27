@@ -373,11 +373,12 @@ version(PRINTING){
  * NB: The details are defined when the linear solver is initialized depending
  *      on the choice
  */
+alias solve_t = c_int function(LinSysSolver* self, c_float* b);
 struct linsys_solver {
   linsys_solver_type type;                 ///< linear system solver type functions
   //c_int (*solve)(LinSysSolver *self,
   //               c_float      *b);              ///< solve linear system
-  c_int function(LinSysSolver* self, c_float* b) solve;  // todo : pointer disppeared
+  solve_t solve;
 
 version(EMBEDDED){}
 else { // ifndef EMBEDDED
