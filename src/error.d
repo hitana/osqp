@@ -14,7 +14,7 @@ import constants;
 //#  define osqp_error(error_code) _osqp_error(error_code, __FUNCTION__);
 //#endif
 
-enum OSQP_ERROR_MESSAGE = [  // const char *[] 
+string[7] OSQP_ERROR_MESSAGE = [
   "Problem data validation.",
   "Solver settings validation.",
   "Linear system solver not available.\nTried to obtain it from shared library.",
@@ -30,8 +30,9 @@ import core.vararg;
 c_int _osqp_error(osqp_error_type error_code, ...)
 {
 version(PRINTING){  
-  char * function_name = va_arg!(char * )(_argptr);  
-  c_print("ERROR in %s: %s\n", function_name, cast(char*)(OSQP_ERROR_MESSAGE[error_code-1]));
+  char * function_name = va_arg!(char * )(_argptr);
+  char * text = cast(char*)(OSQP_ERROR_MESSAGE[error_code-1]);
+  c_print("ERROR in %s: %s\n", function_name, text));
 }
   return cast(c_int)error_code;
 }
