@@ -32,7 +32,7 @@ c_int _osqp_error(osqp_error_type error_code, ...)
 version(PRINTING){  
   char * function_name = va_arg!(char * )(_argptr);
   char * text = cast(char*)(OSQP_ERROR_MESSAGE[error_code-1]);
-  c_print("ERROR in %s: %s\n", function_name, text));
+  c_print("ERROR in %s: %s\n", function_name, text);
 }
   return cast(c_int)error_code;
 }
