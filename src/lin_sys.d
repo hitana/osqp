@@ -7,7 +7,7 @@ import glob_opts;
 import constants;
 import qdldl_interface;  // Include only this solver in the same directory
 
- enum LINSYS_SOLVER_NAME = [  // const char * []
+string[2] LINSYS_SOLVER_NAME = [
   "qdldl", "mkl pardiso"
  ];
 
