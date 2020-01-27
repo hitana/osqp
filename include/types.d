@@ -374,6 +374,10 @@ version(PRINTING){
  *      on the choice
  */
 alias solve_t = c_int function(LinSysSolver* self, c_float* b);
+alias update_matrices_t = c_int function(LinSysSolver* s, const csc* P, const csc* A);
+alias update_rho_vec_t = c_int function(LinSysSolver* s, const c_float* rho_vec);
+alias free_t void function(LinSysSolver* self);
+
 struct linsys_solver {
   linsys_solver_type type;                 ///< linear system solver type functions
   //c_int (*solve)(LinSysSolver *self,
@@ -383,22 +387,19 @@ struct linsys_solver {
 version(EMBEDDED){}
 else { // ifndef EMBEDDED
   //void (*free)(LinSysSolver *self);             ///< free linear system solver (only in desktop version)
-  void function(LinSysSolver* self) free; // todo
+  free_t free; // todo
 } // ifndef EMBEDDED
 
 version(EMBEDDED_1){}
 else { // ifndef EMBEDDED
-
-
-
   //c_int (*update_matrices)(LinSysSolver *s,
   //                         const csc *P,            ///< update matrices P
   //                         const csc *A);           //   and A in the solver
-  c_int function(LinSysSolver* s, const csc* P, const csc* A) update_matrices;
+  update_matrices_t update_matrices;
 
   //c_int (*update_rho_vec)(LinSysSolver  *s,
   //                        const c_float *rho_vec);  ///< Update rho_vec
-  c_int function(LinSysSolver* s, const c_float* rho_vec) update_rho_vec;
+  update_rho_vec_t update_rho_vec;
 } // if EMBEDDED != 1
 
 version(EMBEDDED){}
