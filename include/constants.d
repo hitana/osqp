@@ -53,7 +53,7 @@ enum linsys_solver_type { QDLDL_SOLVER, MKL_PARDISO_SOLVER };
 enum int QDLDL_SOLVER = 0;
 enum int MKL_PARDISO_SOLVER = 1;
 
-extern const char *[] LINSYS_SOLVER_NAME;
+//extern const char *[] LINSYS_SOLVER_NAME;
 
 
 /******************
