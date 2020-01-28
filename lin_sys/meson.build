@@ -9,7 +9,7 @@ if embedded == '0'
                                 ['lib_handler.d'], 
                                 ['lib_handler.h'],
                                 include_directories: ['../include', 'direct/qdldl',
-                                '../src'], # for D modules
+                                '../src', 'direct/qdldl/amd/src', 'direct/qdldl/amd/include', 'direct/qdldl/qdldl_sources/src'], # for D modules
                                 c_args: c_args
                             	  )
                         

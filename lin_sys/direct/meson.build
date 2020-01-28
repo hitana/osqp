@@ -16,7 +16,7 @@ if embedded == '0'
     linsys_pardiso_lib = library('linsys_pardiso', 
                                  ['pardiso/pardiso_interface.d', 'pardiso/pardiso_loader.d'],
                                  include_directories: ['pardiso', '../../include', '../',
-                                 '../../src', 'qdldl/qdldl_sources/src', '../', '../../lin_sys' # for D modules
+                                 '../../src', 'qdldl/qdldl_sources/src', '../', '../../lin_sys', 'qdldl', 'qdldl/amd/src', 'qdldl/amd/include'  # for D modules
                                  ],
                                  c_args: c_args)
     
