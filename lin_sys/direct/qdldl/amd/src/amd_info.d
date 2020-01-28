@@ -19,7 +19,7 @@ nothrow @nogc extern(C):
 import glob_opts;
 import amd_internal;
 import amd;
-import suitesparse_config;
+import SuiteSparse_config;
 
 //#define PRI(format,x) { if (x >= 0) { SUITESPARSE_PRINTF ((format, x)) ; }}
 //auto PRI (T)(string format, auto ref T x) { if (x >= 0) { SUITESPARSE_PRINTF ((format, x)) ; }}

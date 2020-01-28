@@ -254,7 +254,8 @@ osqp_src = ['src/auxil.d',
             'src/osqp.d',
             'src/proj.d',
             'src/scaling.d',
-            'src/util.d']
+            'src/util.d',            
+            'include/glob_opts.d']
 
 # Add the KKT update only in normal mode and matrix-updating embedded mode (not mode 1)
 # todo : EMBEDDED also requires these files
@@ -326,9 +327,28 @@ if not python and not matlab and not r_lang and (embedded == '0')
   # install(['TARGETS', 'osqp', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])
 
   message('Create demo executable (linked to static library)')
+
+  demo_src = ['examples/osqp_demo.c', 
+              'include/glob_opts.d',
+              'lin_sys/direct/qdldl/amd/src/SuiteSparse_config.d',
+              'lin_sys/direct/qdldl/amd/include/amd.d',
+              'lin_sys/direct/qdldl/amd/src/amd_1.d',
+              'lin_sys/direct/qdldl/amd/src/amd_2.d',
+              'lin_sys/direct/qdldl/amd/src/amd_aat.d',
+              'lin_sys/direct/qdldl/amd/src/amd_control.d',
+              'lin_sys/direct/qdldl/amd/src/amd_defaults.d',
+              'lin_sys/direct/qdldl/amd/src/amd_info.d',
+              'lin_sys/direct/qdldl/amd/src/amd_order.d',
+              'lin_sys/direct/qdldl/amd/src/amd_post_tree.d',
+              'lin_sys/direct/qdldl/amd/src/amd_postorder.d',
+              'lin_sys/direct/qdldl/amd/src/amd_preprocess.d',
+              'lin_sys/direct/qdldl/amd/src/amd_valid.d',
+              'lin_sys/direct/qdldl/amd/include/amd_internal.d'
+              ]
+
   osqp_demo_exe = executable('osqp_demo', 
-                            'examples/osqp_demo.c',
-                            include_directories: ['include'],
+                            demo_src,
+                            include_directories: ['include', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include'],
                             dependencies: [gcov_lib],
                             link_with: osqp_lib,
                             #link_with: osqpstatic_lib,

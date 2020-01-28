@@ -23,7 +23,7 @@ import amd_1;
 import amd_valid;
 import amd_preprocess;
 import amd_aat;
-import suitesparse_config;
+import SuiteSparse_config;
 
 /* ========================================================================= */
 /* === AMD_order =========================================================== */

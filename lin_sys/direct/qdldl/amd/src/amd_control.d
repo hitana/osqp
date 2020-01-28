@@ -20,7 +20,7 @@ nothrow @nogc extern(C):
 import glob_opts;
 import amd_internal;
 import amd;
-import suitesparse_config;
+import SuiteSparse_config;
 
 void AMD_control
 (

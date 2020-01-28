@@ -43,8 +43,13 @@
 nothrow @nogc extern(C):
 
 import glob_opts;
-
 import SuiteSparse_config;
+import amd_postorder;
+import amd_preprocess;
+import amd_aat;
+import amd_valid;
+import amd_1;
+import amd_2;
 
 /* ------------------------------------------------------------------------- */
 /* ANSI include files */
@@ -210,20 +215,20 @@ version(DLONG){
     alias Int = SuiteSparse_long;
     alias ID = SuiteSparse_long_id;
     alias Int_MAX = SuiteSparse_long_max;
-    alias AMD_order = amd_l_order;
-    alias AMD_defaults = amd_l_defaults;
-    alias AMD_control = amd_l_control;
-    alias AMD_info = amd_l_info;
-    alias AMD_1 = amd_l1;
-    alias AMD_2 = amd_l2;
-    alias AMD_valid = amd_l_valid;
-    alias AMD_aat = amd_l_aat;
-    alias AMD_postorder = amd_l_postorder;
-    alias AMD_post_tree = amd_l_post_tree;
-    alias AMD_dump = amd_l_dump;
-    alias AMD_debug = amd_l_debug;
-    alias AMD_debug_init = amd_l_debug_init;
-    alias AMD_preprocess = amd_l_preprocess;
+    alias amd_l_order = AMD_order;
+    alias amd_l_defaults = AMD_defaults;
+    alias amd_l_control = AMD_control;
+    alias amd_l_info = AMD_info;
+    alias amd_l1 = AMD_1;
+    alias amd_l2 = AMD_2;
+    alias amd_l_valid = AMD_valid;
+    alias amd_l_aat = AMD_aat;
+    alias Aamd_l_postorder = MD_postorder;
+    alias amd_l_post_tree = AMD_post_tree;
+    alias amd_l_dump = AMD_dump;
+    alias amd_l_debug = AMD_debug;
+    alias amd_l_debug_init = AMD_debug_init;
+    alias amd_l_preprocess = AMD_preprocess;
 }
 else {
     version(ZLONG){
@@ -232,15 +237,15 @@ else {
         alias Int_MAX = SuiteSparse_long_max;
         alias AMD_order = amd_l_order;
         alias AMD_defaults = amd_l_defaults;
-        alias AMD_control = amd_l_control;
-        alias AMD_info = amd_l_info;
-        alias AMD_1 = amd_l1;
-        alias AMD_2 = amd_l2;
-        alias AMD_valid = amd_l_valid;
-        alias AMD_aat = amd_l_aat;
-        alias AMD_postorder = amd_l_postorder;
-        alias AMD_post_tree = amd_l_post_tree;
-        alias AMD_dump = amd_l_dump;
+        alias amd_l_control = AMD_control;
+        alias amd_l_info = AMD_info;
+        alias amd_l1 = AMD_1;
+        alias amd_l2 = AMD_2;
+        alias amd_l_valid = AMD_valid;
+        alias amd_l_aat = AMD_aat;
+        alias amd_l_postorder = AMD_postorder;
+        alias amd_l_post_tree = AMD_post_tree;
+        alias amd_l_dump = AMD_dump;
         alias amd_l_debug = AMD_debug;
         alias amd_l_debug_init = AMD_debug_init;
         alias amd_l_preprocess = AMD_preprocess;
@@ -249,13 +254,12 @@ else {
         alias Int = int;
         enum string ID = "%d";
         alias Int_MAX = INT_MAX;
-
-        // todo : switch places
-        alias AMD_order = amd_order;
-        alias AMD_defaults = amd_defaults;
-        alias AMD_control = amd_control;
-        alias AMD_info = amd_info;
-        alias amd_1 = AMD_1;
+        
+        alias amd_order = AMD_order;
+        alias amd_defaults = AMD_defaults;
+        alias amd_control = AMD_control;
+        alias amd_info = AMD_info;
+        alias amd_1 = amd_1.AMD_1;
         alias amd_2 = AMD_2;
         alias amd_valid = AMD_valid;
         alias amd_aat = AMD_aat;

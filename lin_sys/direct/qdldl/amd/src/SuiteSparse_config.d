@@ -43,7 +43,7 @@
  * Author: Timothy A. Davis.
  */
 
-module suitesparse_config;
+module SuiteSparse_config;
 
 nothrow @nogc extern(C):
 

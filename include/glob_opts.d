@@ -213,6 +213,26 @@ version (PRINTING)
   //#  define c_eprint(...) c_print("ERROR in %s: ", __FUNCTION__); c_print(__VA_ARGS__); c_print("\n");
   //void c_eprint(ref c_int a, ref c_int b) { c_print("ERROR in %s: ", __FUNCTION__); c_print(__VA_ARGS__); c_print("\n"); }
 
+  import core.stdc.stdarg;
+  import core.vararg;  
 
-  void c_eprint(char* a, ...) { c_print("ERROR in %s: ", __FUNCTION__); c_print(__VA_ARGS__); c_print("\n"); }  
+
+  void c_eprint(char* a, ...) {
+    // We can't use hte following method because of
+    // Error: @nogc function glob_opts.c_eprint cannot call non-@nogc function core.stdc.stdarg.va_end
+    //va_list args;
+    //va_start(args, a);
+    // it's up to you to figure out the end of the list!
+    // isn't that fun?
+    //va_end(args);
+  
+    // todo : so I skip all arguments printing for now
+
+    c_print(cast(char*)"ERROR in %s: ", cast(char*)__FUNCTION__); 
+    //for (int i = 0; i < _arguments.length; i++) c_print(_arguments[i]);  // works only for extern (D) functions
+
+  
+
+    c_print(cast(char*)"\n"); 
+  }
 }
