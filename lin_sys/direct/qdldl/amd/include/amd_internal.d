@@ -328,7 +328,7 @@ else
     //#endif
 
     //EXTERN Int AMD_debug ;
-    __gshared Int AMD_debug = 3; // for example
+    //__gshared Int AMD_debug = 3; // todo : AMD_debug declared nowhere in C code
 
     //#ifdef ASSERT
     //#undef ASSERT
@@ -349,9 +349,10 @@ else
     //#define AMD_DEBUG3(params) { if (AMD_debug >= 3) SUITESPARSE_PRINTF (params) ; }
     //#define AMD_DEBUG4(params) { if (AMD_debug >= 4) SUITESPARSE_PRINTF (params) ; }
     void AMD_DEBUG0(T)(auto ref T params, ...) { SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG1(T)(auto ref T params, ...) { if (AMD_debug >= 1) SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG2(T)(auto ref T params, ...) { if (AMD_debug >= 2) SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG3(T)(auto ref T params, ...) { if (AMD_debug >= 3) SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG4(T)(auto ref T params, ...) { if (AMD_debug >= 4) SUITESPARSE_PRINTF (params); }
+    // todo : AMD_debug declared nowhere in C code
+    void AMD_DEBUG1(T)(auto ref T params, ...) { /*if (AMD_debug >= 1)*/ SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG2(T)(auto ref T params, ...) { /*if (AMD_debug >= 2) */SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG3(T)(auto ref T params, ...) { /*if (AMD_debug >= 3)*/ SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG4(T)(auto ref T params, ...) { /*if (AMD_debug >= 4) */SUITESPARSE_PRINTF (params); }
 
 } // !NDEBUG

@@ -334,23 +334,24 @@ if not python and not matlab and not r_lang and (embedded == '0')
 
   message('Create demo executable (linked to static library)')
 
-  demo_src = ['examples/osqp_demo.c', 
-              'include/glob_opts.d',
-              'lin_sys/direct/qdldl/amd/src/SuiteSparse_config.d',
-              'lin_sys/direct/qdldl/amd/include/amd.d',
-              'lin_sys/direct/qdldl/amd/src/amd_1.d',
-              'lin_sys/direct/qdldl/amd/src/amd_2.d',
-              'lin_sys/direct/qdldl/amd/src/amd_aat.d',
-              'lin_sys/direct/qdldl/amd/src/amd_control.d',
-              'lin_sys/direct/qdldl/amd/src/amd_defaults.d',
-              'lin_sys/direct/qdldl/amd/src/amd_info.d',
-              'lin_sys/direct/qdldl/amd/src/amd_order.d',
-              'lin_sys/direct/qdldl/amd/src/amd_post_tree.d',
-              'lin_sys/direct/qdldl/amd/src/amd_postorder.d',
-              'lin_sys/direct/qdldl/amd/src/amd_preprocess.d',
-              'lin_sys/direct/qdldl/amd/src/amd_valid.d',
-              'lin_sys/direct/qdldl/amd/include/amd_internal.d'
-              ]
+  d_library_src = ['include/glob_opts.d',
+          'include/constants.d',
+          'lin_sys/direct/qdldl/amd/src/SuiteSparse_config.d',
+          'lin_sys/direct/qdldl/amd/include/amd.d',
+          'lin_sys/direct/qdldl/amd/src/amd_1.d',
+          'lin_sys/direct/qdldl/amd/src/amd_2.d',
+          'lin_sys/direct/qdldl/amd/src/amd_aat.d',
+          'lin_sys/direct/qdldl/amd/src/amd_control.d',
+          'lin_sys/direct/qdldl/amd/src/amd_defaults.d',
+          'lin_sys/direct/qdldl/amd/src/amd_info.d',
+          'lin_sys/direct/qdldl/amd/src/amd_order.d',
+          'lin_sys/direct/qdldl/amd/src/amd_post_tree.d',
+          'lin_sys/direct/qdldl/amd/src/amd_postorder.d',
+          'lin_sys/direct/qdldl/amd/src/amd_preprocess.d',
+          'lin_sys/direct/qdldl/amd/src/amd_valid.d',
+          'lin_sys/direct/qdldl/amd/include/amd_internal.d']
+  
+  demo_src = ['examples/osqp_demo.c', d_library_src]
 
   osqp_demo_exe = executable('osqp_demo', 
                             demo_src,
@@ -372,10 +373,11 @@ if conf_data.get('UNITTESTS')
 
   # Generating tests.stamp so that the test data are not always generated
   # set(data_timestamp ${PROJECT_SOURCE_DIR}/tests/tests_data.stamp)
+  tester_src = ['tests/osqp_tester.c', d_library_src]
 
   osqp_tester_exe = executable('osqp_tester', 
-                               ['tests/osqp_tester.c'],
-                               include_directories: ['include', 'tests', test_include_dirs],
+                               tester_src,
+                               include_directories: ['include', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include', 'tests', test_include_dirs],
                                dependencies: [gcov_lib],
                                link_with: osqpstatic_lib,
                                c_args: c_args,
@@ -383,9 +385,10 @@ if conf_data.get('UNITTESTS')
                                )
   
   # Add custom memory target
+  tester_memory_src = ['tests/osqp_tester.c', 'tests/custom_memory/custom_memory.c', d_library_src]
   osqp_tester_custom_memory_exe = executable('osqp_tester_custom_memory', 
-                                            ['tests/osqp_tester.c', 'tests/custom_memory/custom_memory.c'],
-                                            include_directories: ['include', 'tests', test_include_dirs],
+                                            tester_memory_src,
+                                            include_directories: ['include', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include', 'tests', test_include_dirs],
                                             dependencies: [gcov_lib],
                                             link_with: osqpstatic_lib,
                                             c_args: c_args,
