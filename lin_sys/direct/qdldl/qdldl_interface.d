@@ -211,9 +211,11 @@ static c_int permute_KKT(csc ** KKT, qdldl_solver * p, c_int Pnz, c_int Anz, c_i
 
     // Compute permutation matrix P using AMD
 version(DLONG) {
-    amd_status = amd_l_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
+    //amd_status = amd_l_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
+    amd_status = AMD_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
 } else {
-    amd_status = amd_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
+    //amd_status = amd_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
+    amd_status = AMD_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
 }
     if (amd_status < 0) {
         // Free Amd info and return an error

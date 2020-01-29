@@ -741,8 +741,9 @@ else {
 
 version(NDEBUG){}
 else {
-	//AMD_DEBUG1 (("\n======Nel "ID"\n", nel)) ; // todo
-	if (AMD_debug >= 2)
+	//AMD_DEBUG1 (("\n======Nel "ID"\n", nel)) ; // todo : AMD_debug: TLS reference in libosqp.so mismatches non-TLS definition in osqp_demo@exe/lin_sys_direct_qdldl_amd_include_amd_internal.d.o section .bss
+	//if (AMD_debug >= 2)
+	if (true)		// todo : 
 	{
 	    AMD_dump (n, Pe, Iw, Len, iwlen, pfree, Nv, Next,
 		    Last, Head, Elen, Degree, W, nel) ;

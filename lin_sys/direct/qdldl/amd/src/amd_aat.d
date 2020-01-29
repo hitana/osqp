@@ -68,7 +68,7 @@ else {
     {
 	p1 = Ap [k] ;
 	p2 = Ap [k+1] ;
-	//AMD_DEBUG2 (("\nAAT Column: "ID" p1: "ID" p2: "ID"\n", k, p1, p2)) ;	// todo: later
+	AMD_DEBUG2 ("\nAAT Column: "~ID~" p1: "~ID~" p2: "~ID~"\n", k, p1, p2) ;
 
 	/* construct A+A' */
 	for (p = p1 ; p < p2 ; )
@@ -81,7 +81,7 @@ else {
 		 * add both A (j,k) and A (k,j) to the matrix A+A' */
 		Len [j]++ ;
 		Len [k]++ ;
-		//AMD_DEBUG3 (("    upper ("ID","ID") ("ID","ID")\n", j,k, k,j));	// todo : later
+		AMD_DEBUG3 ("    upper ("~ID~","~ID~") ("~ID~","~ID~")\n", j,k, k,j);
 		p++ ;
 	    }
 	    else if (j == k)
@@ -110,7 +110,7 @@ else {
 		     * add both A (i,j) and A (j,i) to the matrix A+A' */
 		    Len [i]++ ;
 		    Len [j]++ ;
-		    //AMD_DEBUG3 (("    lower ("ID","ID") ("ID","ID")\n",i,j, j,i)) ;	// todo : later
+		    AMD_DEBUG3 ("    lower ("~ID~","~ID~") ("~ID~","~ID~")\n",i,j, j,i) ;
 		    pj++ ;
 		}
 		else if (i == k)
@@ -142,7 +142,7 @@ else {
 	     * add both A (i,j) and A (j,i) to the matrix A+A' */
 	    Len [i]++ ;
 	    Len [j]++ ;
-	    //AMD_DEBUG3 (("    lower cleanup ("ID","ID") ("ID","ID")\n",i,j, j,i)) ;	// todo: later
+	    AMD_DEBUG3 ("    lower cleanup ("~ID~","~ID~") ("~ID~","~ID~")\n",i,j, j,i) ;
 	}
     }
 
@@ -171,8 +171,8 @@ else {
 	nzaat += Len [k] ;
     }
 
-    //AMD_DEBUG1 (("AMD nz in A+A', excluding diagonal (nzaat) = %g\n",(c_float) nzaat)) ; // todoL later
-    //AMD_DEBUG1 (("   nzboth: "ID" nz: "ID" nzdiag: "ID" symmetry: %g\n",nzboth, nz, nzdiag, sym)) ; // todo : later
+    AMD_DEBUG1 ("AMD nz in A+A', excluding diagonal (nzaat) = %g\n",cast(c_float) nzaat) ;
+    AMD_DEBUG1 ("   nzboth: "~ID~" nz: "~ID~" nzdiag: "~ID~" symmetry: %g\n",nzboth, nz, nzdiag, sym) ;
 
     if (Info != cast(c_float *) NULL)
     {

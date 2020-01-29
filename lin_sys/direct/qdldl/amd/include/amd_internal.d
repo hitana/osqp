@@ -55,8 +55,8 @@ import amd_2;
 /* ANSI include files */
 /* ------------------------------------------------------------------------- */
 
-/* from stdlib.h:  size_t, malloc, free, realloc, and calloc */
-import core.stdc.stdlib;
+import core.stdc.stdlib;  // size_t, malloc, free, realloc, and calloc
+import core.stdc.stdarg;
 
 //#if !defined(NPRINT) || !defined(NDEBUG)
 version (NPRINT){}
@@ -182,28 +182,49 @@ auto NULL = null;
 */
 enum c_int SIZE_T_MAX = (cast(size_t) (-1));
 
-    
-//void AMD_debug_init ( char *s ) ;
-void AMD_debug_init ( string s ) ;
 
-void AMD_dump
-(
-    Int n,
-    Int *Pe ,
-    Int *Iw,
-    Int *Len,
-    Int iwlen,
-    Int pfree,
-    Int *Nv,
-    Int *Next,
-    Int *Last,
-    Int *Head,
-    Int *Elen,
-    Int *Degree,
-    Int *W,
-    Int nel
-) ;
+version(NDEBUG){
+    void AMD_debug_init ( string s ) {};
+    void AMD_dump
+    (
+        Int n,
+        Int *Pe ,
+        Int *Iw,
+        Int *Len,
+        Int iwlen,
+        Int pfree,
+        Int *Nv,
+        Int *Next,
+        Int *Last,
+        Int *Head,
+        Int *Elen,
+        Int *Degree,
+        Int *W,
+        Int nel
+    ) {};
+}
+else {
+    //void AMD_debug_init ( char *s ) ;
+    void AMD_debug_init ( string s ) ;
 
+    void AMD_dump
+    (
+        Int n,
+        Int *Pe ,
+        Int *Iw,
+        Int *Len,
+        Int iwlen,
+        Int pfree,
+        Int *Nv,
+        Int *Next,
+        Int *Last,
+        Int *Head,
+        Int *Elen,
+        Int *Degree,
+        Int *W,
+        Int nel
+    );
+}
 /* ------------------------------------------------------------------------- */
 /* integer type for AMD: int or SuiteSparse_long */
 /* ------------------------------------------------------------------------- */
@@ -252,7 +273,7 @@ else {
     }
     else {
         alias Int = int;
-        enum string ID = "%d";
+        enum string ID = "%d";        
         alias Int_MAX = INT_MAX;
         
     /*    alias amd_order = AMD_order;
@@ -284,6 +305,14 @@ version (NDEBUG){
 //#define AMD_DEBUG2(params)
 //#define AMD_DEBUG3(params)
 //#define AMD_DEBUG4(params)
+
+void ASSERT(T)(auto ref T expression) {}
+void AMD_DEBUG0(T)(auto ref T params, ...) {}
+void AMD_DEBUG1(T)(auto ref T params, ...) {}
+void AMD_DEBUG2(T)(auto ref T params, ...) {}
+void AMD_DEBUG3(T)(auto ref T params, ...) {}
+void AMD_DEBUG4(T)(auto ref T params, ...) {}
+//__gshared Int AMD_debug = 0;
 }
 else 
 {
@@ -292,14 +321,14 @@ else
     //#include <assert.h>
     import core.exception;
     //import core.sync.exception;
-    //import core.stdcpp.exception;
+    //import core.stdcpp.exception;    
 
     //#ifndef EXTERN
     //#define EXTERN extern
     //#endif
 
     //EXTERN Int AMD_debug ;
-    Int AMD_debug ; // todo
+    __gshared Int AMD_debug = 3; // for example
 
     //#ifdef ASSERT
     //#undef ASSERT
@@ -319,10 +348,10 @@ else
     //#define AMD_DEBUG2(params) { if (AMD_debug >= 2) SUITESPARSE_PRINTF (params) ; }
     //#define AMD_DEBUG3(params) { if (AMD_debug >= 3) SUITESPARSE_PRINTF (params) ; }
     //#define AMD_DEBUG4(params) { if (AMD_debug >= 4) SUITESPARSE_PRINTF (params) ; }
-    void AMD_DEBUG0(T)(auto ref T params) { SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG1(T)(auto ref T params) { if (AMD_debug >= 1) SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG2(T)(auto ref T params) { if (AMD_debug >= 2) SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG3(T)(auto ref T params) { if (AMD_debug >= 3) SUITESPARSE_PRINTF (params); }
-    void AMD_DEBUG4(T)(auto ref T params) { if (AMD_debug >= 4) SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG0(T)(auto ref T params, ...) { SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG1(T)(auto ref T params, ...) { if (AMD_debug >= 1) SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG2(T)(auto ref T params, ...) { if (AMD_debug >= 2) SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG3(T)(auto ref T params, ...) { if (AMD_debug >= 3) SUITESPARSE_PRINTF (params); }
+    void AMD_DEBUG4(T)(auto ref T params, ...) { if (AMD_debug >= 4) SUITESPARSE_PRINTF (params); }
 
 } // !NDEBUG

@@ -164,7 +164,7 @@ else {
     /* --------------------------------------------------------------------- */
 
     nzaat = AMD_aat (n, Cp, Ci, Len, P, Info) ;
-    //AMD_DEBUG1 (("nzaat: %g\n", cast(c_float) nzaat)) ;  // todo : later
+    AMD_DEBUG1 ("nzaat: %g\n", cast(c_float) nzaat) ;
     ASSERT ((MAX (nz-n, 0) <= nzaat) && (nzaat <= 2 * cast(size_t) nz)) ;
 
     /* --------------------------------------------------------------------- */
@@ -187,7 +187,7 @@ else {
     {
 	S = cast(int*)SuiteSparse_malloc (slen, (Int.sizeof)) ;
     }
-    //AMD_DEBUG1 (("slen %g\n", cast(c_float) slen)) ;   // todo : later
+    AMD_DEBUG1 ("slen %g\n", cast(c_float) slen) ;
     if (!S)
     {
 	/* :: out of memory :: (or problem too large) */

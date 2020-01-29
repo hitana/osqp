@@ -114,7 +114,8 @@ enum c_int AMD_SUBSUB_VERSION = 6;
 enum c_int AMD_VERSION = AMD_VERSION_CODE(AMD_MAIN_VERSION,AMD_SUB_VERSION); // todo : check it
 
 
-int amd_order                  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
+//int amd_order
+int AMD_order                  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
                                 * AMD_INVALID, or AMD_OUT_OF_MEMORY */
 (
     int n,                     /* A is n-by-n.  n must be >= 0. */
