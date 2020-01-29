@@ -215,7 +215,7 @@ version(DLONG){
     alias Int = SuiteSparse_long;
     alias ID = SuiteSparse_long_id;
     alias Int_MAX = SuiteSparse_long_max;
-    alias amd_l_order = AMD_order;
+/*    alias amd_l_order = AMD_order;
     alias amd_l_defaults = AMD_defaults;
     alias amd_l_control = AMD_control;
     alias amd_l_info = AMD_info;
@@ -223,19 +223,19 @@ version(DLONG){
     alias amd_l2 = AMD_2;
     alias amd_l_valid = AMD_valid;
     alias amd_l_aat = AMD_aat;
-    alias Aamd_l_postorder = MD_postorder;
+    alias amd_l_postorder = AMD_postorder;
     alias amd_l_post_tree = AMD_post_tree;
     alias amd_l_dump = AMD_dump;
     alias amd_l_debug = AMD_debug;
     alias amd_l_debug_init = AMD_debug_init;
-    alias amd_l_preprocess = AMD_preprocess;
+    alias amd_l_preprocess = AMD_preprocess;*/
 }
 else {
     version(ZLONG){
         alias Int = SuiteSparse_long;
         alias ID = SuiteSparse_long_id;
         alias Int_MAX = SuiteSparse_long_max;
-        alias AMD_order = amd_l_order;
+    /*    alias AMD_order = amd_l_order;
         alias AMD_defaults = amd_l_defaults;
         alias amd_l_control = AMD_control;
         alias amd_l_info = AMD_info;
@@ -248,18 +248,18 @@ else {
         alias amd_l_dump = AMD_dump;
         alias amd_l_debug = AMD_debug;
         alias amd_l_debug_init = AMD_debug_init;
-        alias amd_l_preprocess = AMD_preprocess;
+        alias amd_l_preprocess = AMD_preprocess;*/
     }
     else {
         alias Int = int;
         enum string ID = "%d";
         alias Int_MAX = INT_MAX;
         
-        alias amd_order = AMD_order;
+    /*    alias amd_order = AMD_order;
         alias amd_defaults = AMD_defaults;
         alias amd_control = AMD_control;
         alias amd_info = AMD_info;
-        alias amd_1 = amd_1.AMD_1;
+        alias amd_1 = AMD_1;
         alias amd_2 = AMD_2;
         alias amd_valid = AMD_valid;
         alias amd_aat = AMD_aat;
@@ -268,7 +268,7 @@ else {
         alias amd_dump = AMD_dump;
         alias amd_debug = AMD_debug;
         alias amd_debug_init = AMD_debug_init;
-        alias amd_preprocess = AMD_preprocess;
+        alias amd_preprocess = AMD_preprocess;*/
     }
 }
 

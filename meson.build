@@ -16,6 +16,7 @@ conf_data = configuration_data({
   'DFLOAT': get_option('DFLOAT'),
   'DLONG': get_option('DLONG'),
   'DEBUG': get_option('DEBUG'),
+  'NDEBUG': get_option('NDEBUG'),
   'COVERAGE': get_option('COVERAGE'),
   'ENABLE_MKL_PARDISO': get_option('ENABLE_MKL_PARDISO'),  
   'EMBEDDED': get_option('USE_EMBEDDED'),
@@ -172,6 +173,10 @@ if conf_data.get('R_LANG')
   d_module_versions += 'R_LANG'
 endif
 
+if conf_data.get('NDEBUG')
+  d_module_versions += 'NDEBUG'
+endif
+
 message ('d_module_versions=@0@'.format(d_module_versions))
 
 
@@ -203,6 +208,7 @@ gcov_lib = []
 rt_lib = []
 m_lib = []
 dl_lib = []
+
 if not conf_data.get('MSVC')
   if conf_data.get('COVERAGE')
     c_args += '--coverage'

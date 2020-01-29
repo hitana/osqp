@@ -26,7 +26,7 @@ mkdir build
 # cd build
 # cmake -G "Unix Makefiles" -DCOVERAGE=ON -DUNITTESTS=ON ..
 # make
-meson -D COVERAGE=true -D UNITTESTS=true build
+meson -D COVERAGE=true -D UNITTESTS=true -D NDEBUG=true build
 ninja -C build -j8
 
 ${TRAVIS_BUILD_DIR}/build/osqp_tester
@@ -66,7 +66,7 @@ fi
 echo "Running OSQP demo"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-meson -D DLONG=false -D UNITTESTS=true build
+meson -D DLONG=false -D UNITTESTS=true -D NDEBUG=true build
 ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/osqp_demo
 
@@ -75,34 +75,34 @@ ${TRAVIS_BUILD_DIR}/build/osqp_demo
 echo "Testing OSQP with floats"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-meson -D DFLOAT=true -D UNITTESTS=true build
+meson -D DFLOAT=true -D UNITTESTS=true -D NDEBUG=true build
 ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/osqp_tester
 
 echo "Testing OSQP without long integers"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-meson -D DLONG=false -D UNITTESTS=true build
+meson -D DLONG=false -D UNITTESTS=true -D NDEBUG=true build
 ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/osqp_tester
 
 echo "Building OSQP with embedded=1"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-meson -D USE_EMBEDDED=true -D EMBEDDED='1' build
+meson -D USE_EMBEDDED=true -D EMBEDDED='1' -D NDEBUG=true build
 ninja -C build -j8
 
 echo "Building OSQP with embedded=2"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-meson -D USE_EMBEDDED=true -D EMBEDDED='2' build
+meson -D USE_EMBEDDED=true -D EMBEDDED='2' -D NDEBUG=true build
 ninja -C build -j8
 
 
 echo "Testing OSQP without printing"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
-meson -D PRINTING=false -D UNITTESTS=true build
+meson -D PRINTING=false -D UNITTESTS=true -D NDEBUG=true build
 ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/osqp_tester
 
@@ -118,7 +118,7 @@ rm -rf build
 #cmake -DUNITTESTS=ON -DOSQP_CUSTOM_MEMORY=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h ..
 #make osqp_tester_custom_memory
 # todo : fails. add -DOSQP_CUSTOM_MEMORY=true
-meson -D UNITTESTS=true -D OSQP_CUSTOM_MEMORY_HEADER=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h build
+meson -D UNITTESTS=true -D OSQP_CUSTOM_MEMORY_HEADER=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h -D NDEBUG=true build
 ninja -C build -j8 test
 ${TRAVIS_BUILD_DIR}/build/osqp_tester_custom_memory
 
