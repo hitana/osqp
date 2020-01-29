@@ -112,7 +112,7 @@ else {
 
     for (k = 0 ; k < n ; k++)
     {
-	//AMD_DEBUG1 (("Construct row/column k= "ID" of A+A'\n", k))  ;  // todo
+	AMD_DEBUG1 ("Construct row/column k= "~ID~" of A+A'\n", k);
 	p1 = Ap [k] ;
 	p2 = Ap [k+1] ;
 

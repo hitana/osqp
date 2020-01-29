@@ -645,7 +645,7 @@ void AMD_2
     }
     dense = MAX (16, dense) ;
     dense = MIN (n,  dense) ;
-    //AMD_DEBUG1 (("\n\nAMD (debug), alpha %g, aggr. "ID"\n", alpha, aggressive)) ;	// todo
+    AMD_DEBUG1 ("\n\nAMD (debug), alpha %g, aggr. "~ID~"\n", alpha, aggressive);
 
     for (i = 0 ; i < n ; i++)
     {
@@ -663,7 +663,7 @@ void AMD_2
 
 version(NDEBUG){}
 else {
-    //AMD_DEBUG1 (("\n======Nel "ID" initial\n", nel)) ;// todo
+    AMD_DEBUG1 ("\n======Nel "~ID~" initial\n", nel);
     AMD_dump (n, Pe, Iw, Len, iwlen, pfree, Nv, Next, Last,
 		Head, Elen, Degree, W, -1) ;
 } // !NDEBUG
@@ -708,7 +708,7 @@ else {
 	     * version does not have this option.
 	     * ------------------------------------------------------------- */
 
-	    //AMD_DEBUG1 (("Dense node "ID" degree "ID"\n", i, deg)) ; // todo
+	    AMD_DEBUG1 ("Dense node "~ID~" degree "~ID~"\n", i, deg);
 	    ndense++ ;
 	    Nv [i] = 0 ;		/* do not postorder this node */
 	    Elen [i] = EMPTY ;
@@ -741,7 +741,7 @@ else {
 
 version(NDEBUG){}
 else {
-	//AMD_DEBUG1 (("\n======Nel "ID"\n", nel)) ; // todo : AMD_debug: TLS reference in libosqp.so mismatches non-TLS definition in osqp_demo@exe/lin_sys_direct_qdldl_amd_include_amd_internal.d.o section .bss
+	AMD_DEBUG1 ("\n======Nel "~ID~"\n", nel) ;
 	//if (AMD_debug >= 2)
 	if (true)		// todo : 
 	{
@@ -766,7 +766,7 @@ else {
 	}
 	mindeg = deg ;
 	ASSERT (me >= 0 && me < n) ;
-	//AMD_DEBUG1 (("=================me: "ID"\n", me)) ;  // todo
+	AMD_DEBUG1 ("=================me: "~ID~"\n", me) ;
 
 	/* ----------------------------------------------------------------- */
 	/* remove chosen variable from link list */
@@ -874,7 +874,7 @@ else {
 		    e = me ;
 		    pj = p ;
 		    ln = slenme ;
-		    //AMD_DEBUG2 (("Search sv: "ID" "ID" "ID"\n", me,pj,ln)) ;  // todo
+		    AMD_DEBUG2 ("Search sv: "~ID~" "~ID~" "~ID~"\n", me,pj,ln);
 		}
 		else
 		{
@@ -883,7 +883,7 @@ else {
 		    ASSERT (e >= 0 && e < n) ;
 		    pj = Pe [e] ;
 		    ln = Len [e] ;
-		    //AMD_DEBUG2 (("Search element e "ID" in me "ID"\n", e,me)) ; // todo
+		    AMD_DEBUG2 ("Search element e "~ID~" in me "~ID~"\n", e,me);
 		    ASSERT (Elen [e] < EMPTY && W [e] > 0 && pj >= 0) ;
 		}
 		ASSERT (ln >= 0 && (ln == 0 || (pj >= 0 && pj < iwlen))) ;
@@ -900,7 +900,7 @@ else {
 		    i = Iw [pj++] ;
 		    ASSERT (i >= 0 && i < n && (i == me || Elen [i] >= EMPTY));
 		    nvi = Nv [i] ;
-		    //AMD_DEBUG2 ((": "ID" "ID" "ID" "ID"\n", i, Elen [i], Nv [i], wflg)) ; // todo
+		    AMD_DEBUG2 (": "~ID~" "~ID~" "~ID~" "~ID~"\n", i, Elen [i], Nv [i], wflg);
 
 		    if (nvi > 0)
 		    {
@@ -912,7 +912,7 @@ else {
 			if (pfree >= iwlen)
 			{
 
-			    AMD_DEBUG1 (("GARBAGE COLLECTION\n")) ;
+			    AMD_DEBUG1 ("GARBAGE COLLECTION\n");
 
 			    /* prepare for compressing Iw by adjusting pointers
 			     * and lengths so that the lists being searched in
@@ -954,7 +954,7 @@ else {
 				j = FLIP (Iw [psrc++]) ;
 				if (j >= 0)
 				{
-				    //AMD_DEBUG2 (("Got object j: "ID"\n", j)) ;  // todo
+				    AMD_DEBUG2 ("Got object j: "~ID~"\n", j);
 				    Iw [pdst] = Pe [j] ;
 				    Pe [j] = pdst++ ;
 				    lenj = Len [j] ;
@@ -988,7 +988,7 @@ else {
 			degme += nvi ;
 			Nv [i] = -nvi ;
 			Iw [pfree++] = i ;
-			//AMD_DEBUG2 (("     s: "ID"     nv "ID"\n", i, Nv [i]));  // todo
+			AMD_DEBUG2 ("     s: "~ID~"     nv "~ID~"\n", i, Nv [i]);
 
 			/* ------------------------------------------------- */
 			/* remove variable i from degree link list */
@@ -1016,7 +1016,7 @@ else {
 		{
 		    /* set tree pointer and flag to indicate element e is
 		     * absorbed into new element me (the parent of e is me) */
-		    //AMD_DEBUG1 ((" Element "ID" => "ID"\n", e, me)) ;  // todo
+		    AMD_DEBUG1 (" Element "~ID~" => "~ID~"\n", e, me);
 		    Pe [e] = FLIP (me) ;
 		    W [e] = 0 ;
 		}
@@ -1041,9 +1041,9 @@ else {
 
 version(NDEBUG){}
 else {
-	//AMD_DEBUG2 (("New element structure: length= "ID"\n", pme2-pme1+1)) ;  // todo
-	//for (pme = pme1 ; pme <= pme2 ; pme++) AMD_DEBUG3 ((" "ID"", Iw[pme]));  // todo
-	AMD_DEBUG3 (("\n")) ;
+	AMD_DEBUG2 ("New element structure: length= "~ID~"\n", pme2-pme1+1);
+	for (pme = pme1 ; pme <= pme2 ; pme++) AMD_DEBUG3 (" "~ID~"", Iw[pme]);
+	AMD_DEBUG3 ("\n");
 } // !NDEBUG
 
 	/* ----------------------------------------------------------------- */
@@ -1073,13 +1073,13 @@ else {
 	 * in Scan 2.
 	 * ----------------------------------------------------------------- */
 
-	AMD_DEBUG2 (("me: ")) ;
+	AMD_DEBUG2 ("me: ");
 	for (pme = pme1 ; pme <= pme2 ; pme++)
 	{
 	    i = Iw [pme] ;
 	    ASSERT (i >= 0 && i < n) ;
 	    eln = Elen [i] ;
-	    //AMD_DEBUG3 ((""ID" Elen "ID": \n", i, eln)) ; // todo
+	    AMD_DEBUG3 (""~ID~" Elen "~ID~": \n", i, eln);
 	    if (eln > 0)
 	    {
 		/* note that Nv [i] has been negated to denote i in Lme: */
@@ -1091,26 +1091,26 @@ else {
 		    e = Iw [p] ;
 		    ASSERT (e >= 0 && e < n) ;
 		    we = W [e] ;
-		    //AMD_DEBUG4 (("    e "ID" we "ID" ", e, we)) ;	// todo
+		    AMD_DEBUG4 ("    e "~ID~" we "~ID~" ", e, we);
 		    if (we >= wflg)
 		    {
 			/* unabsorbed element e has been seen in this loop */
-			AMD_DEBUG4 (("    unabsorbed, first time seen")) ;
+			AMD_DEBUG4 ("    unabsorbed, first time seen");
 			we -= nvi ;
 		    }
 		    else if (we != 0)
 		    {
 			/* e is an unabsorbed element */
 			/* this is the first we have seen e in all of Scan 1 */
-			AMD_DEBUG4 (("    unabsorbed")) ;
+			AMD_DEBUG4 ("    unabsorbed");
 			we = Degree [e] + wnvi ;
 		    }
-		    AMD_DEBUG4 (("\n")) ;
+		    AMD_DEBUG4 ("\n");
 		    W [e] = we ;
 		}
 	    }
 	}
-	AMD_DEBUG2 (("\n")) ;
+	AMD_DEBUG2 ("\n");
 
 /* ========================================================================= */
 /* DEGREE UPDATE AND ELEMENT ABSORPTION */
@@ -1127,7 +1127,7 @@ else {
 	{
 	    i = Iw [pme] ;
 	    ASSERT (i >= 0 && i < n && Nv [i] < 0 && Elen [i] >= 0) ;
-	    //AMD_DEBUG2 (("Updating: i "ID" "ID" "ID"\n", i, Elen[i], Len [i]));	// todo
+	    AMD_DEBUG2 ("Updating: i "~ID~" "~ID~" "~ID~"\n", i, Elen[i], Len [i]);
 	    p1 = Pe [i] ;
 	    p2 = p1 + Elen [i] - 1 ;
 	    pn = p1 ;
@@ -1157,12 +1157,12 @@ else {
 			    deg += dext ;
 			    Iw [pn++] = e ;
 			    hash += e ;
-			    //AMD_DEBUG4 ((" e: "ID" hash = "ID"\n",e,hash)) ;// todo
+			    AMD_DEBUG4 (" e: "~ID~" hash = "~ID~"\n",e,hash);
 			}
 			else
 			{
 			    /* external degree of e is zero, absorb e into me*/
-			    //AMD_DEBUG1 ((" Element "ID" =>"ID" (aggressive)\n", e, me)) ; // todo
+			    AMD_DEBUG1 (" Element "~ID~" =>"~ID~" (aggressive)\n", e, me);
 			    ASSERT (dext == 0) ;
 			    Pe [e] = FLIP (me) ;
 			    W [e] = 0 ;
@@ -1185,7 +1185,7 @@ else {
 			deg += dext ;
 			Iw [pn++] = e ;
 			hash += e ;
-			//MD_DEBUG4 (("	e: "ID" hash = "ID"\n",e,hash)) ;// todo
+			AMD_DEBUG4 ("	e: "~ID~" hash = "~ID~"\n",e,hash);
 		    }
 		}
 	    }
@@ -1214,7 +1214,7 @@ else {
 		    deg += nvj ;
 		    Iw [pn++] = j ;
 		    hash += j ;
-		    //AMD_DEBUG4 (("  s: "ID" hash "ID" Nv[j]= "ID"\n", j, hash, nvj)) ; // todo
+		    AMD_DEBUG4 ("  s: "~ID~" hash "~ID~" Nv[j]= "~ID~"\n", j, hash, nvj) ;
 		}
 	    }
 
@@ -1253,7 +1253,7 @@ else {
 		 * flop count analysis.  It also means that the post-ordering
 		 * is not an exact elimination tree post-ordering. */
 
-		//AMD_DEBUG1 (("  MASS i "ID" => parent e "ID"\n", i, me)) ; // todo
+		AMD_DEBUG1 ("  MASS i "~ID~" => parent e "~ID~"\n", i, me);
 		Pe [i] = FLIP (me) ;
 		nvi = -Nv [i] ;
 		degme -= nvi ;
@@ -1340,12 +1340,12 @@ else {
 /* SUPERVARIABLE DETECTION */
 /* ========================================================================= */
 
-	AMD_DEBUG1 (("Detecting supervariables:\n")) ;
+	AMD_DEBUG1 ("Detecting supervariables:\n");
 	for (pme = pme1 ; pme <= pme2 ; pme++)
 	{
 	    i = Iw [pme] ;
 	    ASSERT (i >= 0 && i < n) ;
-	    //AMD_DEBUG2 (("Consider i "ID" nv "ID"\n", i, Nv [i])) ; // todo
+	    AMD_DEBUG2 ("Consider i "~ID~" nv "~ID~"\n", i, Nv [i]);
 	    if (Nv [i] < 0)
 	    {
 		/* i is a principal variable in Lme */
@@ -1386,7 +1386,7 @@ else {
 		*/
 
 		ASSERT (i >= EMPTY && i < n) ;
-		//AMD_DEBUG2 (("----i "ID" hash "ID"\n", i, hash)) ;  // todo
+		AMD_DEBUG2 ("----i "~ID~" hash "~ID~"\n", i, hash);
 
 		while (i != EMPTY && Next [i] != EMPTY)
 		{
@@ -1422,7 +1422,7 @@ else {
 			/* check if j and i have identical nonzero pattern */
 			/* ------------------------------------------------- */
 
-			//AMD_DEBUG3 (("compare i "ID" and j "ID"\n", i,j)) ; // todo
+			AMD_DEBUG3 ("compare i "~ID~" and j "~ID~"\n", i,j);
 
 			/* check if i and j have the same Len and Elen */
 			ASSERT (Len [j] >= 0 && Elen [j] >= 0) ;
@@ -1440,7 +1440,7 @@ else {
 			    /* found it!  j can be absorbed into i */
 			    /* --------------------------------------------- */
 
-			    //AMD_DEBUG1 (("found it! j "ID" => i "ID"\n", j,i)); // todo
+			    AMD_DEBUG1 ("found it! j "~ID~" => i "~ID~"\n", j,i);
 			    Pe [j] = FLIP (i) ;
 			    /* both Nv [i] and Nv [j] are negated since they */
 			    /* are in Lme, and the absolute values of each */
@@ -1476,7 +1476,7 @@ else {
 		}
 	    }
 	}
-	AMD_DEBUG2 (("detect done\n")) ;
+	AMD_DEBUG2 ("detect done\n");
 
 /* ========================================================================= */
 /* RESTORE DEGREE LISTS AND REMOVE NONPRINCIPAL SUPERVARIABLES FROM ELEMENT */
@@ -1489,7 +1489,7 @@ else {
 	    i = Iw [pme] ;
 	    ASSERT (i >= 0 && i < n) ;
 	    nvi = -Nv [i] ;
-	    //AMD_DEBUG3 (("Restore i "ID" "ID"\n", i, nvi)) ; // todo
+	    AMD_DEBUG3 ("Restore i "~ID~" "~ID~"\n", i, nvi);
 	    if (nvi > 0)
 	    {
 		/* i is a principal variable in Lme */
@@ -1530,13 +1530,13 @@ else {
 
 	    }
 	}
-	AMD_DEBUG2 (("restore done\n")) ;
+	AMD_DEBUG2("restore done\n");
 
 /* ========================================================================= */
 /* FINALIZE THE NEW ELEMENT */
 /* ========================================================================= */
 
-	//AMD_DEBUG2 (("ME = "ID" DONE\n", me)) ;  // todo
+	AMD_DEBUG2 ("ME = "~ID~" DONE\n", me);
 	Nv [me] = nvpiv ;
 	/* save the length of the list for the new element me */
 	Len [me] = p - pme1 ;
@@ -1584,12 +1584,12 @@ else {
 
 version(NDEBUG){}
 else {
-	//AMD_DEBUG2 (("finalize done nel "ID" n "ID"\n   ::::\n", nel, n)) ; // todo
+	AMD_DEBUG2 ("finalize done nel "~ID~" n "~ID~"\n   ::::\n", nel, n);
 	for (pme = Pe [me] ; pme <= Pe [me] + Len [me] - 1 ; pme++)
 	{
-	      //AMD_DEBUG3 ((" "ID"", Iw [pme])) ; // todo
+	      AMD_DEBUG3 (" "~ID~"", Iw [pme]);
 	}
-	AMD_DEBUG3 (("\n")) ;
+	AMD_DEBUG3 ("\n");
 } // !NDEBUG
 
     }
@@ -1689,55 +1689,55 @@ else {
 
 version(NDEBUG){}
 else {
-    AMD_DEBUG2 (("\nTree:\n")) ;
+    AMD_DEBUG2 ("\nTree:\n");
     for (i = 0 ; i < n ; i++)
     {
-	//AMD_DEBUG2 ((" "ID" parent: "ID"   ", i, Pe [i])) ; // todo
+	AMD_DEBUG2 (" "~ID~" parent: "~ID~"   ", i, Pe [i]);
 	ASSERT (Pe [i] >= EMPTY && Pe [i] < n) ;
 	if (Nv [i] > 0)
 	{
 	    /* this is an element */
 	    e = i ;
-	    //MD_DEBUG2 ((" element, size is "ID"\n", Elen [i])) ; // todo
+	    AMD_DEBUG2 (" element, size is "~ID~"\n", Elen [i]);
 	    ASSERT (Elen [e] > 0) ;
 	}
-	AMD_DEBUG2 (("\n")) ;
+	AMD_DEBUG2 ("\n");
     }
-    AMD_DEBUG2 (("\nelements:\n")) ;
+    AMD_DEBUG2 ("\nelements:\n");
     for (e = 0 ; e < n ; e++)
     {
 	if (Nv [e] > 0)
 	{
-	    //AMD_DEBUG3 (("Element e= "ID" size "ID" nv "ID" \n", e, Elen [e], Nv [e])) ; // todo
+	    AMD_DEBUG3 ("Element e= "~ID~" size "~ID~" nv "~ID~" \n", e, Elen [e], Nv [e]);
 	}
     }
-    AMD_DEBUG2 (("\nvariables:\n")) ;
+    AMD_DEBUG2 ("\nvariables:\n");
     for (i = 0 ; i < n ; i++)
     {
 	Int cnt ;
 	if (Nv [i] == 0)
 	{
-	    //AMD_DEBUG3 (("i unordered: "ID"\n", i)) ;  // todo
+	    AMD_DEBUG3 ("i unordered: "~ID~"\n", i);
 	    j = Pe [i] ;
 	    cnt = 0 ;
-	    //AMD_DEBUG3 (("  j: "ID"\n", j)) ; // todo
+	    AMD_DEBUG3 ("  j: "~ID~"\n", j);
 	    if (j == EMPTY)
 	    {
-		AMD_DEBUG3 (("	i is a dense variable\n")) ;
+		AMD_DEBUG3 ("	i is a dense variable\n");
 	    }
 	    else
 	    {
 		ASSERT (j >= 0 && j < n) ;
 		while (Nv [j] == 0)
 		{
-		    //AMD_DEBUG3 (("	j : "ID"\n", j)) ; // todo
+		    AMD_DEBUG3 ("	j : "~ID~"\n", j);
 		    j = Pe [j] ;
-		    //AMD_DEBUG3 (("	j:: "ID"\n", j)) ;  // todo
+		    AMD_DEBUG3 ("	j:: "~ID~"\n", j);
 		    cnt++ ;
 		    if (cnt > n) break ;
 		}
 		e = j ;
-		//AMD_DEBUG3 (("	got to e: "ID"\n", e)) ;  // todo
+		AMD_DEBUG3 ("	got to e: "~ID~"\n", e);
 	    }
 	}
     }
@@ -1759,10 +1759,10 @@ else {
 	     * was selected as pivot.
 	     * ------------------------------------------------------------- */
 
-	    //AMD_DEBUG1 (("Path compression, i unordered: "ID"\n", i)) ; // todo
+	    AMD_DEBUG1 ("Path compression, i unordered: "~ID~"\n", i);
 	    j = Pe [i] ;
 	    ASSERT (j >= EMPTY && j < n) ;
-	    //AMD_DEBUG3 (("	j: "ID"\n", j)) ;  // todo
+	    AMD_DEBUG3 ("	j: "~ID~"\n", j);
 	    if (j == EMPTY)
 	    {
 		/* Skip a dense variable.  It has no parent. */
@@ -1773,14 +1773,14 @@ else {
 	    /* while (j is a variable) */
 	    while (Nv [j] == 0)
 	    {
-		//AMD_DEBUG3 (("		j : "ID"\n", j)) ; // todo
+		AMD_DEBUG3 ("		j : "~ID~"\n", j);
 		j = Pe [j] ;
-		//AMD_DEBUG3 (("		j:: "ID"\n", j)) ;  // todo
+		AMD_DEBUG3 ("		j:: "~ID~"\n", j);
 		ASSERT (j >= 0 && j < n) ;
 	    }
 	    /* got to an element e */
 	    e = j ;
-	    //AMD_DEBUG3 (("got to e: "ID"\n", e)) ;  // todo
+	    AMD_DEBUG3 ("got to e: "~ID~"\n", e);
 
 	    /* -------------------------------------------------------------
 	     * traverse the path again from i to e, and compress the path
@@ -1793,7 +1793,7 @@ else {
 	    while (Nv [j] == 0)
 	    {
 		jnext = Pe [j] ;
-		//AMD_DEBUG3 (("j "ID" jnext "ID"\n", j, jnext)) ; // todo
+		AMD_DEBUG3 ("j "~ID~" jnext "~ID~"\n", j, jnext);
 		Pe [j] = e ;
 		j = jnext ;
 		ASSERT (j >= 0 && j < n) ;
@@ -1879,6 +1879,6 @@ else {
 	k = Next [i] ;
 	ASSERT (k >= 0 && k < n) ;
 	Last [k] = i ;
-	//AMD_DEBUG2 (("   perm ["ID"] = "ID"\n", k, i)) ; // todo	
+	AMD_DEBUG2 ("   perm ["~ID~"] = "~ID~"\n", k, i);
     }
 }
