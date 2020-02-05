@@ -7,7 +7,7 @@ option('DLONG', type : 'boolean', value : false, description : 'Use long integer
 option('DEBUG', type : 'boolean', value : false, description : 'Debug mode')
 option('NDEBUG', type:'boolean', value : true, description : 'Always true')
 option('COVERAGE', type : 'boolean', value : true, description : 'Perform code coverage')
-option('ENABLE_MKL_PARDISO', type : 'boolean', value : true, description : 'Enable MKL Pardiso solver')
+option('ENABLE_MKL_PARDISO', type : 'boolean', value : false, description : 'Enable MKL Pardiso solver')
 
 option('SYSTEM_NAME', type : 'string', value : 'Linux', description : 'Host OS type')
 option('USE_EMBEDDED', type : 'boolean', value : false, description : 'The code is generated for embedded platforms')

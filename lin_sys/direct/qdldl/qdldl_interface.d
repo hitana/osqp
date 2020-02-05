@@ -450,17 +450,10 @@ static void LDLSolve(c_float *x, c_float *b, const csc *L, const c_float *Dinv, 
 
 }
 
+version (EMBEDDED){
+    c_int solve_linsys_qdldl(qdldl_solver * s, c_float * b) {
+        c_int j;
 
-c_int solve_linsys_qdldl(qdldl_solver * s, c_float * b) {
-    c_int j;
-
-version (EMBEDDED){}
-else {
-    if (s.polish) {
-        /* stores solution to the KKT system in b */
-        LDLSolve(b, b, s.L, s.Dinv, s.P, s.bp);
-    } else {
-} // !version (EMBEDDED)
         /* stores solution to the KKT system in s.sol */
         LDLSolve(s.sol, b, s.L, s.Dinv, s.P, s.bp);
 
@@ -473,14 +466,35 @@ else {
         for (j = 0 ; j < s.m ; j++) {
             b[j + s.n] += s.rho_inv_vec[j] * s.sol[j + s.n];
         }
-version (EMBEDDED){}
-else {
+
+        return 0;
     }
-} // !version (EMBEDDED)
-
-    return 0;
 }
+else {
+    c_int solve_linsys_qdldl(qdldl_solver * s, c_float * b) {
+        c_int j;
 
+        if (s.polish) {
+            /* stores solution to the KKT system in b */
+            LDLSolve(b, b, s.L, s.Dinv, s.P, s.bp);
+        } else {
+            /* stores solution to the KKT system in s.sol */
+            LDLSolve(s.sol, b, s.L, s.Dinv, s.P, s.bp);
+
+            /* copy x_tilde from s.sol */
+            for (j = 0 ; j < s.n ; j++) {
+                b[j] = s.sol[j];
+            }
+
+            /* compute z_tilde from b and s.sol */
+            for (j = 0 ; j < s.m ; j++) {
+                b[j + s.n] += s.rho_inv_vec[j] * s.sol[j + s.n];
+            }
+        }
+
+        return 0;
+    }
+}
 
 version (EMBEDDED_1){}
 else { // #if EMBEDDED != 1

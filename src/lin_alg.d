@@ -216,7 +216,8 @@ else {
 
 /* multiply scalar to matrix */
 void mat_mult_scalar(csc *A, c_float sc) {
-  c_int i, nnzA;
+  c_int i;
+  c_int nnzA;
 
   nnzA = A.p[A.n];
 
@@ -226,7 +227,8 @@ void mat_mult_scalar(csc *A, c_float sc) {
 }
 
 void mat_premult_diag(csc *A, const c_float *d) {
-  c_int j, i;
+  c_int j;
+  c_int i;
 
   for (j = 0; j < A.n; j++) {                // Cycle over columns
     for (i = A.p[j]; i < A.p[j + 1]; i++) { // Cycle every row in the column
@@ -237,7 +239,8 @@ void mat_premult_diag(csc *A, const c_float *d) {
 }
 
 void mat_postmult_diag(csc *A, const c_float *d) {
-  c_int j, i;
+  c_int j;
+  c_int i;
 
   for (j = 0; j < A.n; j++) {                // Cycle over columns j
     for (i = A.p[j]; i < A.p[j + 1]; i++) { // Cycle every row i in column j
@@ -248,7 +251,8 @@ void mat_postmult_diag(csc *A, const c_float *d) {
 }
 
 void mat_vec(const csc *A, const c_float *x, c_float *y, c_int plus_eq) {
-  c_int i, j;
+  c_int i;
+  c_int j;
 
   if (!plus_eq) {
     // y = 0
@@ -281,7 +285,9 @@ void mat_vec(const csc *A, const c_float *x, c_float *y, c_int plus_eq) {
 
 void mat_tpose_vec(const csc *A, const c_float *x, c_float *y,
                    c_int plus_eq, c_int skip_diag) {
-  c_int i, j, k;
+  c_int i;
+  c_int j;
+  c_int k;
 
   if (!plus_eq) {
     // y = 0
@@ -333,7 +339,8 @@ void mat_tpose_vec(const csc *A, const c_float *x, c_float *y,
 version(EMBEDDED){}
 else {
   void mat_inf_norm_cols(const csc *M, c_float *E) {
-    c_int j, ptr;
+    c_int j;
+    c_int ptr;
 
     // Initialize zero max elements
     for (j = 0; j < M.n; j++) {
@@ -349,7 +356,9 @@ else {
   }
 
   void mat_inf_norm_rows(const csc *M, c_float *E) {
-    c_int i, j, ptr;
+    c_int i;
+    c_int j;
+    c_int ptr;
 
     // Initialize zero max elements
     for (j = 0; j < M.m; j++) {
@@ -366,7 +375,9 @@ else {
   }
 
   void mat_inf_norm_cols_sym_triu(const csc *M, c_float *E) {
-    c_int   i, j, ptr;
+    c_int i;
+    c_int j;
+    c_int ptr;
     c_float abs_x;
 
     // Initialize zero max elements
@@ -395,7 +406,9 @@ else {
 
 c_float quad_form(const csc *P, const c_float *x) {
   c_float quad_form = 0.;
-  c_int   i, j, ptr;                                // Pointers to iterate over
+  c_int i; 
+  c_int j; 
+  c_int ptr;                                // Pointers to iterate over
                                                     // matrix: (i,j) a element
                                                     // pointer
 
