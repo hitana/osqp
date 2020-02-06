@@ -56,13 +56,13 @@ conf_qdldl.set('QDLDL_BOOL_TYPE', 'ubyte')
 #configure_file(input : 'qdldl_sources/configure/qdldl_types.h.in',
 #  output : 'qdldl_types.h',
 #  configuration : conf_qdldl)
-configure_file(input : 'qdldl_sources/configure/qdldl_types.d.in',
-  output : 'qdldl_types.d',
-  configuration : conf_qdldl)
+#configure_file(input : 'qdldl_sources/configure/qdldl_types.d.in',
+#  output : 'qdldl_types.d',
+#  configuration : conf_qdldl)
 
 # todo : get build directory name here
 #run_command('cp', '../../../build/lin_sys/direct/qdldl/qdldl_types.h', 'qdldl_sources/include/qdldl_types.h')
-run_command('cp', '../../../build/lin_sys/direct/qdldl/qdldl_types.d', 'qdldl_sources/src/qdldl_types.d')
+#run_command('cp', '../../../build/lin_sys/direct/qdldl/qdldl_types.d', 'qdldl_sources/src/qdldl_types.d')
 
 
 # Set sources
@@ -76,7 +76,7 @@ message ('making object library qdldlobject_lib ...')
 qdldlobject_lib = library('qdldlobject', 
                           qdldl_src, 
 						  qdldl_headers,
-						  include_directories: ['qdldl_sources/include'],
+						  include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
 						  c_args: c_args)
 
 # Create Static Library
@@ -85,7 +85,7 @@ message ('making static_library qdldlstatic_lib ...')
 qdldlstatic_lib = static_library('qdldlstatic', 
                                 qdldl_src, 
                                 qdldl_headers,
-                            	include_directories: ['qdldl_sources/include'],
+                            	include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
 								c_args: c_args)
 # Give same name to static library output
 # set_target_properties(['qdldlstatic', 'PROPERTIES', 'OUTPUT_NAME', 'qdldl'])
@@ -98,7 +98,7 @@ message ('making shared_library qdldl_lib ...')
 qdldl_lib = shared_library('qdldl', 
                            qdldl_src, 
                            qdldl_headers,
-						   include_directories: ['qdldl_sources/include'],
+						   include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
 						   dependencies: [gcov_lib],
 						   c_args: c_args
 						   )

@@ -114,8 +114,8 @@ else {
     }
 
     /* allocate two size-n integer workspaces */
-    Len  = cast(int*)SuiteSparse_malloc (n, (Int.sizeof)) ;
-    Pinv = cast(int*)SuiteSparse_malloc (n, (Int.sizeof)) ;
+    Len  = cast(Int*)SuiteSparse_malloc (n, (Int.sizeof)) ;
+    Pinv = cast(Int*)SuiteSparse_malloc (n, (Int.sizeof)) ;
     mem += n ;
     mem += n ;
     if (!Len || !Pinv)
@@ -131,8 +131,8 @@ else {
     {
 	/* sort the input matrix and remove duplicate entries */
 	AMD_DEBUG1 (("Matrix is jumbled\n")) ;
-	Rp = cast(int*)SuiteSparse_malloc (n+1, (Int.sizeof)) ;
-	Ri = cast(int*)SuiteSparse_malloc (nz,  (Int.sizeof)) ;
+	Rp = cast(Int*)SuiteSparse_malloc (n+1, (Int.sizeof)) ;
+	Ri = cast(Int*)SuiteSparse_malloc (nz,  (Int.sizeof)) ;
 	mem += (n+1) ;
 	mem += MAX (nz,1) ;
 	if (!Rp || !Ri)
@@ -185,7 +185,7 @@ else {
     ok = ok && (slen < Int_MAX) ;	/* S[i] for Int i must be OK */
     if (ok)
     {
-	S = cast(int*)SuiteSparse_malloc (slen, (Int.sizeof)) ;
+	S = cast(Int*)SuiteSparse_malloc (slen, (Int.sizeof)) ;
     }
     AMD_DEBUG1 ("slen %g\n", cast(c_float) slen) ;
     if (!S)
@@ -208,7 +208,7 @@ else {
     /* order the matrix */
     /* --------------------------------------------------------------------- */
 
-    AMD_1 (n, Cp, Ci, P, Pinv, Len, cast(int)slen, S, Control, Info) ;
+    AMD_1 (n, Cp, Ci, P, Pinv, Len, cast(Int)slen, S, Control, Info) ;
 
     /* --------------------------------------------------------------------- */
     /* free the workspace */

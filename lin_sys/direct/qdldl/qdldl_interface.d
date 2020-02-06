@@ -70,22 +70,14 @@ else {
 version (EMBEDDED_1){}
 else {
     // These are required for matrix updates
-    /*
+    
     c_int * Pdiag_idx;
     c_int Pdiag_n;  ///< index and number of diagonal elements in P
     csc   * KKT;                 ///< Permuted KKT matrix in sparse form (used to update P and A matrices)
     c_int * PtoKKT;
     c_int * AtoKKT;    ///< Index of elements from P and A to KKT matrix
     c_int * rhotoKKT;            ///< Index of rho places in KKT matrix
-    */
-    // todo  test it
-    QDLDL_int * Pdiag_idx;
-    QDLDL_int Pdiag_n;  ///< index and number of diagonal elements in P
-    csc   * KKT;                 ///< Permuted KKT matrix in sparse form (used to update P and A matrices)
-    QDLDL_int * PtoKKT;
-    QDLDL_int * AtoKKT;    ///< Index of elements from P and A to KKT matrix
-    QDLDL_int * rhotoKKT;            ///< Index of rho places in KKT matrix
-
+    
     // QDLDL Numeric workspace
     QDLDL_float *D;
     QDLDL_int   *etree;
@@ -149,17 +141,14 @@ void free_linsys_solver_qdldl(qdldl_solver *s) {
  * @param  nvar Number of QP variables
  * @return      exitstatus (0 is good)
  */
-//static c_int LDL_factor(csc *A,  qdldl_solver * p, c_int nvar){
-static QDLDL_int LDL_factor(csc *A,  qdldl_solver * p, c_int nvar){    
+static c_int LDL_factor(csc *A,  qdldl_solver * p, c_int nvar){
 
-    //c_int sum_Lnz;    
-    QDLDL_int sum_Lnz; // todo : test it
+    c_int sum_Lnz;
     c_int factor_status;
 
     // Compute elimination tree
-    sum_Lnz = QDLDL_etree(A.n, A.p, A.i, p.iwork, p.Lnz, p.etree);
-    // todo : test it
-    //sum_Lnz = QDLDL_etree(cast(QDLDL_int)(A.n), cast(QDLDL_int*)(A.p), cast(QDLDL_int*)(A.i), p.iwork, p.Lnz, p.etree);
+    //sum_Lnz = QDLDL_etree(A.n, A.p, A.i, p.iwork, p.Lnz, p.etree);
+    sum_Lnz = QDLDL_etree(cast(const QDLDL_int)(A.n), cast(const QDLDL_int*)(A.p), cast(const QDLDL_int*)(A.i), p.iwork, p.Lnz, p.etree);
 
     if (sum_Lnz < 0){
       // Error
@@ -282,7 +271,7 @@ c_int init_linsys_solver_qdldl(qdldl_solver ** sp, const csc * P, const csc * A,
     // Allocate private structure to store KKT factorization
     qdldl_solver *s;
     //s = c_calloc(1, sizeof(qdldl_solver));    
-    s = cast (qdldl_solver*)c_calloc(1, qdldl_solver.sizeof);  // todo : test it
+    s = cast (qdldl_solver*)c_calloc(1, qdldl_solver.sizeof);
     
 
     *sp = s;

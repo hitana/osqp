@@ -8,7 +8,6 @@ import qdldl_types; // for QDLDL_int and others
 
 
 version(PRINTING){
-//#  include <stdio.h>
   import core.stdc.stdio;
 } // ifdef PRINTING
 
@@ -22,23 +21,14 @@ version(PRINTING){
  *  but the API requires that the matrices are in the CSC format.
  */
 struct csc {
-  /*
+  
   c_int    nzmax; ///< maximum number of entries
   c_int    m;     ///< number of rows
   c_int    n;     ///< number of columns
   c_int   *p;     ///< column pointers (size n+1); col indices (size nzmax) start from 0 when using triplet format (direct KKT matrix formation)
   c_int   *i;     ///< row indices, size nzmax starting from 0
   c_float *x;     ///< numerical values, size nzmax
-  c_int    nz;    ///< number of entries in triplet matrix, -1 for csc
-  */
-  // todo : test it
-  QDLDL_int    nzmax; ///< maximum number of entries
-  QDLDL_int    m;     ///< number of rows
-  QDLDL_int    n;     ///< number of columns
-  QDLDL_int   *p;     ///< column pointers (size n+1); col indices (size nzmax) start from 0 when using triplet format (direct KKT matrix formation)
-  QDLDL_int   *i;     ///< row indices, size nzmax starting from 0
-  QDLDL_float *x;     ///< numerical values, size nzmax
-  QDLDL_int    nz;    ///< number of entries in triplet matrix, -1 for csc
+  c_int    nz;    ///< number of entries in triplet matrix, -1 for csc  
 };
 
 /**

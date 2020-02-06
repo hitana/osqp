@@ -503,7 +503,7 @@ void AMD_2
 	Int aggressive;
 
     //unsigned Int hash ;	    /* unsigned, so that hash % n is well defined.*/
-	uint hash ;	    /* unsigned, so that hash % n is well defined.*/
+	UInt hash ;	    /* unsigned, so that hash % n is well defined.*/
 
 /*
  * deg:		the degree of a variable or element

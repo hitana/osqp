@@ -75,9 +75,9 @@ csc* triplet_to_csc(const csc *T, c_int *TtoC) {
 
   m  = T.m;
   n  = T.n;
-  Ti = cast(int*)T.i;
-  Tj = cast(int*)T.p;
-  Tx = cast(double*)T.x;
+  Ti = cast(c_int*)T.i;
+  Tj = cast(c_int*)T.p;
+  Tx = cast(c_float*)T.x;
   nz = T.nz;
   C  = csc_spalloc(m, n, nz, Tx != OSQP_NULL, 0);     /* allocate result */
   w  = cast(c_int*)csc_calloc(n, c_int.sizeof);                  /* get workspace */
@@ -120,9 +120,9 @@ csc* triplet_to_csr(const csc *T, c_int *TtoC) {
 
   m  = T.m;
   n  = T.n;
-  Ti = cast(int*)T.i;
-  Tj = cast(int*)T.p;
-  Tx = cast(double*)T.x;
+  Ti = cast(c_int*)T.i;
+  Tj = cast(c_int*)T.p;
+  Tx = cast(c_float*)T.x;
   nz = T.nz;
   C  = csc_spalloc(m, n, nz, Tx != OSQP_NULL, 0);     /* allocate result */
   w  = cast(c_int*)csc_calloc(m, c_int.sizeof);                  /* get workspace */
@@ -170,7 +170,7 @@ c_int* csc_pinv(c_int *p, c_int n) {
 
   if (!p) return OSQP_NULL;                /* p = OSQP_NULL denotes identity */
 
-  pinv = cast(int*)csc_malloc(n, c_int.sizeof);     /* allocate result */
+  pinv = cast(c_int*)csc_malloc(n, c_int.sizeof);     /* allocate result */
 
   if (!pinv) return OSQP_NULL;             /* out of memory */
 
@@ -196,12 +196,12 @@ csc* csc_symperm(const csc *A, const c_int *pinv, c_int *AtoC, c_int values) {
   csc     *C;
 
   n  = A.n;
-  Ap = cast(int*)A.p;
-  Ai = cast(int*)A.i;
-  Ax = cast(double*)A.x;
+  Ap = cast(c_int*)A.p;
+  Ai = cast(c_int*)A.i;
+  Ax = cast(c_float*)A.x;
   C  = csc_spalloc(n, n, Ap[n], values && (Ax != OSQP_NULL),
                    0);                                /* alloc result*/
-  w = cast(int*)csc_calloc(n, c_int.sizeof);                   /* get workspace */
+  w = cast(c_int*)csc_calloc(n, c_int.sizeof);                   /* get workspace */
 
   if (!C || !w) return csc_done(C, w, OSQP_NULL, 0);  /* out of memory */
 

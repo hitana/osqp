@@ -111,7 +111,7 @@ else {
     c_float *b;
     c_int    i;
 
-    b = cast(double*)c_malloc(n * (c_float.sizeof));
+    b = cast(c_float*)c_malloc(n * (c_float.sizeof));
     if (!b) return OSQP_NULL;
 
     for (i = 0; i < n; i++) {

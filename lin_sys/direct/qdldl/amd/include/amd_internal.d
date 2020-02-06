@@ -234,6 +234,7 @@ import amd;
 //#if defined (DLONG) || defined (ZLONG)
 version(DLONG){
     alias Int = SuiteSparse_long;
+    alias UInt = ulong;
     alias ID = SuiteSparse_long_id;
     alias Int_MAX = SuiteSparse_long_max;
 /*    alias amd_l_order = AMD_order;
@@ -254,6 +255,7 @@ version(DLONG){
 else {
     version(ZLONG){
         alias Int = SuiteSparse_long;
+        alias UInt = ulong;
         alias ID = SuiteSparse_long_id;
         alias Int_MAX = SuiteSparse_long_max;
     /*    alias AMD_order = amd_l_order;
@@ -273,6 +275,7 @@ else {
     }
     else {
         alias Int = int;
+        alias UInt = uint;
         enum string ID = "%d";        
         alias Int_MAX = INT_MAX;
         

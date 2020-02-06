@@ -123,14 +123,14 @@ version(PROFILING){
 
   // Cost function
   work.data.P = copy_csc_mat(data.P);
-  work.data.q = vec_copy(cast(double*)data.q, cast(int)data.n);
+  work.data.q = vec_copy(cast(c_float*)data.q, cast(c_int)data.n);
   if (!(work.data.P) || !(work.data.q)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
   // Constraints
   work.data.A = copy_csc_mat(data.A);
   if (!(work.data.A)) return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
-  work.data.l = vec_copy(cast(double*)data.l, cast(int)data.m);
-  work.data.u = vec_copy(cast(double*)data.u, cast(int)data.m);
+  work.data.l = vec_copy(cast(c_float*)data.l, cast(c_int)data.m);
+  work.data.u = vec_copy(cast(c_float*)data.u, cast(c_int)data.m);
   if ( data.m && (!(work.data.l) || !(work.data.u)) )
     return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
 
@@ -1066,8 +1066,8 @@ version(PROFILING){
     if (P_new_n > nnzP) {
 version(PRINTING){
       c_eprint(cast(char*)"new number of elements (%i) greater than elements in P (%i)",
-               cast(int)P_new_n,
-               cast(int)nnzP);
+               cast(c_int)P_new_n,
+               cast(c_int)nnzP);
 } /* ifdef PRINTING */
       return 1;
     }
@@ -1146,8 +1146,8 @@ version(PROFILING){
     if (A_new_n > nnzA) {
 version(PRINTING){
       c_eprint(cast(char*)"new number of elements (%i) greater than elements in A (%i)",
-               cast(int)A_new_n,
-               cast(int)nnzA);
+               cast(c_int)A_new_n,
+               cast(c_int)nnzA);
 } /* ifdef PRINTING */
       return 1;
     }
@@ -1230,8 +1230,8 @@ version(PROFILING){
     if (P_new_n > nnzP) {
 version(PRINTING){
       c_eprint(cast(char*)"new number of elements (%i) greater than elements in P (%i)",
-               cast(int)P_new_n,
-               cast(int)nnzP);
+               cast(c_int)P_new_n,
+               cast(c_int)nnzP);
 } /* ifdef PRINTING */
       return 1;
     }
@@ -1244,8 +1244,8 @@ version(PRINTING){
     if (A_new_n > nnzA) {
 version(PRINTING){
       c_eprint(cast(char*)"new number of elements (%i) greater than elements in A (%i)",
-               cast(int)A_new_n,
-               cast(int)nnzA);
+               cast(c_int)A_new_n,
+               cast(c_int)nnzA);
 } /* ifdef PRINTING */
       return 2;
     }
