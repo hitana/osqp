@@ -153,7 +153,7 @@ static c_int LDL_factor(csc *A,  qdldl_solver * p, c_int nvar){
     if (sum_Lnz < 0){
       // Error
 version(PRINTING) {
-      c_eprint("Error in KKT matrix LDL factorization when computing the elimination tree. A is not perfectly upper triangular");
+      c_eprint(cast(char*)"ERROR in %s: Error in KKT matrix LDL factorization when computing the elimination tree. A is not perfectly upper triangular\n", cast(char*)__FUNCTION__);
 }
       return sum_Lnz;
     }
@@ -172,13 +172,13 @@ version(PRINTING) {
     if (factor_status < 0){
       // Error
 version(PRINTING) {
-      c_eprint("Error in KKT matrix LDL factorization when computing the nonzero elements. There are zeros in the diagonal matrix");
+      c_eprint(cast(char*)"ERROR in %s: Error in KKT matrix LDL factorization when computing the nonzero elements. There are zeros in the diagonal matrix\n", cast(char*)__FUNCTION__);
 }
       return factor_status;
     } else if (factor_status < nvar) {
       // Error: Number of positive elements of D should be equal to nvar
 version(PRINTING) {
-      c_eprint("Error in KKT matrix LDL factorization when computing the nonzero elements. The problem seems to be non-convex");
+      c_eprint(cast(char*)"ERROR in %s: Error in KKT matrix LDL factorization when computing the nonzero elements. The problem seems to be non-convex\n", cast(char*)__FUNCTION__);
 }
       return -2;
     }
@@ -388,7 +388,7 @@ else { // #if EMBEDDED != 1
     // Check if matrix has been created
     if (!KKT_temp){
 version (PRINTING){
-        c_eprint("Error forming and permuting KKT matrix");
+        c_eprint(cast(char*)"ERROR in %s: Error forming and permuting KKT matrix\n", cast(char*)__FUNCTION__);
 }
         free_linsys_solver_qdldl(s);
         *sp = OSQP_NULL;

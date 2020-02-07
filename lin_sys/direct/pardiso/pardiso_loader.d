@@ -60,7 +60,7 @@ void pardiso(void** pt, const c_int* maxfct, const c_int* mnum,
 	else
 	{
 version(PRINTING){
-		c_eprint("Pardiso not loaded correctly");
+		c_eprint(cast(char*)"ERROR in %s: Pardiso not loaded correctly\n", cast(char*)__FUNCTION__);
 }
 	}
 }

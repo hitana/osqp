@@ -288,7 +288,7 @@ csc* csc_to_triu(csc *M) {
   // Check if matrix is square
   if (M.m != M.n) {
 version(PRINTING){
-    c_eprint(cast(char*)"Matrix M not square");
+    c_eprint(cast(char*)"ERROR in %s: Matrix M not square\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return OSQP_NULL;
   }
@@ -316,7 +316,7 @@ version(PRINTING){
 
   if (!M_trip) {
 version(PRINTING){
-    c_eprint(cast(char*)"Upper triangular matrix extraction failed (out of memory)");
+    c_eprint(cast(char*)"ERROR in %s: Upper triangular matrix extraction failed (out of memory)\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return OSQP_NULL;
   }

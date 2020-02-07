@@ -25,12 +25,9 @@ string[7] OSQP_ERROR_MESSAGE = [
 ];
 
 import core.stdc.stdarg;
-import core.vararg;
-//c_int _osqp_error(osqp_error_type error_code, const char * function_name)
-c_int _osqp_error(osqp_error_type error_code, ...)
+c_int _osqp_error(osqp_error_type error_code, const char * function_name)
 {
-version(PRINTING){  
-  char * function_name = va_arg!(char * )(_argptr);
+version(PRINTING){
   char * text = cast(char*)(OSQP_ERROR_MESSAGE[error_code-1]);
   c_print("ERROR in %s: %s\n", function_name, text);
 }
@@ -38,6 +35,5 @@ version(PRINTING){
 }
 
 //#  define osqp_error(error_code) _osqp_error(error_code, __func__);
-// todo : review it
 alias osqp_error = _osqp_error;
 

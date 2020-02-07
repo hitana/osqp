@@ -425,7 +425,7 @@ c_float quad_form(const csc *P, const c_float *x) {
       else {                                        // Element in lower diagonal
                                                     // part
 version(PRINTING){
-        c_eprint(cast(char*)"quad_form matrix is not upper triangular");
+        c_eprint(cast(char*)"ERROR in %s: quad_form matrix is not upper triangular\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
         return cast(c_float)OSQP_NULL;
       }

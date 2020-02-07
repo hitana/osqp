@@ -839,21 +839,21 @@ c_int validate_data(const OSQPData *data) {
 
   if (!data) {
 version(PRINTING){
-    c_eprint(cast(char*)"Missing data");
+    c_eprint(cast(char*)"ERROR in %s: Missing data\n", cast(char*)__FUNCTION__);
 }
     return 1;
   }
 
   if (!(data.P)) {
 version(PRINTING){
-    c_eprint(cast(char*)"Missing matrix P");
+    c_eprint(cast(char*)"ERROR in %s: Missing matrix P\n", cast(char*)__FUNCTION__);
 }
     return 1;
   }
 
   if (!(data.A)) {
 version(PRINTING){
-    c_eprint(cast(char*)"Missing matrix A");
+    c_eprint(cast(char*)"ERROR in %s: Missing matrix A\n", cast(char*)__FUNCTION__);
 }
     return 1;
   }
@@ -861,7 +861,7 @@ version(PRINTING){
   // General dimensions Tests
   if ((data.n <= 0) || (data.m < 0)) {
 version(PRINTING){
-    c_eprint(cast(char*)"n must be positive and m nonnegative; n = %i, m = %i",
+    c_eprint(cast(char*)"ERROR in %s: n must be positive and m nonnegative; n = %i, m = %i\n", cast(char*)__FUNCTION__,
              cast(int)data.n, cast(int)data.m);
 } /* ifdef PRINTING */
     return 1;
@@ -870,14 +870,14 @@ version(PRINTING){
   // Matrix P
   if (data.P.m != data.n) {
 version(PRINTING){
-    c_eprint(cast(char*)"P does not have dimension n x n with n = %i", cast(int)data.n);
+    c_eprint(cast(char*)"ERROR in %s: P does not have dimension n x n with n = %i\n", cast(char*)__FUNCTION__, cast(int)data.n);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (data.P.m != data.P.n) {
 version(PRINTING){
-    c_eprint(cast(char*)"P is not square");
+    c_eprint(cast(char*)"ERROR in %s: P is not square\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -886,7 +886,7 @@ version(PRINTING){
     for (ptr = data.P.p[j]; ptr < data.P.p[j + 1]; ptr++) {
       if (data.P.i[ptr] > j) {  // if ROW > COLUMN
 version(PRINTING){
-        c_eprint(cast(char*)"P is not upper triangular");
+        c_eprint(cast(char*)"ERROR in %s: P is not upper triangular\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
         return 1;
       }
@@ -896,7 +896,7 @@ version(PRINTING){
   // Matrix A
   if ((data.A.m != data.m) || (data.A.n != data.n)) {
 version(PRINTING){
-    c_eprint(cast(char*)"A does not have dimension %i x %i", cast(int)data.m, cast(int)data.n);
+    c_eprint(cast(char*)"ERROR in %s: A does not have dimension %i x %i\n", cast(char*)__FUNCTION__, cast(int)data.m, cast(int)data.n);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -905,7 +905,7 @@ version(PRINTING){
   for (j = 0; j < data.m; j++) {
     if (data.l[j] > data.u[j]) {
 version(PRINTING){
-      c_eprint(cast(char*)"Lower bound at index %d is greater than upper bound: %.4e > %.4e",
+      c_eprint(cast(char*)"ERROR in %s: Lower bound at index %d is greater than upper bound: %.4e > %.4e\n", cast(char*)__FUNCTION__,
                cast(int)j, data.l[j], data.u[j]);
 } /* ifdef PRINTING */
       return 1;
@@ -932,28 +932,28 @@ c_int validate_linsys_solver(c_int linsys_solver) {
 c_int validate_settings(const OSQPSettings *settings) {
   if (!settings) {
 version(PRINTING){
-    c_eprint(cast(char*)"Missing settings!");
+    c_eprint(cast(char*)"ERROR in %s: Missing settings!\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.scaling < 0) {
 version(PRINTING){
-    c_eprint(cast(char*)"scaling must be nonnegative");
+    c_eprint(cast(char*)"ERROR in %s: scaling must be nonnegative\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if ((settings.adaptive_rho != 0) && (settings.adaptive_rho != 1)) {
 version(PRINTING){
-    c_eprint(cast(char*)"adaptive_rho must be either 0 or 1");
+    c_eprint(cast(char*)"ERROR in %s: adaptive_rho must be either 0 or 1\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.adaptive_rho_interval < 0) {
 version(PRINTING){
-    c_eprint(cast(char*)"adaptive_rho_interval must be nonnegative");
+    c_eprint(cast(char*)"ERROR in %s: adaptive_rho_interval must be nonnegative\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -961,7 +961,7 @@ version(PROFILING){
 
   if (settings.adaptive_rho_fraction <= 0) {
 version(PRINTING){
-    c_eprint(cast(char*)"adaptive_rho_fraction must be positive");
+    c_eprint(cast(char*)"ERROR in %s: adaptive_rho_fraction must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -969,56 +969,56 @@ version(PRINTING){
 
   if (settings.adaptive_rho_tolerance < 1.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"adaptive_rho_tolerance must be >= 1");
+    c_eprint(cast(char*)"ERROR in %s: adaptive_rho_tolerance must be >= 1\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.polish_refine_iter < 0) {
 version(PRINTING){
-    c_eprint(cast(char*)"polish_refine_iter must be nonnegative");
+    c_eprint(cast(char*)"ERROR in %s: polish_refine_iter must be nonnegative\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.rho <= 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"rho must be positive");
+    c_eprint(cast(char*)"ERROR in %s: rho must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.sigma <= 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"sigma must be positive");
+    c_eprint(cast(char*)"ERROR in %s: sigma must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.delta <= 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"delta must be positive");
+    c_eprint(cast(char*)"ERROR in %s: delta must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.max_iter <= 0) {
 version(PRINTING){
-    c_eprint(cast(char*)"max_iter must be positive");
+    c_eprint(cast(char*)"ERROR in %s: max_iter must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_abs < 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"eps_abs must be nonnegative");
+    c_eprint(cast(char*)"ERROR in %s: eps_abs must be nonnegative\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_rel < 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"eps_rel must be nonnegative");
+    c_eprint(cast(char*)"ERROR in %s: eps_rel must be nonnegative\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1026,21 +1026,21 @@ version(PRINTING){
   if ((settings.eps_rel == 0.0) &&
       (settings.eps_abs == 0.0)) {
 version(PRINTING){
-    c_eprint(cast(char*)"at least one of eps_abs and eps_rel must be positive");
+    c_eprint(cast(char*)"ERROR in %s: at least one of eps_abs and eps_rel must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_prim_inf <= 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"eps_prim_inf must be positive");
+    c_eprint(cast(char*)"ERROR in %s: eps_prim_inf must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.eps_dual_inf <= 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"eps_dual_inf must be positive");
+    c_eprint(cast(char*)"ERROR in %s: eps_dual_inf must be positive\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1048,14 +1048,14 @@ version(PRINTING){
   if ((settings.alpha <= 0.0) ||
       (settings.alpha >= 2.0)) {
 version(PRINTING){
-    c_eprint(cast(char*)"alpha must be strictly between 0 and 2");
+    c_eprint(cast(char*)"ERROR in %s: alpha must be strictly between 0 and 2\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (validate_linsys_solver(settings.linsys_solver)) {
 version(PRINTING){
-    c_eprint(cast(char*)"linsys_solver not recognized");
+    c_eprint(cast(char*)"ERROR in %s: linsys_solver not recognized\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1063,7 +1063,7 @@ version(PRINTING){
   if ((settings.verbose != 0) &&
       (settings.verbose != 1)) {
 version(PRINTING){
-    c_eprint(cast(char*)"verbose must be either 0 or 1");
+    c_eprint(cast(char*)"ERROR in %s: verbose must be either 0 or 1\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1071,14 +1071,14 @@ version(PRINTING){
   if ((settings.scaled_termination != 0) &&
       (settings.scaled_termination != 1)) {
 version(PRINTING){
-    c_eprint(cast(char*)"scaled_termination must be either 0 or 1");
+    c_eprint(cast(char*)"ERROR in %s: scaled_termination must be either 0 or 1\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
 
   if (settings.check_termination < 0) {
 version(PRINTING){
-    c_eprint(cast(char*)"check_termination must be nonnegative");
+    c_eprint(cast(char*)"ERROR in %s: check_termination must be nonnegative\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1086,7 +1086,7 @@ version(PRINTING){
   if ((settings.warm_start != 0) &&
       (settings.warm_start != 1)) {
 version(PRINTING){
-    c_eprint(cast(char*)"warm_start must be either 0 or 1");
+    c_eprint(cast(char*)"ERROR in %s: warm_start must be either 0 or 1\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }
@@ -1094,7 +1094,7 @@ version(PROFILING){
 
   if (settings.time_limit < 0.0) {
 version(PRINTING){
-    c_eprint(cast(char*)"time_limit must be nonnegative\n");
+    c_eprint(cast(char*)"ERROR in %s: time_limit must be nonnegative\n", cast(char*)__FUNCTION__);
 } /* ifdef PRINTING */
     return 1;
   }

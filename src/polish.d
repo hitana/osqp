@@ -155,7 +155,7 @@ static c_int iterative_refinement(OSQPWorkspace *work,
     rhs = cast(c_float *)c_malloc((c_float.sizeof) * n);
 
     if (!rhs) {
-      return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR);
+      return osqp_error(cast(osqp_error_type)OSQP_MEM_ALLOC_ERROR, __FUNCTION__);
     } else {
       for (i = 0; i < work.settings.polish_refine_iter; i++) {
         // Form the RHS for the iterative refinement:  b - K*z

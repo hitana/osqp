@@ -37,7 +37,7 @@ soHandle_t lh_load_lib(const char *libName) {
 
     if (!libName) {
         version(PRINTING){
-        c_eprint("no library name given");
+        c_eprint(cast(char*)"ERROR in %s: no library name given\n", cast(char*)__FUNCTION__);
         }
         return OSQP_NULL;
     }
@@ -46,15 +46,15 @@ version(IS_WINDOWS){
     h = LoadLibrary (libName);
     if (!h) {
         version(PRINTING){
-        c_eprint("Windows error while loading dynamic library %s, error = %d",
-                libName, cast(int)GetLastError());
+        c_eprint(cast(char*)"ERROR in %s: Windows error while loading dynamic library %s, error = %d\n",
+                cast(char*)__FUNCTION__, libName, cast(int)GetLastError());
         }
     }
 } else {
     h = dlopen (libName, RTLD_LAZY);
     if (!h) {
         version(PRINTING){
-        c_eprint("Error while loading dynamic library %s: %s", libName, dlerror());
+        c_eprint(cast(char*)"ERROR in %s: Error while loading dynamic library %s: %s\n", cast(char*)__FUNCTION__, libName, dlerror());
         }
     }
 }
@@ -162,7 +162,7 @@ version(IS_WINDOWS){
             return s;
         } else {
             version(PRINTING){
-            c_eprint("Cannot find symbol %s in dynamic library, error = %d",
+            c_eprint(cast(char*)"ERROR in %s: Cannot find symbol %s in dynamic library, error = %d\n", cast(char*)__FUNCTION__, 
                     symName, cast(int)GetLastError());
             }
         }
@@ -171,7 +171,7 @@ version(IS_WINDOWS){
         err = dlerror();  /* we have only one chance; a successive call to dlerror() returns OSQP_NULL */
         if (err) {
             version(PRINTING){
-            c_eprint("Cannot find symbol %s in dynamic library, error = %s",
+            c_eprint(cast(char*)"ERROR in %s: Cannot find symbol %s in dynamic library, error = %s\n", cast(char*)__FUNCTION__, 
                     symName, err);
             }
         } else {
