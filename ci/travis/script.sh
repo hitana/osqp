@@ -17,7 +17,7 @@ fi
 
 
 # ---------------------------------------------------
-# Test C interface
+# Test D interface
 # Compile and test OSQP
 echo "Change directory to Travis build ${TRAVIS_BUILD_DIR}"
 echo "Testing OSQP with standard configuration"
@@ -30,18 +30,18 @@ meson -D COVERAGE=true -D UNITTESTS=true -D NDEBUG=true build
 ninja -C build -j8
 
 ${TRAVIS_BUILD_DIR}/build/osqp_tester
-# Pefrorm code coverage (only in Linux case)
-if [[ $TRAVIS_OS_NAME == "linux" ]]; then
-    cd ${TRAVIS_BUILD_DIR}/build
-    lcov --directory . --capture -o coverage.info # capture coverage info
-    lcov --remove coverage.info "${TRAVIS_BUILD_DIR}/tests/*" \
-        "${TRAVIS_BUILD_DIR}/lin_sys/direct/qdldl/amd/*" \
-        "${TRAVIS_BUILD_DIR}/lin_sys/direct/qdldl/qdldl_sources/*" \
-        "/usr/include/x86_64-linux-gnu/**/*" \
-        -o coverage.info # filter out tests and unnecessary files
-    lcov --list coverage.info # debug before upload
-    coveralls-lcov coverage.info # uploads to coveralls
-fi
+# Perform code coverage (only in Linux case)
+#if [[ $TRAVIS_OS_NAME == "linux" ]]; then
+#    cd ${TRAVIS_BUILD_DIR}/build
+#    lcov --directory . --capture -o coverage.info # capture coverage info
+#    lcov --remove coverage.info "${TRAVIS_BUILD_DIR}/tests/*" \
+#        "${TRAVIS_BUILD_DIR}/lin_sys/direct/qdldl/amd/*" \
+#        "${TRAVIS_BUILD_DIR}/lin_sys/direct/qdldl/qdldl_sources/*" \
+#        "/usr/include/x86_64-linux-gnu/**/*" \
+#        -o coverage.info # filter out tests and unnecessary files
+#    lcov --list coverage.info # debug before upload
+#    coveralls-lcov coverage.info # uploads to coveralls
+#fi
 
 if [[ $TRAVIS_OS_NAME == "linux" ]]; then
     echo "Testing OSQP with valgrind (disabling MKL pardiso for memory allocation issues)"
