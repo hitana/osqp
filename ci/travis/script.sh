@@ -79,6 +79,20 @@ meson -D DFLOAT=true -D UNITTESTS=true -D NDEBUG=true build
 ninja -C build -j8
 ${TRAVIS_BUILD_DIR}/build/osqp_tester
 
+echo "Testing OSQP with doubles"
+cd ${TRAVIS_BUILD_DIR}
+rm -rf build
+meson -D DFLOAT=false -D UNITTESTS=true -D NDEBUG=true build
+ninja -C build -j8
+${TRAVIS_BUILD_DIR}/build/osqp_tester
+
+echo "Testing OSQP with long integers"
+cd ${TRAVIS_BUILD_DIR}
+rm -rf build
+meson -D DLONG=true -D UNITTESTS=true -D NDEBUG=true build
+ninja -C build -j8
+${TRAVIS_BUILD_DIR}/build/osqp_tester
+
 echo "Testing OSQP without long integers"
 cd ${TRAVIS_BUILD_DIR}
 rm -rf build
@@ -110,9 +124,9 @@ ${TRAVIS_BUILD_DIR}/build/osqp_tester
 # Test custom memory management
 # ---------------------------------------------------
 
-echo "Test OSQP custom allocators"
-cd ${TRAVIS_BUILD_DIR}
-rm -rf build
+#echo "Test OSQP custom allocators"
+#cd ${TRAVIS_BUILD_DIR}
+#rm -rf build
 #mkdir build
 #cd build
 #cmake -DUNITTESTS=ON -DOSQP_CUSTOM_MEMORY=${TRAVIS_BUILD_DIR}/tests/custom_memory/custom_memory.h ..
@@ -123,6 +137,6 @@ rm -rf build
 #${TRAVIS_BUILD_DIR}/build/osqp_tester_custom_memory
 
 
-cd ${TRAVIS_BUILD_DIR}
+#cd ${TRAVIS_BUILD_DIR}
 
 set +e
