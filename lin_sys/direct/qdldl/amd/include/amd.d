@@ -114,35 +114,6 @@ enum c_int AMD_SUBSUB_VERSION = 6;
 enum c_int AMD_VERSION = AMD_VERSION_CODE(AMD_MAIN_VERSION,AMD_SUB_VERSION); // todo : check it
 
 
-//int amd_order
-int AMD_order                  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
-                                * AMD_INVALID, or AMD_OUT_OF_MEMORY */
-(
-    int n,                     /* A is n-by-n.  n must be >= 0. */
-    //const int [] Ap,          /* column pointers for A, of size n+1 */
-    //const int [] Ai,          /* row indices of A, of size nz = Ap [n] */
-    //int [] P,                 /* output permutation, of size n */
-    //c_float [] Control,        /* input Control settings, of size AMD_CONTROL */
-    //c_float [] Info            /* output Info statistics, of size AMD_INFO */
-
-    // todo : test
-    const int * Ap,          /* column pointers for A, of size n+1 */
-    const int * Ai,          /* row indices of A, of size nz = Ap [n] */
-    int * P,                 /* output permutation, of size n */
-    c_float * Control,        /* input Control settings, of size AMD_CONTROL */
-    c_float *Info            /* output Info statistics, of size AMD_INFO */
-) ;
-
-SuiteSparse_long amd_l_order    /* see above for description of arguments */
-(
-    SuiteSparse_long n,
-    const SuiteSparse_long [] Ap,
-    const SuiteSparse_long [] Ai,
-    SuiteSparse_long [] P,
-    c_float [] Control,
-    c_float [] Info
-) ;
-
 
 /* Input arguments (not modified):
  *
@@ -305,83 +276,29 @@ SuiteSparse_long amd_l_order    /* see above for description of arguments */
 /* direct interface to AMD */
 /* ------------------------------------------------------------------------- */
 
-/* amd_2 is the primary AMD ordering routine.  It is not meant to be
- * user-callable because of its restrictive inputs and because it destroys
- * the user's input matrix.  It does not check its inputs for errors, either.
- * However, if you can work with these restrictions it can be faster than
- * amd_order and use less memory (assuming that you can create your own copy
- * of the matrix for AMD to destroy).  Refer to AMD/Source/amd_2.c for a
- * description of each parameter. */
-
-void amd_2
-(
-    int n,
-    int *Pe,
-    int *Iw,
-    int *Len,
-    int iwlen,
-    int pfree,
-    int *Nv,
-    int *Next,
-    int *Last,
-    int *Head,
-    int *Elen,
-    int *Degree,
-    int *W,
-    c_float *Control,
-    c_float *Info
-) ;
-
-void amd_l2
-(
-    SuiteSparse_long n,
-    SuiteSparse_long *Pe,
-    SuiteSparse_long *Iw,
-    SuiteSparse_long *Len,
-    SuiteSparse_long iwlen,
-    SuiteSparse_long pfree,
-    SuiteSparse_long *Nv,
-    SuiteSparse_long *Next,
-    SuiteSparse_long *Last,
-    SuiteSparse_long *Head,
-    SuiteSparse_long *Elen,
-    SuiteSparse_long *Degree,
-    SuiteSparse_long *W,
-    c_float *Control,
-    c_float *Info
-) ;
-
-
-/* ------------------------------------------------------------------------- */
-/* amd_valid */
-/* ------------------------------------------------------------------------- */
-
-/* Returns AMD_OK or AMD_OK_BUT_JUMBLED if the matrix is valid as input to
- * amd_order; the latter is returned if the matrix has unsorted and/or
- * duplicate row indices in one or more columns.  Returns AMD_INVALID if the
- * matrix cannot be passed to amd_order.  For amd_order, the matrix must also
- * be square.  The first two arguments are the number of rows and the number
- * of columns of the matrix.  For its use in AMD, these must both equal n.
- *
- * NOTE: this routine returned TRUE/FALSE in v1.2 and earlier.
- */
-
-int amd_valid
-(
-    int n_row,                 /* # of rows */
-    int n_col,                 /* # of columns */
-    const int * Ap,          /* column pointers, of size n_col+1 */
-    const int * Ai           /* row indices, of size Ap [n_col] */
-) ;
-
-SuiteSparse_long amd_l_valid
-(
-    SuiteSparse_long n_row,
-    SuiteSparse_long n_col,
-    const SuiteSparse_long * Ap,
-    const SuiteSparse_long * Ai
-) ;
-
+version (DLONG){
+    SuiteSparse_long AMD_order
+    (
+        SuiteSparse_long n,
+        const SuiteSparse_long * Ap,
+        const SuiteSparse_long * Ai,
+        SuiteSparse_long * P,
+        c_float * Control,
+        c_float * Info
+    );
+}
+else {
+    int AMD_order                  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
+                                * AMD_INVALID, or AMD_OUT_OF_MEMORY */
+    (
+        int n,                     /* A is n-by-n.  n must be >= 0. */
+        const int * Ap,          /* column pointers for A, of size n+1 */
+        const int * Ai,          /* row indices of A, of size nz = Ap [n] */
+        int * P,                 /* output permutation, of size n */
+        c_float * Control,        /* input Control settings, of size AMD_CONTROL */
+        c_float * Info            /* output Info statistics, of size AMD_INFO */
+    );
+}
 
 /* ------------------------------------------------------------------------- */
 /* AMD Control and Info arrays */

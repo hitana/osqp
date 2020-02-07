@@ -75,21 +75,14 @@ version(MATLAB){
 /* === SuiteSparse_long ===================================================== */
 /* ========================================================================== */
 
-// todo : How do i check SuiteSparse_long?
-// todo : what if no DLONG defined?
-
-//#ifndef SuiteSparse_long
-//#define SuiteSparse_long long long
 alias SuiteSparse_long = long;
 enum long SuiteSparse_long_max = LONG_MAX;
 enum string SuiteSparse_long_idd = "ld";
-//#define SuiteSparse_long_max LONG_MAX
-//#define SuiteSparse_long_idd "ld"
 
-// todo: test it
+// todo: review it
 //#define SuiteSparse_long_id "%" SuiteSparse_long_idd
-enum string SuiteSparse_long_id = "%ld";
-//#endif
+
+
 
 /* ========================================================================== */
 /* === SuiteSparse_config parameters and functions ========================== */

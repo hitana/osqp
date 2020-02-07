@@ -235,7 +235,7 @@ import amd;
 version(DLONG){
     alias Int = SuiteSparse_long;
     alias UInt = ulong;
-    alias ID = SuiteSparse_long_id;
+    alias ID = SuiteSparse_long_idd;
     alias Int_MAX = SuiteSparse_long_max;
 /*    alias amd_l_order = AMD_order;
     alias amd_l_defaults = AMD_defaults;
@@ -256,7 +256,7 @@ else {
     version(ZLONG){
         alias Int = SuiteSparse_long;
         alias UInt = ulong;
-        alias ID = SuiteSparse_long_id;
+        alias ID = SuiteSparse_long_idd;
         alias Int_MAX = SuiteSparse_long_max;
     /*    alias AMD_order = amd_l_order;
         alias AMD_defaults = amd_l_defaults;

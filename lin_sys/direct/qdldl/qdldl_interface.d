@@ -9,8 +9,7 @@ import qdldl_types; // for QDLDL_float and others
 import cs;
 
 import qdldl;
-//#include "qdldl_interface.h"
-
+import amd_internal;
 /**
  * QDLDL solver structure
  */
@@ -199,13 +198,10 @@ static c_int permute_KKT(csc ** KKT, qdldl_solver * p, c_int Pnz, c_int Anz, c_i
     info = cast(c_float *)c_malloc(AMD_INFO * (c_float.sizeof));
 
     // Compute permutation matrix P using AMD
-version(DLONG) {
     //amd_status = amd_l_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
-    amd_status = AMD_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
-} else {
     //amd_status = amd_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
-    amd_status = AMD_order((*KKT).n, (*KKT).p, (*KKT).i, p.P, cast(c_float *)OSQP_NULL, info);
-}
+    amd_status = AMD_order(cast(c_int)((*KKT).n), cast(const c_int*)(*KKT).p, cast(const c_int*)(*KKT).i, cast(c_int*)p.P, cast(c_float *)OSQP_NULL, info);
+
     if (amd_status < 0) {
         // Free Amd info and return an error
         c_free(info);
@@ -367,9 +363,9 @@ else { // #if EMBEDDED != 1
     else { // Called from ADMM algorithm
 
         // Allocate vectors of indices
-        s.PtoKKT = cast(int*)c_malloc((P.p[P.n]) * (c_int.sizeof));
-        s.AtoKKT = cast(int*)c_malloc((A.p[A.n]) * (c_int.sizeof));
-        s.rhotoKKT = cast(int*)c_malloc((A.m) * (c_int.sizeof));
+        s.PtoKKT = cast(c_int*)c_malloc((P.p[P.n]) * (c_int.sizeof));
+        s.AtoKKT = cast(c_int*)c_malloc((A.p[A.n]) * (c_int.sizeof));
+        s.rhotoKKT = cast(c_int*)c_malloc((A.m) * (c_int.sizeof));
 
         // Use p.rho_inv_vec for storing param2 = rho_inv_vec
         for (i = 0; i < A.m; i++){
