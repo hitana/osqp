@@ -19,14 +19,16 @@ qdldl_interface_src = ['qdldl_interface.d']
   qdldl_interface_src += amd_sources
 #endif
 
+
 # Create object library for linear system solver interface
 message ('making object library linsys_qdldl_lib ...')
 linsys_qdldl_lib = library('linsys_qdldl', 
                             qdldl_interface_src,
-							include_directories: ['../../../include', '../../../configure', 'amd/include', 'qdldl_sources/include', 
-                                   'amd/src', 'amd/include', '../../../src', 'qdldl_sources/src'  # for D modules
-                                   ]
-                                   )
+                            include_directories: ['../../../include', '../../../configure', 'amd/include', 'qdldl_sources/include',
+                                                 'amd/src', 'amd/include', '../../../src', 'qdldl_sources/src'  # for D modules
+                            ],
+                            d_module_versions: d_module_versions
+                            )
 
 # Generate header file with the global options
 # ---------------------------------------------
@@ -75,9 +77,10 @@ qdldl_headers = ['qdldl_sources/include/qdldl.h']
 message ('making object library qdldlobject_lib ...')
 qdldlobject_lib = library('qdldlobject', 
                           qdldl_src, 
-						  qdldl_headers,
-						  include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
-						  c_args: c_args)
+						              qdldl_headers,
+                          include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
+                          d_module_versions: d_module_versions,
+						              c_args: c_args)
 
 # Create Static Library
 # ----------------------------------------------
@@ -85,8 +88,9 @@ message ('making static_library qdldlstatic_lib ...')
 qdldlstatic_lib = static_library('qdldlstatic', 
                                 qdldl_src, 
                                 qdldl_headers,
-                            	include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
-								c_args: c_args)
+                                include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
+                                d_module_versions: d_module_versions,
+								                c_args: c_args)
 # Give same name to static library output
 # set_target_properties(['qdldlstatic', 'PROPERTIES', 'OUTPUT_NAME', 'qdldl'])
 # Install Static Library
@@ -98,9 +102,9 @@ message ('making shared_library qdldl_lib ...')
 qdldl_lib = shared_library('qdldl', 
                            qdldl_src, 
                            qdldl_headers,
-						   include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
-						   dependencies: [gcov_lib],
-						   c_args: c_args
-						   )
+                           include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
+                           dependencies: [gcov_lib],
+                           d_module_versions: d_module_versions,
+                           c_args: c_args)
 # Install qdldl shared library
 # install(['TARGETS', 'qdldl', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])
