@@ -5,6 +5,9 @@ nothrow @nogc extern(C):
 
 /* Includes */
 import glob_opts;
+version(EMBEDDED) {
+  import osqp_configure; // for c_free and others  
+}
 import types;
 import constants;
 import util; // Needed for osqp_set_default_settings functions
@@ -29,10 +32,10 @@ version(CTRLC){
 import ctrlc;
 } /* ifdef CTRLC */
 
-version(EMBEDDED){}
-else {
+//version(EMBEDDED){}
+//else {
 import lin_sys;
-} /* ifndef EMBEDDED */
+//} /* ifndef EMBEDDED */
 
 /**********************
 * Main API Functions *
@@ -88,8 +91,8 @@ version(PROFILING){
 } /* ifdef PROFILING */
 }
 
-version(EMBEDDED){}
-else {
+//version(EMBEDDED){}
+//else {
 
 
 c_int osqp_setup(OSQPWorkspace** workp, const OSQPData *data, const OSQPSettings *settings) {
@@ -302,7 +305,7 @@ else {
   return 0;
 }
 
-} // #ifndef EMBEDDED
+//} // #ifndef EMBEDDED
 
 
 c_int osqp_solve(OSQPWorkspace *work) {
@@ -536,7 +539,7 @@ version(PRINTING){
         goto exit;
       }
     }
-} // EMBEDDED != 1
+} // EMBEDDED_1 != 1
 
   }        // End of ADMM for loop
 
@@ -603,7 +606,7 @@ version(EMBEDDED_1) {}
 else {
   /* Update rho estimate */
   work.info.rho_estimate = compute_rho_estimate(work);
-} /* if EMBEDDED != 1 */
+} /* if EMBEDDED_1 != 1 */
 
   /* Update solve time */
 version(PROFILING){
@@ -677,17 +680,17 @@ version(CTRLC){
 }
 
 
-version(EMBEDDED){}
-else {
-
 c_int osqp_cleanup(OSQPWorkspace *work) {
   c_int exitflag = 0;
 
   if (work) { // If workspace has been allocated
     // Free Data
     if (work.data) {
-      if (work.data.P) csc_spfree(work.data.P);
+version(EMBEDDED){}   // todo : useless here
+else {
+      if (work.data.P) csc_spfree(work.data.P);   // todo : test it
       if (work.data.A) csc_spfree(work.data.A);
+} // !EMBEDDED
       if (work.data.q) c_free(work.data.q);
       if (work.data.l) c_free(work.data.l);
       if (work.data.u) c_free(work.data.u);
@@ -708,19 +711,22 @@ c_int osqp_cleanup(OSQPWorkspace *work) {
     if (work.D_temp_A) c_free(work.D_temp_A);
     if (work.E_temp)   c_free(work.E_temp);
 
+version(EMBEDDED){}
+else {
     // Free linear system solver structure
     if (work.linsys_solver) {
       if (work.linsys_solver.free) {
         work.linsys_solver.free(work.linsys_solver);
       }
     }
+} // !EMBEDDED
 
     // Unload linear system solver after free
     if (work.settings) {
       exitflag = unload_linsys_solver(work.settings.linsys_solver);
     }
 
-version(EMBEDDED){} // todo : useless here
+version(EMBEDDED){}   // todo : useless here
 else {
     // Free active constraints structure
     if (work.pol) {
@@ -756,7 +762,6 @@ else {
     if (work.delta_x)     c_free(work.delta_x);
     if (work.Pdelta_x)    c_free(work.Pdelta_x);
     if (work.Adelta_x)    c_free(work.Adelta_x);
-
     // Free Settings
     if (work.settings) c_free(work.settings);
 
@@ -778,11 +783,10 @@ version(PROFILING){
     // Free work
     c_free(work);
   }
-
   return exitflag;
 }
 
-} // #ifndef EMBEDDED
+//} // #ifndef EMBEDDED
 
 
 /************************

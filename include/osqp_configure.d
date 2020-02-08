@@ -52,11 +52,5 @@ else {
     alias c_malloc = malloc;
     alias c_calloc = calloc;
     alias c_realloc = realloc;
-    alias c_free = c_free;
-    
-    //#include <stdlib.h>
-    //#define c_malloc malloc
-    //#define c_calloc calloc
-    //#define c_realloc realloc
-    //#define c_free c_free
+    alias c_free = free;
 }

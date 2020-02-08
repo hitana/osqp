@@ -65,7 +65,7 @@ enum bool NOGDI = true; // todo : test it
 //#   include <windows.h>
 import windows; // todo
 
-struct OSQP_TIMER {
+struct OSQPTimer {
   LARGE_INTEGER tic;
   LARGE_INTEGER toc;
   LARGE_INTEGER freq;
@@ -77,28 +77,24 @@ struct OSQP_TIMER {
     import core.time: mach_timebase_info_data_t;  // todo
 
     /* Use MAC OSX  mach_time for timing */
-    struct OSQP_TIMER {
+    struct OSQPTimer {
       ulong                  tic;
       ulong                  toc;
       mach_timebase_info_data_t tinfo;
     };
-  }
+}
 else version(linux)
 {
 
     /* Use POSIX clock_gettime() for timing on non-Windows machines */
     import core.sys.posix.sys.time;
 
-    struct OSQP_TIMER {
+    struct OSQPTimer {
       timespec tic;
       timespec toc;
     };
-}
-
-alias OSQPTimer = OSQP_TIMER;
-
+  }
 }/* END #ifdef PROFILING */
-
 
 /**
  * Problem scaling matrices stored as vectors

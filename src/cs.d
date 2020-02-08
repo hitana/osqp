@@ -3,6 +3,7 @@ module cs;
 nothrow @nogc extern(C):
 
 import glob_opts;
+import osqp_configure; // for c_malloc and others
 import types; // CSC matrix type
 import lin_alg; // Vector copy operations
 import constants; // for OSQP_NULL

@@ -1,6 +1,9 @@
 
 module polish;
 
+version(EMBEDDED){}
+else {
+
 nothrow @nogc extern(C):
 
 import types;
@@ -357,3 +360,5 @@ version(PRINTING){
 
   return 0;
 }
+
+} // !EMBEDDED

@@ -67,16 +67,23 @@ c_int init_linsys_solver(LinSysSolver          **s,
                          const c_float          *rho_vec,
                          linsys_solver_type      linsys_solver,
                          c_int                   polish) {
-  switch (linsys_solver) {
-  case cast(linsys_solver_type)QDLDL_SOLVER:
-    return init_linsys_solver_qdldl(cast(qdldl_solver **)s, P, A, sigma, rho_vec, polish);
 
-version(ENABLE_MKL_PARDISO){
-  case cast(linsys_solver_type)MKL_PARDISO_SOLVER:
-    return init_linsys_solver_pardiso(cast(pardiso_solver **)s, P, A, sigma, rho_vec, polish);
-
-} /* ifdef ENABLE_MKL_PARDISO */
-  default: // QDLDL
-    return init_linsys_solver_qdldl(cast(qdldl_solver **)s, P, A, sigma, rho_vec, polish);
+  version (EMBEDDED){
+    return 0; // test it
   }
+  else {
+
+    switch (linsys_solver) 
+    {
+      case cast(linsys_solver_type)QDLDL_SOLVER:
+        return init_linsys_solver_qdldl(cast(qdldl_solver **)s, P, A, sigma, rho_vec, polish);
+
+      version(ENABLE_MKL_PARDISO){
+        case cast(linsys_solver_type)MKL_PARDISO_SOLVER:
+          return init_linsys_solver_pardiso(cast(pardiso_solver **)s, P, A, sigma, rho_vec, polish);
+      } /* ifdef ENABLE_MKL_PARDISO */
+      default: // QDLDL
+        return init_linsys_solver_qdldl(cast(qdldl_solver **)s, P, A, sigma, rho_vec, polish);
+    }
+  } // !EMBEDDED
 }

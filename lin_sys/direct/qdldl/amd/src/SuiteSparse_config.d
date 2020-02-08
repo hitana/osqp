@@ -50,6 +50,10 @@ nothrow @nogc extern(C):
 // Include OSQP Global options for memory management
 import glob_opts;
 
+version (EMBEDDED){
+  import osqp_configure; // for c_malloc and others
+}
+
 import core.stdc.math;
 import core.stdc.stdlib;
 import core.stdc.stdio;
@@ -98,37 +102,25 @@ enum string SuiteSparse_long_idd = "ld";
    application directly, except to assign them to the desired user-provided
    functions.  Rather, you should use the
  */
-/*
+
+alias malloc_func_t = void* function(size_t);
+alias realloc_func_t = void* function(void*, size_t);
+alias free_func_t = void function(void*);
+alias printf_func_t = int function(const char*, ...);
+alias hypot_func_t = c_float function(c_float, c_float);
+alias divcomplex_func_t = int function(c_float, c_float, c_float, c_float, c_float*, c_float*);
+
 struct SuiteSparse_config_struct
 {
-    //void *(*malloc_func) (size_t) ;             // pointer to malloc 
-    void* function(size_t) malloc_func;
-
-    //void *(*realloc_func) (void *, size_t) ;    // pointer to realloc 
-    void* function(void*, size_t) realloc_func;
-    //void (*free_func) (void *) ;                // pointer to free 
-    void function(void*) free_func;
-version(PYTHON){
-    //void (*printf_func) (const char *, ...) ;    // pointer to printf (in Python it returns void)
-    void function(const char*, ...) printf_func;
-} else {
-    version(R_LANG){
-        //void (*printf_func) (const char *, ...) ;    // pointer to printf (in R it returns void)
-        void function(const char*, ...) printf_func;
-    }
-    else {
-        //int (*printf_func) (const char *, ...) ;    // pointer to printf 
-        int function(const char*, ...) printf_func;
-    }
-}
-    //c_float (*hypot_func) (c_float, c_float) ;     // pointer to hypot 
-    c_float function(c_float, c_float) hypot_func;
-    //int (*divcomplex_func) (c_float, c_float, c_float, c_float, c_float *, c_float *);
-    int function(c_float, c_float, c_float, c_float, c_float*, c_float*) divcomplex_func;
+    malloc_func_t malloc_func;      // pointer to malloc
+    realloc_func_t realloc_func;    // pointer to realloc
+    free_func_t free_func;          // pointer to free             
+    printf_func_t printf_func;      // pointer to printf
+    hypot_func_t hypot_func;        // pointer to hypot
+    divcomplex_func_t divcomplex_func;
 };
-*/
-//extern struct SuiteSparse_config_struct SuiteSparse_config ;
 
+//extern struct SuiteSparse_config_struct SuiteSparse_config ;
 
 /* OSQP: disabling this timing code */
 //#define NTIMER
@@ -150,14 +142,8 @@ version(PYTHON){
     { \
         (void) (SuiteSparse_config.printf_func) params ; \
     } \
-}
-*/
-
-// todo : test it
-//void SUITESPARSE_PRINTF(T)(auto ref T params) {if (SuiteSparse_config.printf_func != NULL) { SuiteSparse_config.printf_func ((params)); }}
-//void SUITESPARSE_PRINTF(T)(auto ref T params) { c_print ((params)); }
-void SUITESPARSE_PRINTF(T)(auto ref T params) { return; }   // todo : later
-
+}*/
+alias SUITESPARSE_PRINTF = c_print;
 
 /* ========================================================================== */
 /* === SuiteSparse version ================================================== */
@@ -212,13 +198,9 @@ void SUITESPARSE_PRINTF(T)(auto ref T params) { return; }   // todo : later
 */
 //#define SUITESPARSE_HAS_VERSION_FUNCTION
 
-//#define SUITESPARSE_DATE "May 4, 2016"
 enum string SUITESPARSE_DATE = "May 4, 2016";
 //#define SUITESPARSE_VER_CODE(main,sub) ((main) * 1000 + (sub))
 c_int SUITESPARSE_VER_CODE(c_int main, c_int sub) {return (main) * 1000 + (sub);}
-//#define SUITESPARSE_MAIN_VERSION 4
-//#define SUITESPARSE_SUB_VERSION 5
-//#define SUITESPARSE_SUBSUB_VERSION 3
 enum c_int SUITESPARSE_MAIN_VERSION = 4;
 enum c_int SUITESPARSE_SUB_VERSION = 5;
 enum c_int SUITESPARSE_SUBSUB_VERSION = 3;
@@ -247,26 +229,28 @@ enum c_int SUITESPARSE_VERSION = SUITESPARSE_VER_CODE(SUITESPARSE_MAIN_VERSION,S
     If -DPRINT is defined a compile time, then printf is disabled, and
     SuiteSparse will not use printf.
  */
-/*
+
 version(PRINTING){
     SuiteSparse_config_struct SuiteSparse_config =
     {
         // Memory allocation from glob_opts.h in OSQP
-        c_malloc, c_realloc, c_free, c_print,
-        SuiteSparse_hypot,
-        SuiteSparse_divcomplex
+        &c_malloc, &c_realloc, &c_free, 
+        
+        &c_print,
+
+        &SuiteSparse_hypot,
+        &SuiteSparse_divcomplex
     };
-}else 
-{
+} else {
     SuiteSparse_config_struct SuiteSparse_config =
     {
         // Memory allocation from glob_opts.h in OSQP
-        c_malloc, c_realloc, c_free,
-        SuiteSparse_hypot,
-        SuiteSparse_divcomplex        
+        &c_malloc, &c_realloc, &c_free,
+        null,
+        &SuiteSparse_hypot,
+        &SuiteSparse_divcomplex        
     };
 }
-*/
 
 /* -------------------------------------------------------------------------- */
 /* SuiteSparse_malloc: malloc wrapper */
@@ -292,8 +276,8 @@ void *SuiteSparse_malloc    /* pointer to allocated block of memory */
     }
     else
     {
-        //p = cast(void *) cast(SuiteSparse_config.malloc_func) (size) ;
-         p = cast(void *) c_malloc(size) ; // todo
+        p = cast(void *)(SuiteSparse_config.malloc_func(size));
+        //p = cast(void *) c_malloc(size) ; // todo
     }
     return (p) ;
 }

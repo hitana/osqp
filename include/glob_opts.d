@@ -68,7 +68,6 @@ else {  // # ifndef EMBEDDED
           alias c_realloc = PyMem_Realloc;
           //#   define c_free PyMem_Free
           //#   define c_realloc PyMem_Realloc
-
     }
     else {
       version (OSQP_CUSTOM_MEMORY) {}
@@ -81,11 +80,6 @@ else {  // # ifndef EMBEDDED
           alias c_calloc = calloc;
           alias c_free = free;
           alias c_realloc = realloc;
-          //#  include <stdlib.h>
-          //#  define c_malloc  malloc
-          //#  define c_calloc  calloc
-          //#  define c_free    free
-          //#  define c_realloc realloc
       }
     }
   }

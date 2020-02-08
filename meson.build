@@ -283,6 +283,24 @@ r_lang = conf_data.get('R_LANG')
 if matlab
   # target_link_libraries(['osqpstatic', matlab_libraries])
 endif
+
+d_library_src = ['include/glob_opts.d',
+          'include/constants.d',
+          'lin_sys/direct/qdldl/amd/src/SuiteSparse_config.d',
+          'lin_sys/direct/qdldl/amd/include/amd.d',
+          'lin_sys/direct/qdldl/amd/src/amd_1.d',
+          'lin_sys/direct/qdldl/amd/src/amd_2.d',
+          'lin_sys/direct/qdldl/amd/src/amd_aat.d',
+          'lin_sys/direct/qdldl/amd/src/amd_control.d',
+          'lin_sys/direct/qdldl/amd/src/amd_defaults.d',
+          'lin_sys/direct/qdldl/amd/src/amd_info.d',
+          'lin_sys/direct/qdldl/amd/src/amd_order.d',
+          'lin_sys/direct/qdldl/amd/src/amd_post_tree.d',
+          'lin_sys/direct/qdldl/amd/src/amd_postorder.d',
+          'lin_sys/direct/qdldl/amd/src/amd_preprocess.d',
+          'lin_sys/direct/qdldl/amd/src/amd_valid.d',
+          'lin_sys/direct/qdldl/amd/include/amd_internal.d']
+
 # If we are building Python/Matlab/R interface:
 #   - do not build shared library
 #   - do not build demo
@@ -305,24 +323,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
   # Install osqp shared library
   # install(['TARGETS', 'osqp', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])
 
-  message('Create demo executable (linked to static library)')
-
-  d_library_src = ['include/glob_opts.d',
-          'include/constants.d',
-          'lin_sys/direct/qdldl/amd/src/SuiteSparse_config.d',
-          'lin_sys/direct/qdldl/amd/include/amd.d',
-          'lin_sys/direct/qdldl/amd/src/amd_1.d',
-          'lin_sys/direct/qdldl/amd/src/amd_2.d',
-          'lin_sys/direct/qdldl/amd/src/amd_aat.d',
-          'lin_sys/direct/qdldl/amd/src/amd_control.d',
-          'lin_sys/direct/qdldl/amd/src/amd_defaults.d',
-          'lin_sys/direct/qdldl/amd/src/amd_info.d',
-          'lin_sys/direct/qdldl/amd/src/amd_order.d',
-          'lin_sys/direct/qdldl/amd/src/amd_post_tree.d',
-          'lin_sys/direct/qdldl/amd/src/amd_postorder.d',
-          'lin_sys/direct/qdldl/amd/src/amd_preprocess.d',
-          'lin_sys/direct/qdldl/amd/src/amd_valid.d',
-          'lin_sys/direct/qdldl/amd/include/amd_internal.d']
+  message('Create demo executable (linked to static library)')  
   
   demo_src = ['examples/osqp_demo.c', d_library_src]
 
