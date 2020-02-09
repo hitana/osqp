@@ -336,7 +336,7 @@ void mat_tpose_vec(const csc *A, const c_float *x, c_float *y,
   }
 }
 
-version(EMBEDDED){}
+version(EMBEDDED_1){}
 else {
   void mat_inf_norm_cols(const csc *M, c_float *E) {
     c_int j;

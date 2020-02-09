@@ -91,9 +91,8 @@ version(PROFILING){
 } /* ifdef PROFILING */
 }
 
-//version(EMBEDDED){}
-//else {
-
+version(EMBEDDED){}
+else {
 
 c_int osqp_setup(OSQPWorkspace** workp, const OSQPData *data, const OSQPSettings *settings) {
   c_int exitflag;
@@ -305,7 +304,7 @@ else {
   return 0;
 }
 
-//} // #ifndef EMBEDDED
+} // #ifndef EMBEDDED
 
 
 c_int osqp_solve(OSQPWorkspace *work) {

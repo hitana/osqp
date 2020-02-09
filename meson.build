@@ -339,6 +339,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
   test('osqp_demo', osqp_demo_exe)
 endif
 
+if embedded == '0'
 # ----------------------------------------------
 # Add custom command to generate tests
 if conf_data.get('UNITTESTS')
@@ -371,4 +372,5 @@ if conf_data.get('UNITTESTS')
 
   test('osqp_tester', osqp_tester_exe)
   test('osqp_tester_custom_memory', osqp_tester_custom_memory_exe)
+endif
 endif
