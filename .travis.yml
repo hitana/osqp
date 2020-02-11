@@ -85,25 +85,9 @@ install:
  # todo : dmd version changes from time to time
  - source ~/dlang/dmd-2.090.1/activate
 
-#script: ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
+script: ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
 
-script:
-  - echo "Testing D interface with arguments-> arch=${ARCH}, DFLOAT=${DFLOAT}, DLONG=${DLONG}, USE_EMBEDDED=${USE_EMBEDDED} EMBEDDED=${EMBEDDED}"
-    cd ${TRAVIS_BUILD_DIR}
-    rm -rf build
-    meson --arch "$ARCH" -D NDEBUG=true -DUNITTESTS=${UNITTESTS} -DPRINTING=${PRINTING} -DPROFILING=${PROFILING} -DCTRLC=${CTRLC} -DDFLOAT=${DFLOAT} -DDLONG=${DLONG} -DCOVERAGE=${COVERAGE} -DUSE_EMBEDDED=${USE_EMBEDDED} -DEMBEDDED=${EMBEDDED} build
-    ninja -C build -j8
-
-    if [[ "${USE_EMBEDDED}" == false ]]; then
-        echo "Running OSQP demo"
-        ${TRAVIS_BUILD_DIR}/build/osqp_demo
-        echo "Running OSQP tester"
-        ${TRAVIS_BUILD_DIR}/build/osqp_tester
-    else
-    fi
-
-
-
+#script:
 # - bash ${TRAVIS_BUILD_DIR}/ci/travis/script.sh
  #- ninja -j8 -C build test -v
  #- git submodule update --init --recursive
