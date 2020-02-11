@@ -1,6 +1,6 @@
 option('UNITTESTS', type : 'boolean', value : true, description : 'Enable unittests generation')
-option('PRINTING', type : 'boolean', value : true, description : 'Enable solver printing')
-option('PROFILING', type : 'boolean', value : true, description : 'Enable solver profiling (timing)')
+option('PRINTING', type : 'boolean', value : false, description : 'Enable solver printing')
+option('PROFILING', type : 'boolean', value : false, description : 'Enable solver profiling (timing)')
 option('CTRLC', type : 'boolean', value : true, description : 'Enable user interrupt (Ctrl-C)')
 option('DFLOAT', type : 'boolean', value : false, description : 'Use float numbers instead of doubles')
 option('DLONG', type : 'boolean', value : true, description : 'Use long integers (64bit) for indexing')
