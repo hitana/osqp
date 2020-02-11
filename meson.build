@@ -9,6 +9,7 @@ c_compiler = meson.get_compiler('c')
 d_module_versions = []
 
 conf_data = configuration_data({
+  'ARCH' : get_option('ARCH'),
   'UNITTESTS' : get_option('UNITTESTS'),
   'PRINTING' : get_option('PRINTING'),
   'PROFILING' : get_option('PROFILING'),
@@ -208,7 +209,18 @@ if c_compiler.get_id() != 'msvc'
   endif
 endif
 
-d_args = ['-betterC', c_args]
+# Architecture compiler arguments
+d_arch_args = ''
+if conf_data.get('ARCH') == 'x86_64'
+  c_arch_args = '-march=x86-64'
+  d_arch_args = '-m64'
+elif conf_data.get('ARCH') == 'x86'
+  c_arch_args = '-march=i686'
+  d_arch_args = '-m32'
+endif
+
+d_args = ['-betterC', d_arch_args, c_args]
+
 
 #************************************************************************************
 current_source_dir = meson.current_source_dir()
@@ -333,7 +345,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             dependencies: [gcov_lib],
                             link_with: osqp_lib,
                             #link_with: osqpstatic_lib,
-                            c_args: c_args,
+                            c_args: [c_arch_args, c_args],
                             d_module_versions: d_module_versions
                             )
   test('osqp_demo', osqp_demo_exe)
@@ -355,7 +367,7 @@ if conf_data.get('UNITTESTS')
                                include_directories: ['include', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include', 'tests', test_include_dirs],
                                dependencies: [gcov_lib],
                                link_with: osqpstatic_lib,
-                               c_args: c_args,
+                               c_args: [c_arch_args, c_args],
                                d_module_versions: d_module_versions
                                )
   
@@ -366,7 +378,7 @@ if conf_data.get('UNITTESTS')
                                             include_directories: ['include', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include', 'tests', test_include_dirs],
                                             dependencies: [gcov_lib],
                                             link_with: osqpstatic_lib,
-                                            c_args: c_args,
+                                            c_args: [c_arch_args, c_args],
                                             d_module_versions: d_module_versions
                                             )
 

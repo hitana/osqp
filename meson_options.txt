@@ -1,3 +1,4 @@
+option('ARCH', type : 'string', value : 'x86_64', description : 'Architecture: x86 or x86_64')
 option('UNITTESTS', type : 'boolean', value : true, description : 'Enable unittests generation')
 option('PRINTING', type : 'boolean', value : false, description : 'Enable solver printing')
 option('PROFILING', type : 'boolean', value : false, description : 'Enable solver profiling (timing)')
