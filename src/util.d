@@ -132,7 +132,7 @@ void print_setup_header(const OSQPWorkspace *work) {
 version(PROFILING){
   if (settings.time_limit) c_print("          time_limit: %.2e sec,\n",
                                     settings.time_limit);
-} /* ifdef PROFILING */
+} // PROFILING
 
   if (settings.scaling) c_print("          scaling: on, ");
   else c_print("          scaling: off, ");
@@ -146,8 +146,10 @@ version(PROFILING){
   if (settings.polish) c_print("polish: on, ");
   else c_print("polish: off, ");
 
+version(PROFILING){
   if (settings.time_limit) c_print("time_limit: %.2e sec\n", settings.time_limit);
   else c_print("time_limit: off\n");
+} // PROFILING
 
   c_print("\n");
 }
