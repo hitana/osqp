@@ -37,6 +37,7 @@ module amd;
 nothrow @nogc extern(C):
 
 import glob_opts;
+import amd_internal;
 
 import SuiteSparse_config;
 
@@ -276,29 +277,16 @@ enum c_int AMD_VERSION = AMD_VERSION_CODE(AMD_MAIN_VERSION,AMD_SUB_VERSION); // 
 /* direct interface to AMD */
 /* ------------------------------------------------------------------------- */
 
-version (DLONG){
-    SuiteSparse_long AMD_order
-    (
-        SuiteSparse_long n,
-        const SuiteSparse_long * Ap,
-        const SuiteSparse_long * Ai,
-        SuiteSparse_long * P,
-        c_float * Control,
-        c_float * Info
-    );
-}
-else {
-    int AMD_order                  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
+Int AMD_order                  /* returns AMD_OK, AMD_OK_BUT_JUMBLED,
                                 * AMD_INVALID, or AMD_OUT_OF_MEMORY */
-    (
-        int n,                     /* A is n-by-n.  n must be >= 0. */
-        const int * Ap,          /* column pointers for A, of size n+1 */
-        const int * Ai,          /* row indices of A, of size nz = Ap [n] */
-        int * P,                 /* output permutation, of size n */
-        c_float * Control,        /* input Control settings, of size AMD_CONTROL */
-        c_float * Info            /* output Info statistics, of size AMD_INFO */
-    );
-}
+(
+    Int n,                     /* A is n-by-n.  n must be >= 0. */
+    const Int * Ap,          /* column pointers for A, of size n+1 */
+    const Int * Ai,          /* row indices of A, of size nz = Ap [n] */
+    Int * P,                 /* output permutation, of size n */
+    c_float * Control,        /* input Control settings, of size AMD_CONTROL */
+    c_float * Info            /* output Info statistics, of size AMD_INFO */
+);
 
 /* ------------------------------------------------------------------------- */
 /* AMD Control and Info arrays */
