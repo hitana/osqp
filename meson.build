@@ -212,12 +212,14 @@ endif
 # Architecture compiler arguments
 d_arch_args = ''
 c_arch_args = ''
+link_args = []
 if conf_data.get('ARCH') == 'x86_64'
   c_arch_args = '-march=x86-64'
   d_arch_args = '-m64'
+  link_args = ['-m64']
 elif conf_data.get('ARCH') == 'x86'
   c_arch_args = ['-march=i686', '-m32']
-  #c_arch_args = '-m32'
+  link_args = ['-m32']
   d_arch_args = '-m32'
 endif
 
@@ -332,6 +334,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.                            
                             link_with: linsys_solvers,
                             c_args: d_args,
+                            link_args: link_args,
                             d_module_versions: d_module_versions
                             )
   # Install osqp shared library
@@ -348,6 +351,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             link_with: osqp_lib,
                             #link_with: osqpstatic_lib,
                             c_args: [c_arch_args, c_args],
+                            link_args: link_args,
                             d_module_versions: d_module_versions
                             )
   test('osqp_demo', osqp_demo_exe)
@@ -370,6 +374,7 @@ if conf_data.get('UNITTESTS')
                                dependencies: [gcov_lib],
                                link_with: osqpstatic_lib,
                                c_args: [c_arch_args, c_args],
+                               link_args: link_args,
                                d_module_versions: d_module_versions
                                )
   

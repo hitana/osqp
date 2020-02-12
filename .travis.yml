@@ -66,6 +66,7 @@ addons:
 before_install:
  - sudo add-apt-repository universe
  - sudo apt-get update
+ - sudo apt-get install gcc-multilib
  - sudo apt install python3-pip
  #- sudo apt install meson
  # for test data generation
