@@ -211,11 +211,13 @@ endif
 
 # Architecture compiler arguments
 d_arch_args = ''
+c_arch_args = ''
 if conf_data.get('ARCH') == 'x86_64'
   c_arch_args = '-march=x86-64'
   d_arch_args = '-m64'
 elif conf_data.get('ARCH') == 'x86'
-  c_arch_args = '-march=i686'
+  c_arch_args = ['-march=i686', '-m32']
+  #c_arch_args = '-m32'
   d_arch_args = '-m32'
 endif
 
