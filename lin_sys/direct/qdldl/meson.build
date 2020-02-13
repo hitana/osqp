@@ -28,7 +28,8 @@ linsys_qdldl_lib = library('linsys_qdldl',
                             include_directories: ['../../../include', '../../../configure', 'amd/include', 'qdldl_sources/include',
                                                  'amd/src', 'amd/include', '../../../src', 'qdldl_sources/src'  # for D modules
                             ],
-                            d_module_versions: d_module_versions
+                            d_module_versions: d_module_versions,
+                            link_args: link_args
                             )
 
 # Generate header file with the global options
@@ -81,7 +82,8 @@ qdldlobject_lib = library('qdldlobject',
 						              qdldl_headers,
                           include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
                           d_module_versions: d_module_versions,
-						              c_args: c_args)
+						              c_args: c_args,
+                          link_args: link_args)
 
 # Give same name to static library output
 # set_target_properties(['qdldlstatic', 'PROPERTIES', 'OUTPUT_NAME', 'qdldl'])
@@ -97,6 +99,7 @@ qdldl_lib = library('qdldl',
                            include_directories: ['qdldl_sources/include', 'qdldl_sources/src'],
                            dependencies: [gcov_lib],
                            d_module_versions: d_module_versions,
-                           c_args: c_args)
+                           c_args: c_args,
+                           link_args: link_args)
 # Install qdldl shared library
 # install(['TARGETS', 'qdldl', 'EXPORT', project_name, 'LIBRARY', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'ARCHIVE', 'DESTINATION', '${CMAKE_INSTALL_LIBDIR}', 'RUNTIME', 'DESTINATION', '${CMAKE_INSTALL_BINDIR}'])

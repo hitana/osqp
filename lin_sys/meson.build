@@ -10,7 +10,8 @@ if embedded == '0'
                                 ['lib_handler.h'],
                                 include_directories: ['../include', 'direct/qdldl',
                                 '../src', 'direct/qdldl/amd/src', 'direct/qdldl/amd/include', 'direct/qdldl/qdldl_sources/src'], # for D modules
-                                c_args: c_args
+                                c_args: c_args,
+                                link_args: link_args
                             	  )
                         
 endif

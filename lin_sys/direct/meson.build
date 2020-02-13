@@ -19,7 +19,8 @@ if embedded == '0'
                                  '../../src', 'qdldl/qdldl_sources/src', '../', '../../lin_sys', 'qdldl', 'qdldl/amd/src', 'qdldl/amd/include'  # for D modules
                                  ],
                                  d_module_versions: d_module_versions,
-                                 c_args: c_args)
+                                 c_args: c_args,
+                                 link_args: link_args)
     
 	  direct_linsys_solvers = [direct_linsys_solvers, linsys_pardiso_lib]
   endif

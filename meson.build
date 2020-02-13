@@ -210,28 +210,20 @@ if c_compiler.get_id() != 'msvc'
 endif
 
 # Architecture compiler arguments
-d_arch_args = []
-c_arch_args = []
 link_args = []
 if conf_data.get('ARCH') == 'x86_64'
-  c_arch_args += '-march=x86-64'
-  d_arch_args += '-m64'
   link_args = ['-m64']
-elif conf_data.get('ARCH') == 'x86'
-  if embedded != '0'
-    c_arch_args += ['-march=i686', '-m32']
-    link_args = ['-m32']
-    d_arch_args = '-m32'
+  add_project_arguments(['-march=x86-64', '-m64'], language: 'c')
+  add_project_arguments(['-m64'], language: 'd')
 
-    #add_global_arguments('-m32', language : 'd')
-    #add_global_arguments('-m32', language : 'c')
-  else
-    message ('WARNING! Ignore ARCH=x86 for non-embedded environment!')
-  endif
+elif conf_data.get('ARCH') == 'x86'
+  link_args = ['-m32']
+  add_project_arguments(['-march=i686','-m32'], language: 'c')
+  add_project_arguments(['-m32'], language: 'd')
 
 endif
 
-d_args = ['-betterC', d_arch_args, c_args]
+add_project_arguments(['-betterC'], language: 'd')
 
 
 #************************************************************************************
@@ -292,7 +284,7 @@ osqpstatic_lib = library('osqpstatic',
                                 dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                                 #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.
                                 link_with: linsys_solvers,
-                                c_args: d_args,
+                                #c_args: c_args,
                                 d_module_versions: d_module_versions
                                 )
 # Give same name to static library output
@@ -341,7 +333,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             dependencies: [m_lib, rt_lib, dl_lib, gcov_lib],
                             #dependecies: dependency_list    # WARNING: Passed invalid keyword argument "dependecies". WARNING: This will become a hard error in the future.                            
                             link_with: linsys_solvers,
-                            c_args: d_args,
+                            #c_args: c_args,
                             link_args: link_args,
                             d_module_versions: d_module_versions
                             )
@@ -358,7 +350,7 @@ if not python and not matlab and not r_lang and (embedded == '0')
                             dependencies: [gcov_lib],
                             link_with: osqp_lib,
                             #link_with: osqpstatic_lib,
-                            c_args: [c_arch_args, c_args],
+                            c_args: c_args,
                             link_args: link_args,
                             d_module_versions: d_module_versions
                             )
@@ -381,7 +373,7 @@ if conf_data.get('UNITTESTS')
                                include_directories: ['include', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include', 'tests', test_include_dirs],
                                dependencies: [gcov_lib],
                                link_with: osqpstatic_lib,
-                               c_args: [c_arch_args, c_args],
+                               c_args: c_args,
                                link_args: link_args,
                                d_module_versions: d_module_versions
                                )
@@ -393,7 +385,7 @@ if conf_data.get('UNITTESTS')
                                             include_directories: ['include', 'lin_sys/direct/qdldl/amd/src', 'lin_sys/direct/qdldl/amd/include', 'tests', test_include_dirs],
                                             dependencies: [gcov_lib],
                                             link_with: osqpstatic_lib,
-                                            c_args: [c_arch_args, c_args],
+                                            c_args: c_args,
                                             link_args: link_args,
                                             d_module_versions: d_module_versions
                                             )

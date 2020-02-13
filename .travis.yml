@@ -12,19 +12,14 @@ jobs:
 
 env:
   jobs:
-  - ARCH="x86" DFLOAT=true DLONG=true   USE_EMBEDDED=false EMBEDDED=0
+    # exclude m32 combined with DLONG
   - ARCH="x86" DFLOAT=true DLONG=false  USE_EMBEDDED=false EMBEDDED=0
-  - ARCH="x86" DFLOAT=false DLONG=true  USE_EMBEDDED=false EMBEDDED=0
   - ARCH="x86" DFLOAT=false DLONG=false USE_EMBEDDED=false EMBEDDED=0
 
-  - ARCH="x86" DFLOAT=true DLONG=true   USE_EMBEDDED=true EMBEDDED=1
   - ARCH="x86" DFLOAT=true DLONG=false  USE_EMBEDDED=true EMBEDDED=1
-  - ARCH="x86" DFLOAT=false DLONG=true  USE_EMBEDDED=true EMBEDDED=1
   - ARCH="x86" DFLOAT=false DLONG=false USE_EMBEDDED=true EMBEDDED=1
 
-  - ARCH="x86" DFLOAT=true DLONG=true   USE_EMBEDDED=true EMBEDDED=2
   - ARCH="x86" DFLOAT=true DLONG=false  USE_EMBEDDED=true EMBEDDED=2
-  - ARCH="x86" DFLOAT=false DLONG=true  USE_EMBEDDED=true EMBEDDED=2
   - ARCH="x86" DFLOAT=false DLONG=false USE_EMBEDDED=true EMBEDDED=2
 
   - ARCH="x86_64" DFLOAT=true DLONG=true   USE_EMBEDDED=false EMBEDDED=0
